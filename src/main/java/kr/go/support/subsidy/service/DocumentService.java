@@ -1,0 +1,81 @@
+package kr.go.support.subsidy.service;
+
+import kr.go.support.subsidy.common.FileManager;
+import kr.go.support.subsidy.domain.document.Document;
+import kr.go.support.subsidy.domain.document.DocumentRepository;
+import kr.go.support.subsidy.domain.user.User;
+import kr.go.support.subsidy.domain.user.UserRepository;
+import kr.go.support.subsidy.dto.document.DocumentCreateDto;
+import kr.go.support.subsidy.dto.document.DocumentDownloadDto;
+import kr.go.support.subsidy.dto.document.DocumentResponseDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class DocumentService {
+
+    private final DocumentRepository documentRepository;
+    private final UserRepository userRepository;
+    private final FileManager fileManager;
+
+    //유저별 서류 조회
+    public List<DocumentResponseDto> getDocuments(Long userId) {
+
+        List<DocumentResponseDto> result = documentRepository.findByUserId(userId).stream()
+                        .map(DocumentResponseDto::from)
+                        .toList();
+
+        return result;
+    }
+
+
+    //서류 등록
+    @Transactional
+    public Long createDocument(Long userId, DocumentCreateDto dto){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저가 존재하지 않습니다."));
+
+        //파일 로컬 저장
+        String originFileName = dto.file().getOriginalFilename();
+        String storeFileName = fileManager.storeFile(dto.file());
+        String filePath = fileManager.getFullPath(storeFileName).toString();
+
+        //파일 DB 저장(origin 파일명으로 저장, storeFileName은 url에 포함)
+        Document document = dto.toEntity(user, originFileName, storeFileName, dto.file().getSize(), filePath);
+        return documentRepository.save(document).getId();
+    }
+
+    //서류 삭제
+    @Transactional
+    public void deleteDocument(Long userId, Long documentId ){
+        Document document = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("서류정보가 존재하지 않습니다."));
+
+        //소프트 삭제 정책으로 인해 로컬파일은 제외하고 DB만 삭제처리
+        document.delete();
+    }
+
+    //서류 다운로드
+    public DocumentDownloadDto downloadDocument(Long userId, Long documentId) {
+
+        Document document = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("서류정보가 존재하지 않습니다."));
+
+            // 물리 파일 자원(Resource) 읽기
+            Resource resource = fileManager.getResource(document.getStoreFileName());
+
+            // 파일 자원과 원본 파일명을 DTO로 묶어 반환
+            return new DocumentDownloadDto(resource, document.getOriginFileName());
+    }
+}

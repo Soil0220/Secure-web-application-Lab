@@ -20,7 +20,6 @@ public enum ErrorCode {
     DOCUMENT_FILE_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "D003", "파일 저장 중 오류가 발생했습니다."),
     INVALID_FILE_URL(HttpStatus.INTERNAL_SERVER_ERROR, "D004", "비정상적인 URL 형식입니다."),
 
-
     // Favorite
     FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "F001", "즐겨찾기 정보를 찾을 수 없습니다."),
 

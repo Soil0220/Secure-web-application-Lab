@@ -1,5 +1,5 @@
 
-export default function UserAccount({ userInfo, styles }) {
+export default function AccountManagement({ userInfo, styles }) {
     return (
         <div>
             <h2 style={styles.contentTitle}>⚙️ 회원정보 & 수령계좌 관리</h2>

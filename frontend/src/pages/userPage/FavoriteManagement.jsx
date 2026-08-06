@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function UserRecommend({ recommendedGrants, styles }) {
+export default function FavoriteManagement({ recommendedGrants, styles }) {
     return (
         <div>
-            <h2 style={styles.contentTitle}>⭐ 맞춤 지원금 & 관심목록</h2>
+            <h2 style={styles.contentTitle}> 관심목록</h2>
             {recommendedGrants.map((grant) => (
                 <div key={grant.id} style={styles.dataCard}>
                     <div style={styles.cardHeader}>

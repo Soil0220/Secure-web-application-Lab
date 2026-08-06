@@ -1,5 +1,5 @@
 
-export default function UserDashboard({ applications, styles }) {
+export default function Dashboard({ applications, styles }) {
     return (
         <div>
             <h2 style={styles.contentTitle}>📊 마이페이지 대시보드</h2>

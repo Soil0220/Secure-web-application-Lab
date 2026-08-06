@@ -1,5 +1,5 @@
 
-export default function UserApplications({ applications, styles }) {
+export default function ApplicationManagement({ applications, styles }) {
     return (
         <div>
             <h2 style={styles.contentTitle}>📋 지원금 신청 내역</h2>

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import NoticeCreate from './NoticeCreate';
+import NoticeManagement from './NoticeManagement.jsx';
 import NoticeList from "../../components/NoticeList.jsx";
 
-export default function BoardManagement() {
+export default function Dashboard() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [reload, setReload] = useState(0);
@@ -33,7 +33,7 @@ export default function BoardManagement() {
 
     return (
         <div>
-            <h2 style={styles.title}>📢 게시판 & 민원 관리</h2>
+            <h2 style={styles.title}>게시판 & 민원 관리</h2>
 
             {/* 탭 구분 */}
             <div style={styles.tabHeader}>
@@ -59,7 +59,7 @@ export default function BoardManagement() {
                     {isOpen && (
                         <div style={styles.overlay} onClick={() => setIsOpen(false)}>
                             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                                <NoticeCreate onClose={handleClose} />
+                                <NoticeManagement onClose={handleClose} />
                             </div>
                         </div>
                     )}

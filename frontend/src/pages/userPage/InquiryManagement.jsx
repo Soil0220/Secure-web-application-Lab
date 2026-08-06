@@ -1,9 +1,9 @@
 
-export default function UserInquiries({ inquiries, styles }) {
+export default function InquiryManagement({ inquiries, styles }) {
     return (
         <div>
             <div style={styles.titleRow}>
-                <h2 style={styles.contentTitle}>📢 1:1 문의 내역</h2>
+                <h2 style={styles.contentTitle}>1:1 문의 내역</h2>
                 <button style={styles.primaryBtn}>+ 새 문의 작성</button>
             </div>
             {inquiries.map((inq) => (

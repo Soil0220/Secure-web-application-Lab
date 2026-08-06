@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
 
-const NoticeCreate = ({onClose}) => {
+const NoticeManagement = ({onClose}) => {
     // 폼 상태 관리
     const [formData, setFormData] = useState({
         title: '',
@@ -172,4 +172,4 @@ const styles = {
     }
 };
 
-export default NoticeCreate;
+export default NoticeManagement;

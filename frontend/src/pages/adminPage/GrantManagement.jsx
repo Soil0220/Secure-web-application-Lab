@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function ProgramManagement() {
+export default function GrantManagement() {
     const [programs, setPrograms] = useState([
         { id: 1, category: '청년 / 취업', name: '청년월세 특별지원금', amount: '월 최대 20만원', period: '2026.01.01 ~ 2026.12.31', status: '모집중' },
         { id: 2, category: '창업 / 소상공인', name: '초기 창업 패키지 지원', amount: '최대 1억원', period: '2026.03.01 ~ 2026.04.15', status: '모집예정' },

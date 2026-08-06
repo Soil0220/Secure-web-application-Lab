@@ -1,5 +1,6 @@
 package kr.go.support.subsidy.common;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import java.time.LocalDateTime;

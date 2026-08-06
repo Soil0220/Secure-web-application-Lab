@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {Link} from 'react-router-dom';
-import ProgramManagement from './ProgramManagement.jsx';
-import ApplicantAudit from './ApplicantAudit.jsx';
-import BoardManagement from './BoardManagement.jsx';
+import GrantManagement from './GrantManagement.jsx';
+import ApplicationManagement from './ApplicationManagement.jsx';
+import Dashboard from './Dashboard.jsx';
 import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
 
 export default function AdminPage() {
@@ -52,9 +52,9 @@ export default function AdminPage() {
 
                 {/* 중앙 메인 콘텐츠 영역 */}
                 <main style={styles.mainContent}>
-                    {activeTab === 'program' && <ProgramManagement />}
-                    {activeTab === 'audit' && <ApplicantAudit />}
-                    {activeTab === 'board' && <BoardManagement />}
+                    {activeTab === 'program' && <GrantManagement />}
+                    {activeTab === 'audit' && <ApplicationManagement />}
+                    {activeTab === 'board' && <Dashboard />}
                 </main>
             </div>
         </div>

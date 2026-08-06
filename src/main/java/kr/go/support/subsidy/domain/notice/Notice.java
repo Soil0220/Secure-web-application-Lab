@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 public class Notice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notice_id")
     private Long id;
 
     @Column(nullable = false, length = 255)

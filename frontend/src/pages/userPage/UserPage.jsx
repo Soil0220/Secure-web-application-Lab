@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 // 분리한 서브 컴포넌트 불러오기
-import UserDashboard from './UserDashboard';
-import UserApplications from './UserApplications';
-import UserRecommend from './UserRecommend';
-import UserDocuments from './UserDocuments';
-import UserInquiries from './UserInquiries';
-import UserAccount from './UserAccount';
+import Dashboard from './Dashboard.jsx';
+import ApplicationManagement from './ApplicationManagement.jsx';
+import FavoriteManagement from './FavoriteManagement.jsx';
+import DocumentManagement from './DocumentManagement.jsx';
+import InquiryManagement from './InquiryManagement.jsx';
+import AccountManagement from './AccountManagement.jsx';
 
 const UserPage = () => {
     // 현재 선택된 메뉴 탭 상태 (기본값: 대시보드)
@@ -145,22 +145,22 @@ const UserPage = () => {
                 {/* 메인 콘텐츠 영역 (컴포넌트 스위칭) */}
                 <main style={styles.contentCard}>
                     {activeTab === 'dashboard' && (
-                        <UserDashboard applications={applications} styles={styles} />
+                        <Dashboard applications={applications} styles={styles} />
                     )}
                     {activeTab === 'applications' && (
-                        <UserApplications applications={applications} styles={styles} />
+                        <ApplicationManagement applications={applications} styles={styles} />
                     )}
                     {activeTab === 'recommend' && (
-                        <UserRecommend recommendedGrants={recommendedGrants} styles={styles} />
+                        <FavoriteManagement recommendedGrants={recommendedGrants} styles={styles} />
                     )}
                     {activeTab === 'documents' && (
-                        <UserDocuments styles={styles} />
+                        <DocumentManagement styles={styles} />
                     )}
                     {activeTab === 'inquiries' && (
-                        <UserInquiries inquiries={inquiries} styles={styles} />
+                        <InquiryManagement inquiries={inquiries} styles={styles} />
                     )}
                     {activeTab === 'account' && (
-                        <UserAccount userInfo={userInfo} styles={styles} />
+                        <AccountManagement userInfo={userInfo} styles={styles} />
                     )}
                 </main>
             </div>

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainPage from "./pages/mainPage/MainPage.jsx";
-import Register from "./pages/mainPage/Register.jsx";
-import Login from "./pages/mainPage/Login.jsx";
+import Register from "./pages/mainPage/RegisterManagement.jsx";
+import Login from "./pages/mainPage/LoginManagement.jsx";
 import AdminPage from "./pages/adminPage/AdminPage.jsx";
 import UserPage from "./pages/userPage/UserPage.jsx";
 import { AuthProvider } from "./contexts/authContext/AuthProvider.jsx";

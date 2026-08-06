@@ -4,7 +4,7 @@
 ---
 
 ## 프로젝트 개요 (Overview)
-본 프로젝트는 **정부지원금 서비스**를 모티브로 제작된 웹 애플리케이션입니다.  
+본 프로젝트는 **정부지원금 서비스**를 모티브로 제작되었으며 
 실제 웹 모의해킹 시나리오 수행 및 **취약점 진단 보고서** 작성을 목적으로 개발된 애플리케이션입니다.
 
 ---
@@ -22,7 +22,15 @@
 
 ---
 
-## 주요 서비스 기능 (Features)
+## 시스템 구조 및 설계 (Architecture)
+
+### System Architecture
+![System Architecture](./images/SystemArchitecture.png)
+
+### Database ERD
+![System Architecture](./images/DatabaseERD.png)
+
+### Features
 - 추후 상세 추가 예정
 ---
 

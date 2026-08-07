@@ -19,8 +19,7 @@ import java.net.MalformedURLException;
 public class GlobalExceptionHandler {
 
     // 에러 발생시 가로채서 ResponseApi 규약으로 반환
-    //TODO 추후 로그출력부분 넣어서 모니터링 페이지랑 연동 시키고 빅데이터기반 분석도 적용할만한듯?
-    //TODO 모든 코드에서 비지니스 로직에 대한 커스텀 오류 적용해야함
+    //TODO 추후 로그출력부분 넣어서 모니터링 페이지랑 연동 시키고 빅데이터기반 분석도 여유되면 넣기
 
     //비지니스 로직에 대한 커스텀 오류
     @ExceptionHandler(BusinessException.class)

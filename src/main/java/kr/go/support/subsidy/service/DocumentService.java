@@ -1,6 +1,8 @@
 package kr.go.support.subsidy.service;
 
 import kr.go.support.subsidy.common.FileManager;
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentRepository;
 import kr.go.support.subsidy.domain.user.User;
@@ -44,7 +46,7 @@ public class DocumentService {
     public Long createDocument(Long userId, DocumentCreateDto dto){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         //파일 로컬 저장
         String originFileName = dto.file().getOriginalFilename();
@@ -60,7 +62,7 @@ public class DocumentService {
     @Transactional
     public void deleteDocument(Long userId, Long documentId ){
         Document document = documentRepository.findByIdAndUserId(documentId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("서류정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
 
         //소프트 삭제 정책으로 인해 로컬파일은 제외하고 DB만 삭제처리
         document.delete();
@@ -70,7 +72,7 @@ public class DocumentService {
     public DocumentDownloadDto downloadDocument(Long userId, Long documentId) {
 
         Document document = documentRepository.findByIdAndUserId(documentId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("서류정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
 
             // 물리 파일 자원(Resource) 읽기
             Resource resource = fileManager.getResource(document.getStoreFileName());

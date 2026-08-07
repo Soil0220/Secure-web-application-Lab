@@ -1,5 +1,7 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.application.Application;
 import kr.go.support.subsidy.domain.application.ApplicationRepository;
 import kr.go.support.subsidy.domain.application.ApplicationStatus;
@@ -37,10 +39,10 @@ public class ApplicationService {
     @Transactional
     public Long createApplication(ApplicationCreateDto applicationCreateDto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Grant grant = grantRepository.findById(applicationCreateDto.grantId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 지원금 제도가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
         Application application = applicationCreateDto.toEntity(user, grant);
         return applicationRepository.save(application).getId();
@@ -50,7 +52,7 @@ public class ApplicationService {
     @Transactional
     public void cancelApplication(Long userId, Long grantId ){
         Application application = applicationRepository.findByUserIdAndGrantId(userId, grantId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 신청내역이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
         application.delete();
     }
 
@@ -58,7 +60,7 @@ public class ApplicationService {
     @Transactional
     public Long updateApplication(Long userId, Long grantId, ApplicationStatus status){
         Application application = applicationRepository.findByUserIdAndGrantId(userId, grantId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 신청내역이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
         application.updateApplicationStatus(status);
 

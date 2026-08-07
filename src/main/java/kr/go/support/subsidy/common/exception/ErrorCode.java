@@ -25,7 +25,7 @@ public enum ErrorCode {
 
 
     // Grant
-    GRANT_APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "해당 ID의 신청내역이 존재하지 않습니다."),
+    GRANT_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "해당 ID의 신청내역이 존재하지 않습니다."),
 
 
     // Inquiry
@@ -36,7 +36,7 @@ public enum ErrorCode {
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "N001", "해당 ID의 공지사항이 존재하지 않습니다."),
 
 
-    // User
+    // Account
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "해당 유저가 존재하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "U002", "비밀번호가 일치하지 않습니다."),
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "U003", "동일한 아이디가 이미 존재합니다.");

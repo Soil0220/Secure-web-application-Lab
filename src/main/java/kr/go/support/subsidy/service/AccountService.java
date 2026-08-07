@@ -1,8 +1,9 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
-import kr.go.support.subsidy.dto.notice.NoticeResponseDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
 import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
@@ -16,17 +17,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class AccountService {
     private final UserRepository userRepository;
 
     //로그인
     public User login(UserLoginDto userLoginDto)
     {
         User user = userRepository.findByUsername(userLoginDto.username())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if(!user.getPassword().equals(userLoginDto.password())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
 
         return user;
@@ -36,7 +37,7 @@ public class UserService {
     @Transactional
     public long join(UserJoinDto joinDto) {
         if (userRepository.existsByUsername(joinDto.username())) {
-            throw new IllegalArgumentException("동일한 아이디가 이미 존재합니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
 
         User user = joinDto.toEntity();
@@ -57,7 +58,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         user.delete();
     }
 }

@@ -5,6 +5,7 @@ import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.domain.notice.Notice;
 import kr.go.support.subsidy.dto.notice.NoticeCreateDto;
 import kr.go.support.subsidy.dto.notice.NoticeResponseDto;
+import kr.go.support.subsidy.dto.notice.NoticeUpdateDto;
 import kr.go.support.subsidy.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,15 @@ public class NoticeController {
 
         Long response = noticeService.createNotice(request);
         return ResponseApi.success(response);
+    }
+
+    //공지사항 수정(Admin)
+    @PatchMapping("/admin")
+    public ResponseApi<Void> updateNotice(
+            @Valid @RequestBody NoticeUpdateDto dto){
+        noticeService.updateNotice(dto);
+
+        return ResponseApi.success();
     }
 
     //공지사항 삭제(Admin)

@@ -1,9 +1,12 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.notice.Notice;
 import kr.go.support.subsidy.domain.notice.NoticeRepository;
 import kr.go.support.subsidy.dto.notice.NoticeCreateDto;
 import kr.go.support.subsidy.dto.notice.NoticeResponseDto;
+import kr.go.support.subsidy.dto.notice.NoticeUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +36,20 @@ public class NoticeService {
         return noticeRepository.save(notice).getId();
     }
 
+    //공지사항 수정(Admin)
+    @Transactional
+    public void updateNotice(NoticeUpdateDto dto){
+        Notice notice = noticeRepository.findById(dto.noticeId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
+
+        notice.update(dto);
+    }
+
     //공지사항 삭제(Admin)
     @Transactional
     public void deleteNotice(Long noticeId){
         Notice notice = noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new IllegalArgumentException("공지사항을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
 
         notice.delete();
     }

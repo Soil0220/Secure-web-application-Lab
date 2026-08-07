@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import kr.go.support.subsidy.common.BaseEntity;
 import kr.go.support.subsidy.common.BaseTimeEntity;
+import kr.go.support.subsidy.dto.notice.NoticeUpdateDto;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -27,7 +28,7 @@ public class Notice extends BaseEntity {
     @Column(name = "notice_id")
     private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 200)
     private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -36,5 +37,11 @@ public class Notice extends BaseEntity {
     @Column(name = "is_pinned", nullable = false)
     @JsonProperty("isPinned")
     private boolean isPinned = false;
+
+    public void update(NoticeUpdateDto dto){
+        this.title = dto.title();
+        this.content = dto.content();
+        this.isPinned = dto.isPinned();
+    }
 
 }

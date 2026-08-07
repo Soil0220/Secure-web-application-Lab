@@ -7,6 +7,7 @@ import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.dto.inquiry.InquiryAnswerDto;
 import kr.go.support.subsidy.dto.inquiry.InquiryRequestDto;
 import kr.go.support.subsidy.dto.inquiry.InquiryResponseDto;
+import kr.go.support.subsidy.dto.inquiry.InquiryUpdateDto;
 import kr.go.support.subsidy.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,16 @@ public class InquiryController {
 
         Long response = inquiryService.createInquiry(sessionUser.getId(), dto);
         return ResponseApi.success(response);
+    }
+
+    //문의 수정
+    @PatchMapping
+    public ResponseApi<Void> updateInquiry(
+            @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @Valid @RequestBody InquiryUpdateDto dto
+    ){
+        inquiryService.updateInquiry(sessionUser.getId(), dto);
+        return ResponseApi.success();
     }
 
     //문의 삭제

@@ -1,0 +1,17 @@
+package kr.go.support.subsidy.dto.inquiry;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+public record InquiryUpdateDto (
+        @NotNull
+        Long inquiryId,
+
+        @NotBlank
+        @Size(max = 200)
+        String title,
+
+        @NotBlank
+        String content
+){ }

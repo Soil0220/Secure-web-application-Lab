@@ -1,5 +1,7 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.inquiry.InquiryRepository;
 import kr.go.support.subsidy.domain.user.User;
@@ -7,6 +9,7 @@ import kr.go.support.subsidy.domain.user.UserRepository;
 import kr.go.support.subsidy.dto.inquiry.InquiryAnswerDto;
 import kr.go.support.subsidy.dto.inquiry.InquiryRequestDto;
 import kr.go.support.subsidy.dto.inquiry.InquiryResponseDto;
+import kr.go.support.subsidy.dto.inquiry.InquiryUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +35,19 @@ public class InquiryService {
     @Transactional
     public Long createInquiry(Long userId, InquiryRequestDto dto){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Inquiry inquiry = dto.toEntity(user);
         return inquiryRepository.save(inquiry).getId();
+    }
+
+    //문의 수정
+    @Transactional
+    public void updateInquiry(Long userId, InquiryUpdateDto dto){
+        Inquiry inquiry = inquiryRepository.findByIdAndUserId(dto.inquiryId(), userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
+
+        inquiry.update(dto);
     }
 
     //문의 삭제
@@ -43,7 +55,7 @@ public class InquiryService {
     public void deleteInquiry(Long userId, Long inquiryId){
 
         Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 문의가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.delete();
     }
@@ -52,7 +64,7 @@ public class InquiryService {
     @Transactional
     public Long updateInquiry(Long userId, InquiryAnswerDto dto){
         Inquiry inquiry = inquiryRepository.findByIdAndUserId(dto.inquiryId(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 문의가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.reply(dto.answer());
         return  dto.inquiryId();

@@ -3,6 +3,7 @@ package kr.go.support.subsidy.domain.inquiry;
 import kr.go.support.subsidy.common.BaseEntity;
 import kr.go.support.subsidy.domain.user.User;
 import jakarta.persistence.*;
+import kr.go.support.subsidy.dto.inquiry.InquiryUpdateDto;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -47,5 +48,10 @@ public class Inquiry extends BaseEntity {
         this.answer = answer;
         this.status = InquiryStatus.ANSWERED;
         this.answeredAt = LocalDateTime.now();
+    }
+
+    public void update(InquiryUpdateDto dto){
+        this.title = dto.title();
+        this.content = dto.title();
     }
 }

@@ -7,6 +7,7 @@ import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.dto.grant.GrantCreateDto;
 import kr.go.support.subsidy.dto.grant.GrantResponseDto;
 import kr.go.support.subsidy.dto.grant.GrantStatusUpdateDto;
+import kr.go.support.subsidy.dto.grant.GrantUpdateDto;
 import kr.go.support.subsidy.service.GrantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,15 +30,6 @@ public class GrantController {
         return ResponseApi.success(response);
     }
 
-    //지원금 제도 상태 변경(Admin)
-    @PatchMapping("/admin")
-    public ResponseApi<Long> updateGrant(
-            @Valid @RequestBody GrantStatusUpdateDto dto){
-        Long response = grantService.updateGrant(dto);
-
-        return ResponseApi.success(response);
-    }
-
 
     //지원금 제도 등록(Admin)
     @PostMapping("/admin")
@@ -55,6 +47,24 @@ public class GrantController {
         return ResponseApi.success(response);
     }
 
+    //지원금 제도 수정(Admin)
+    @PatchMapping("/update/admin")
+    public ResponseApi<Void> updateGrant(
+            @Valid @RequestBody GrantUpdateDto dto){
+        grantService.updateGrant(dto);
+
+        return ResponseApi.success();
+    }
+
+    //지원금 제도 상태 변경(Admin)
+    @PatchMapping("/status/admin")
+    public ResponseApi<Long> updateGrant(
+            @Valid @RequestBody GrantStatusUpdateDto dto){
+        Long response = grantService.updateGrantStatus(dto);
+
+        return ResponseApi.success(response);
+    }
+
     //지원금 제도 삭제(Admin)
     @DeleteMapping("/{grantId}/admin")
     public ResponseApi<Void> deleteGrant(
@@ -64,6 +74,4 @@ public class GrantController {
 
         return ResponseApi.success();
     }
-
-
 }

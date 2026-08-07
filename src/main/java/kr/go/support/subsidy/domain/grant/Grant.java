@@ -2,6 +2,7 @@ package kr.go.support.subsidy.domain.grant;
 
 import kr.go.support.subsidy.common.BaseEntity;
 import jakarta.persistence.*;
+import kr.go.support.subsidy.dto.grant.GrantUpdateDto;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -34,7 +35,7 @@ public class Grant extends BaseEntity {
     private String content;
 
     @Column(nullable = false)
-    private Long amount; // 예: 월 최대 20만원
+    private Long amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,7 +48,17 @@ public class Grant extends BaseEntity {
     @Column(nullable = false)
     private GrantStatus status;
 
-    public void grantStatusUpdate(GrantStatus status){
+    public void StatusUpdate(GrantStatus status){
         this.status = status;
+    }
+
+    public void Update(GrantUpdateDto dto){
+        this.category = dto.category();
+        this.title = dto.title();
+        this.content = dto.content();
+        this.amount = dto.amount();
+        this.cycle = dto.cycle();
+        this.startDate = dto.startDate();
+        this.endDate = dto.endDate();
     }
 }

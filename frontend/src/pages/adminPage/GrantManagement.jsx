@@ -20,7 +20,7 @@ export default function GrantManagement() {
     return (
         <div>
             <div style={styles.headerRow}>
-                <h2 style={styles.title}>📋 지원 사업 관리</h2>
+                <h2 style={styles.title}>지원 사업 관리</h2>
                 <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>+ 신규 지원사업 등록</button>
             </div>
 

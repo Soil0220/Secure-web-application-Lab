@@ -1,5 +1,7 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.favorite.Favorite;
 import kr.go.support.subsidy.domain.favorite.FavoriteRepository;
 import kr.go.support.subsidy.domain.grant.Grant;
@@ -38,10 +40,10 @@ public class FavoriteService {
     public Long createFavorite(Long userId, FavoriteCreateDto dto)
     {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Grant grant = grantRepository.findById(dto.grantId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 지원금 제도가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GRANT_NOT_FOUND));
 
         Favorite favorite = dto.toEntity(user, grant);
         return favoriteRepository.save(favorite).getId();
@@ -51,7 +53,7 @@ public class FavoriteService {
     @Transactional
     public void deleteFavorite(Long userId, Long grantId){
         Favorite favorite = favoriteRepository.findByUserIdAndGrantId(userId, grantId)
-                .orElseThrow(() -> new IllegalArgumentException("즐겨찾기 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FAVORITE_NOT_FOUND));
 
         favorite.delete();
     }

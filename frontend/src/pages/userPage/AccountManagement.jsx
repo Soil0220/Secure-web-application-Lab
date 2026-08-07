@@ -2,7 +2,7 @@
 export default function AccountManagement({ userInfo, styles }) {
     return (
         <div>
-            <h2 style={styles.contentTitle}>⚙️ 회원정보 & 수령계좌 관리</h2>
+            <h2 style={styles.contentTitle}>회원정보 & 수령계좌 관리</h2>
             <div style={styles.formGroup}>
                 <label style={styles.label}>이름</label>
                 <input style={styles.input} type="text" value={userInfo.name} readOnly />

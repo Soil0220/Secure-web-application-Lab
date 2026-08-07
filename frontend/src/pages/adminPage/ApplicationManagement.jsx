@@ -16,7 +16,7 @@ export default function ApplicationManagement() {
 
     return (
         <div>
-            <h2 style={styles.title}>🔎 신청자 심사 및 관리</h2>
+            <h2 style={styles.title}>신청자 심사 및 관리</h2>
 
             <div style={styles.splitLayout}>
                 {/* 신청자 목록 테이블 */}
@@ -50,7 +50,7 @@ export default function ApplicationManagement() {
                 {/* 상세 심사 우측 패널 */}
                 {selected && (
                     <div style={styles.detailPanel}>
-                        <h3>📋 서류 심사 상세</h3>
+                        <h3>서류 심사 상세</h3>
                         <p><b>신청자명:</b> {selected.name}</p>
                         <p><b>신청 사업:</b> {selected.program}</p>
                         <p><b>제출 서류:</b> <a href="#doc" onClick={(e) => { e.preventDefault(); alert('서류 미리보기 기능'); }}>{selected.doc}</a></p>

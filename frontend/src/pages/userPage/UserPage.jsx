@@ -107,37 +107,37 @@ const UserPage = () => {
                             style={activeTab === 'dashboard' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('dashboard')}
                         >
-                            📊 대시보드
+                            대시보드
                         </li>
                         <li
                             style={activeTab === 'applications' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('applications')}
                         >
-                            📋 지원금 신청 내역
+                            지원금 신청 내역
                         </li>
                         <li
                             style={activeTab === 'recommend' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('recommend')}
                         >
-                            ⭐ 맞춤 지원금 & 관심목록
+                            맞춤 지원금 & 관심목록
                         </li>
                         <li
                             style={activeTab === 'documents' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('documents')}
                         >
-                            📁 자주 쓰는 서류 / 증빙 제출
+                            자주 쓰는 서류 / 증빙 제출
                         </li>
                         <li
                             style={activeTab === 'inquiries' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('inquiries')}
                         >
-                            📢 1:1 문의 내역
+                            1:1 문의 내역
                         </li>
                         <li
                             style={activeTab === 'account' ? styles.menuItemActive : styles.menuItem}
                             onClick={() => setActiveTab('account')}
                         >
-                            ⚙️ 회원정보 & 수령계좌 관리
+                            회원정보 & 수령계좌 관리
                         </li>
                     </ul>
                 </aside>

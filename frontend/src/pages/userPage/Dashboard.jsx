@@ -2,7 +2,7 @@
 export default function Dashboard({ applications, styles }) {
     return (
         <div>
-            <h2 style={styles.contentTitle}>📊 마이페이지 대시보드</h2>
+            <h2 style={styles.contentTitle}>마이페이지 대시보드</h2>
 
             {/* 신청 요약 카드 */}
             <div style={styles.summaryGrid}>

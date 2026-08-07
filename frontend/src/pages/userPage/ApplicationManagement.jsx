@@ -2,7 +2,7 @@
 export default function ApplicationManagement({ applications, styles }) {
     return (
         <div>
-            <h2 style={styles.contentTitle}>📋 지원금 신청 내역</h2>
+            <h2 style={styles.contentTitle}>지원금 신청 내역</h2>
             {applications.map((app) => (
                 <div key={app.id} style={styles.dataCard}>
                     <div style={styles.cardHeader}>

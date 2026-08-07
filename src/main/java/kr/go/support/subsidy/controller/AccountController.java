@@ -11,7 +11,7 @@ import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import kr.go.support.subsidy.service.UserService;
+import kr.go.support.subsidy.service.AccountService;
 
 import java.util.List;
 
@@ -19,9 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-public class UserController {
+public class AccountController {
 
-    private final UserService userService;
+    private final AccountService accountService;
 
     //회원가입(Public)
     @PostMapping("/join/public")
@@ -29,7 +29,7 @@ public class UserController {
             @Valid @RequestBody UserJoinDto dto){
 
         try{
-            userService.join(dto);
+            accountService.join(dto);
             return ResponseApi.success();
         }
         catch (IllegalArgumentException e) {
@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping("/login/public")
     public ResponseApi<SessionUser> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpServletRequest request){
         try {
-            User loginUser = userService.login(userLoginDto);
+            User loginUser = accountService.login(userLoginDto);
 
             //기존 세션 제거
             HttpSession oldSession = request.getSession(false);
@@ -77,7 +77,7 @@ public class UserController {
     @GetMapping("/admin")
     public ResponseApi<List<UserResponseDto>> getUsers(){
 
-        List<UserResponseDto> response = userService.getUsers();
+        List<UserResponseDto> response = accountService.getUsers();
         return ResponseApi.success(response);
     }
 
@@ -86,7 +86,7 @@ public class UserController {
     public ResponseApi<Void> deleteUser(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        userService.deleteUser(sessionUser.getId());
+        accountService.deleteUser(sessionUser.getId());
         return ResponseApi.success();
     }
 

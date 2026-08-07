@@ -51,7 +51,7 @@ public class ApplicationController {
     }
 
     //지원금 신청 상태 갱신
-    @PatchMapping("/{grantId}")
+    @PatchMapping("/{grantId}/admin")
     public ResponseApi<Long> updateApplicationStatus(
             @PathVariable Long grantId,
             @RequestParam ApplicationStatus status,

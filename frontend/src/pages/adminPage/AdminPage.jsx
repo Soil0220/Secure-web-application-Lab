@@ -18,7 +18,7 @@ export default function AdminPage() {
                         <span style={styles.logoText}> 지원금24<span style={styles.adminText}> ADMIN</span></span></Link>
                     </div>
                     <div style={styles.topNav}>
-                        <span style={styles.userInfo}>👤 관리자님</span>
+                        <span style={styles.userInfo}> 관리자님</span>
                         <Link to="/"><button style={styles.topLinkBtn} onClick={() => {logout()}}>로그아웃</button></Link>
                     </div>
                 </div>
@@ -33,19 +33,19 @@ export default function AdminPage() {
                             style={{ ...styles.menuItem, ...(activeTab === 'program' ? styles.menuItemActive : {}) }}
                             onClick={() => setActiveTab('program')}
                         >
-                            📋 지원 사업 관리
+                            지원 사업 관리
                         </button>
                         <button
                             style={{ ...styles.menuItem, ...(activeTab === 'audit' ? styles.menuItemActive : {}) }}
                             onClick={() => setActiveTab('audit')}
                         >
-                            🔎 신청자 심사 및 관리
+                            신청자 심사 및 관리
                         </button>
                         <button
                             style={{ ...styles.menuItem, ...(activeTab === 'board' ? styles.menuItemActive : {}) }}
                             onClick={() => setActiveTab('board')}
                         >
-                            📢 게시판 & 민원 관리
+                            게시판 & 민원 관리
                         </button>
                     </div>
                 </aside>

@@ -2,6 +2,7 @@ package kr.go.support.subsidy.dto.document;
 
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentType;
 import kr.go.support.subsidy.domain.user.User;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public record DocumentCreateDto (
 
         @NotNull
+        @Size(max = 100)
         DocumentType docType,
 
         @NotNull

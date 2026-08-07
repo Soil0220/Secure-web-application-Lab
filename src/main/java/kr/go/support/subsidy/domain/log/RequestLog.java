@@ -22,7 +22,7 @@ public class RequestLog {
     @Column(name = "request_time", nullable = false, updatable = false)
     private LocalDateTime requestTime;
 
-    @Column(name = "api_url", nullable = false)
+    @Column(name = "api_url", nullable = false, length = 500)
     private String apiUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false)

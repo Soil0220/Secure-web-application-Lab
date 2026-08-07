@@ -26,17 +26,17 @@ public class Document extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 100)
-    private DocumentType docType; // 예: 주민등록등본
-
     @Column(nullable = false)
+    private DocumentType docType;
+
+    @Column(nullable = false, length = 100)
     private String originFileName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String storeFileName;
 
     @Column(nullable = false, length = 500)
-    private String filePath; // S3 또는 local 저장 경로
+    private String filePath;
 
     private Long fileSize;
 }

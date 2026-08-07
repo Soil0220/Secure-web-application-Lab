@@ -21,16 +21,16 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 255)
     private String email;
 
     @Column(length = 20)
@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String bankName;
 
-    @Column(length = 100)
+    @Column(length = 20)
     private String accountNum;
 
     @Enumerated(EnumType.STRING)

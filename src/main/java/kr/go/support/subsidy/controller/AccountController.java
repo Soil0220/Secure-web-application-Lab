@@ -25,47 +25,49 @@ public class AccountController {
 
     //회원가입(Public)
     @PostMapping("/join/public")
-    public ResponseApi<?> join(
+    public ResponseApi<Void> join(
             @Valid @RequestBody UserJoinDto dto){
 
-        try{
-            accountService.join(dto);
+        /*
+        SignUpType type = accountService.join(dto);
+
+        if(type == SignUpType.CREATED){
             return ResponseApi.success();
+        } else {
+            String message = "기존 계정이 확인되어 요청하신 정보를 기반으로 복구 및 갱신하였습니다.";
+            return ResponseApi.success(message);
         }
-        catch (IllegalArgumentException e) {
+         */
 
-            return ResponseApi.error("400", e.getMessage());
-        }
-
+        accountService.join(dto);
+        return ResponseApi.success();
     }
 
     //로그인(Public)
     @PostMapping("/login/public")
-    public ResponseApi<SessionUser> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpServletRequest request){
-        try {
-            User loginUser = accountService.login(userLoginDto);
+    public ResponseApi<SessionUser> login(
+            @Valid @RequestBody UserLoginDto userLoginDto,
+            HttpServletRequest request){
 
-            //기존 세션 제거
-            HttpSession oldSession = request.getSession(false);
-            if (oldSession != null) {
-                oldSession.invalidate();
-            }
+        User loginUser = accountService.login(userLoginDto);
 
-            //세션 재생성
-            HttpSession session = request.getSession(true);
-            SessionUser sessionUser = new SessionUser(loginUser);
-            session.setAttribute("loginUser", sessionUser);
-
-            return ResponseApi.success(sessionUser);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseApi.error("401", e.getMessage());
+        //기존 세션 제거
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate();
         }
+
+        //세션 재생성
+        HttpSession session = request.getSession(true);
+        SessionUser sessionUser = new SessionUser(loginUser);
+        session.setAttribute("loginUser", sessionUser);
+
+        return ResponseApi.success(sessionUser);
     }
 
     //로그아웃
     @PostMapping("/logout")
-    public ResponseApi<?> logout(HttpServletRequest request) {
+    public ResponseApi<Void> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session != null) {
             session.invalidate();
@@ -82,11 +84,11 @@ public class AccountController {
     }
 
     //계정삭제(Admin)
-    @DeleteMapping("/admin")
+    @DeleteMapping("/{user_id}/admin")
     public ResponseApi<Void> deleteUser(
-            @SessionAttribute(name = "loginUser") SessionUser sessionUser){
+            @PathVariable Long user_id){
 
-        accountService.deleteUser(sessionUser.getId());
+        accountService.deleteUser(user_id);
         return ResponseApi.success();
     }
 

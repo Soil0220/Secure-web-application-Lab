@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -35,13 +36,36 @@ public class AccountService {
 
     //회원가입
     @Transactional
-    public long join(UserJoinDto joinDto) {
-        if (userRepository.existsByUsername(joinDto.username())) {
-            throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
+    public void join(UserJoinDto joinDto) {
+
+        boolean duplicate = userRepository.existsByEmailOrUsername(joinDto.email(), joinDto.username());
+
+        //계정 중복
+        if (duplicate) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL_USERNAME);
         }
 
-        User user = joinDto.toEntity();
-        return userRepository.save(user).getId();
+        userRepository.save(joinDto.toEntity());
+
+        /* 보안상 복구기능이 없는게 좋을거같지만 필요하다면 고려해보기
+        Optional<User> optionalUser = userRepository.findByEmailIncludingDeleted(joinDto.email());
+
+        //기존 계정 있음(삭제여부 무관)
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // 활성 : 중복오류
+            if (!user.isDeleted()) {
+                throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
+            } else { // 비활성 : 계정복구절차 진행
+                user.restore(joinDto);
+                return SignUpType.RESTORED;
+            }
+        }
+        //기존 계정 없음
+        userRepository.save(joinDto.toEntity());
+        return SignUpType.CREATED;
+        */
     }
 
     //계정조회(Admin)

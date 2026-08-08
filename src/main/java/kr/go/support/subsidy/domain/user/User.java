@@ -3,9 +3,14 @@ package kr.go.support.subsidy.domain.user;
 import jakarta.persistence.*;
 import kr.go.support.subsidy.common.BaseEntity;
 import kr.go.support.subsidy.common.BaseTimeEntity;
+import kr.go.support.subsidy.dto.user.UserJoinDto;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -21,7 +26,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 100)
     private String username;
 
     @Column(nullable = false, length = 255)
@@ -51,4 +56,25 @@ public class User extends BaseEntity {
         this.bankName = bankName;
         this.accountNum = accountNum;
     }
-}
+
+    //계정 삭제 전용 메서드(기존 이메일 마스킹처리)
+    @Override
+    public void delete(){
+        super.delete();
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String uuid = UUID.randomUUID().toString();
+        String mask = String.format("deleted_%s_%s", timestamp, uuid);
+        System.out.println(mask);
+        this.username = mask;
+        this.email = mask;
+    }
+
+    /* 계정 복구 메서드
+    public void restore(UserJoinDto dto){
+        super.restore();
+        this.name = dto.username();
+        this.password = dto.password();
+        this.phone = dto.phone();
+    }
+     */
+    }

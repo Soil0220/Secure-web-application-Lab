@@ -1,5 +1,6 @@
 package kr.go.support.subsidy.common.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,9 +11,13 @@ public enum ErrorCode {
 
     //TODO 노출 정보 최소화 작업 해야함
 
+    //인증 및 인가
+    SESSION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "R001", "로그인이 필요한 서비스입니다."),
+    ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "R002", "어드민 권한이 필요합니다"),
+    DUPLICATE_REQUEST(HttpStatus.CONFLICT, "R003", "중복 요청입니다."),
+
     // Application
     APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND,"A001", "해당 ID의 지원금 제도가 존재하지 않습니다."),
-
 
     // Document
     DOCUMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "서류정보가 존재하지 않습니다."),
@@ -39,7 +44,7 @@ public enum ErrorCode {
     // Account
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "해당 유저가 존재하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "U002", "비밀번호가 일치하지 않습니다."),
-    DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "U003", "동일한 아이디가 이미 존재합니다.");
+    DUPLICATE_EMAIL_USERNAME(HttpStatus.BAD_REQUEST, "U003", "해당 계정이 이미 존재합니다.");
 
     private final HttpStatus status;
     private final String code;

@@ -15,6 +15,10 @@ public abstract class BaseEntity extends BaseTimeEntity {
         this.deletedAt = LocalDateTime.now();
     }
 
+    /*
+    public void restore() {this.deletedAt = null;}
+    */
+
     public boolean isDeleted() {
         return this.deletedAt != null;
     }

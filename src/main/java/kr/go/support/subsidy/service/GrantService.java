@@ -22,7 +22,6 @@ import java.util.List;
 public class GrantService {
 
     private final GrantRepository grantRepository;
-    private final UserRepository userRepository;
 
     //지원금 제도 조회
     public List<GrantResponseDto> getGrants() {

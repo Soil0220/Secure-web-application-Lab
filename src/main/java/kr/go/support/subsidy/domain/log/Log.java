@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class RequestLog {
+public class Log {
     @Id
     @Column(name = "request_id", length = 36)
     private String requestId;

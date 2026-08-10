@@ -1,9 +1,7 @@
 package kr.go.support.subsidy.controller;
 
-import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
-import kr.go.support.subsidy.dto.favorite.FavoriteCreateDto;
 import kr.go.support.subsidy.dto.favorite.FavoriteResponseDto;
 import kr.go.support.subsidy.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +27,12 @@ public class FavoriteController {
     }
 
     //지원금 제도 즐겨찾기 설정
-    @PostMapping
+    @PostMapping("/{grantId}")
     public ResponseApi<Long> createFavorite(
-            @Valid @RequestBody FavoriteCreateDto dto,
+            @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        Long favoriteId = favoriteService.createFavorite(sessionUser.getId(), dto);
+        Long favoriteId = favoriteService.createFavorite(sessionUser.getId(), grantId);
         return ResponseApi.success(favoriteId);
     }
 

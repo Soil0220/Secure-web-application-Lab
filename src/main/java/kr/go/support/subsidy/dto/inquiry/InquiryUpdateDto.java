@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record InquiryUpdateDto (
-        @NotNull
-        Long inquiryId,
-
         @NotBlank
         @Size(max = 200)
         String title,

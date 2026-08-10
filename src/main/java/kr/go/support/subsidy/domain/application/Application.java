@@ -40,4 +40,12 @@ public class Application extends BaseEntity {
     public void updateApplicationStatus(ApplicationStatus status){
         this.status = status;
     }
+
+    public static Application toEntity(User user, Grant grant) {
+        return Application.builder()
+                .user(user)
+                .grant(grant)
+                .status(ApplicationStatus.SUBMITTED)
+                .build();
+    }
 }

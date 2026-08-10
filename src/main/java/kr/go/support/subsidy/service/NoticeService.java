@@ -38,8 +38,8 @@ public class NoticeService {
 
     //공지사항 수정(Admin)
     @Transactional
-    public void updateNotice(NoticeUpdateDto dto){
-        Notice notice = noticeRepository.findById(dto.noticeId())
+    public void updateNotice(Long noticeId, NoticeUpdateDto dto){
+        Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
 
         notice.update(dto);

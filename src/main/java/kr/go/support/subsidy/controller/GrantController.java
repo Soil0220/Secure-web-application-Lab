@@ -48,19 +48,21 @@ public class GrantController {
     }
 
     //지원금 제도 수정(Admin)
-    @PatchMapping("/update/admin")
+    @PatchMapping("/update/{grantId}/admin")
     public ResponseApi<Void> updateGrant(
+            @PathVariable Long grantId,
             @Valid @RequestBody GrantUpdateDto dto){
-        grantService.updateGrant(dto);
+        grantService.updateGrant(grantId, dto);
 
         return ResponseApi.success();
     }
 
     //지원금 제도 상태 변경(Admin)
-    @PatchMapping("/status/admin")
+    @PatchMapping("/status/{grantId}/admin")
     public ResponseApi<Long> updateGrant(
+            @PathVariable Long grantId,
             @Valid @RequestBody GrantStatusUpdateDto dto){
-        Long response = grantService.updateGrantStatus(dto);
+        Long response = grantService.updateGrantStatus(grantId, dto);
 
         return ResponseApi.success(response);
     }

@@ -39,7 +39,7 @@ public class DocumentController {
     //서류 등록
     @PostMapping
     public ResponseApi<Long> createDocument(
-            @Valid @RequestBody DocumentCreateDto dto,
+            @Valid @ModelAttribute DocumentCreateDto dto,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
         Long documentId = documentService.createDocument(sessionUser.getId(), dto);
@@ -62,7 +62,7 @@ public class DocumentController {
             @PathVariable Long documentId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        DocumentDownloadDto downloadDto = documentService.downloadDocument(documentId, sessionUser.getId());
+        DocumentDownloadDto downloadDto = documentService.downloadDocument(sessionUser.getId(), documentId);
 
         // 한글,특수문자 파일명 인코딩
         String encodedFileName = UriUtils.encode(downloadDto.originFileName(), StandardCharsets.UTF_8);

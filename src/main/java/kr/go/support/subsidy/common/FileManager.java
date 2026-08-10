@@ -21,11 +21,11 @@ public class FileManager {
 
     // application.yml 등에 설정된 업로드 경로 (없으면 기본값 ./uploads)
 
-    private String uploadDir = "./uploads";
+    private String uploadDir = "uploads";
 
     // 절대 경로 가져오기
     public Path getFullPath(String storeFileName) {
-        return Paths.get(uploadDir).resolve(storeFileName).normalize();
+        return Paths.get(uploadDir).resolve(storeFileName).normalize().toAbsolutePath();
     }
 
     //파일저장
@@ -45,9 +45,11 @@ public class FileManager {
             }
 
             // 파일 저장 (물리적 이관)
+            System.out.println(getFullPath(storeFileName).toString());
             File dest = new File(getFullPath(storeFileName).toString());
+            System.out.println("템템템");
             multipartFile.transferTo(dest);
-
+            System.out.println("템템템2");
             return storeFileName; // DB 저장용 난수화된 파일명 반환
 
         } catch (IOException e) {

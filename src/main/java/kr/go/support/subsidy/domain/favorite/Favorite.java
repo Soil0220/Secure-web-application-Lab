@@ -33,4 +33,11 @@ public class Favorite extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grant_id", nullable = false)
     private Grant grant;
+
+    public static Favorite toEntity(User user, Grant grant) {
+        return Favorite.builder()
+                .user(user)
+                .grant(grant)
+                .build();
+    }
 }

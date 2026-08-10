@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 public record DocumentCreateDto (
 
         @NotNull
-        @Size(max = 100)
         DocumentType docType,
 
         @NotNull

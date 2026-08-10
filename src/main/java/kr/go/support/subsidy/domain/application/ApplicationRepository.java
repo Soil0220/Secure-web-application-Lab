@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     List<Application> findByUserId(Long userId);
     Optional<Application> findByUserIdAndGrantId(Long userId, Long grantId);
+    List<Application> findByGrantId(Long grantId);
 }

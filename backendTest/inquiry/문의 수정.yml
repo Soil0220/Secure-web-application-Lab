@@ -1,0 +1,29 @@
+info:
+  name: 문의 수정
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: http://localhost:8080/api/inquiry/1
+  headers:
+    - name: Origin
+      value: http://localhost:3000
+    - name: X-Request-Id
+      value: e15531-e3323-42d3-a716-446655440000
+    - name: X-Request-Time
+      value: 2026-08-08T14:56:16.000Z
+  body:
+    type: json
+    data: |-
+      {
+        "title" : "문의 테스트 Update",
+        "content" : "문의 내용 Update"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

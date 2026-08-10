@@ -13,9 +13,6 @@ import java.time.LocalDate;
 public record GrantUpdateDto(
 
         @NotNull
-        Long grantId,
-
-        @NotNull
         GrantCategory category,
 
         @NotBlank

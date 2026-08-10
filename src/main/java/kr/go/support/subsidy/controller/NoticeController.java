@@ -37,10 +37,11 @@ public class NoticeController {
     }
 
     //공지사항 수정(Admin)
-    @PatchMapping("/admin")
+    @PatchMapping("/{noticeId}/admin")
     public ResponseApi<Void> updateNotice(
+            @PathVariable Long noticeId,
             @Valid @RequestBody NoticeUpdateDto dto){
-        noticeService.updateNotice(dto);
+        noticeService.updateNotice(noticeId, dto);
 
         return ResponseApi.success();
     }

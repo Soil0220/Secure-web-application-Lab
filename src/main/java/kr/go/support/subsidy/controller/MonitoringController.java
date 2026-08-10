@@ -17,6 +17,7 @@ public class MonitoringController {
 
     private final LogService logService;
 
+    //로그 조회
     @GetMapping("/admin")
     public ResponseApi<List<LogResponseDto>> getLogs(){
         List<LogResponseDto> response = logService.getLogs();

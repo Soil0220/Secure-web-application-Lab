@@ -43,12 +43,13 @@ public class InquiryController {
     }
 
     //문의 수정
-    @PatchMapping
+    @PatchMapping("/{inquiryId}")
     public ResponseApi<Void> updateInquiry(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @PathVariable Long inquiryId,
             @Valid @RequestBody InquiryUpdateDto dto
     ){
-        inquiryService.updateInquiry(sessionUser.getId(), dto);
+        inquiryService.updateInquiry(sessionUser.getId(), inquiryId, dto);
         return ResponseApi.success();
     }
 
@@ -63,12 +64,13 @@ public class InquiryController {
     }
 
     //문의 답변(Admin)
-    @PatchMapping("/admin")
+    @PatchMapping("/{inquiryId}/admin")
     public ResponseApi<Long> updateInquiry(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @PathVariable Long inquiryId,
             @Valid @RequestBody InquiryAnswerDto dto){
 
-        Long response = inquiryService.updateInquiry(sessionUser.getId(), dto);
+        Long response = inquiryService.updateInquiry(sessionUser.getId(), inquiryId, dto);
         return ResponseApi.success(response);
     }
 }

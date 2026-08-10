@@ -43,8 +43,8 @@ public class InquiryService {
 
     //문의 수정
     @Transactional
-    public void updateInquiry(Long userId, InquiryUpdateDto dto){
-        Inquiry inquiry = inquiryRepository.findByIdAndUserId(dto.inquiryId(), userId)
+    public void updateInquiry(Long userId, Long inquiryId, InquiryUpdateDto dto){
+        Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.update(dto);
@@ -62,12 +62,12 @@ public class InquiryService {
 
     //문의 답변(Admin)
     @Transactional
-    public Long updateInquiry(Long userId, InquiryAnswerDto dto){
-        Inquiry inquiry = inquiryRepository.findByIdAndUserId(dto.inquiryId(), userId)
+    public Long updateInquiry(Long userId, Long inquryId, InquiryAnswerDto dto){
+        Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.reply(dto.answer());
-        return  dto.inquiryId();
+        return  inquryId;
     }
 
 }

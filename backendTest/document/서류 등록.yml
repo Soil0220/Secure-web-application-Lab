@@ -1,0 +1,33 @@
+info:
+  name: 서류 등록
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:8080/api/document
+  headers:
+    - name: Origin
+      value: http://localhost:3000
+    - name: X-Request-Id
+      value: e133-3c53-43d3-a716-446655440000
+    - name: X-Request-Time
+      value: 2026-08-08T14:56:16.000Z
+  body:
+    type: multipart-form
+    data:
+      - name: docType
+        type: text
+        value: RESIDENT_REGISTRATION_COPY
+      - name: file
+        type: file
+        value:
+          - C:\Users\asemf\OneDrive\바탕 화면\test.txt
+        contentType: text/plain; charset=utf-8
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

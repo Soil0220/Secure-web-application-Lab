@@ -17,7 +17,7 @@ public enum ErrorCode {
     DUPLICATE_REQUEST(HttpStatus.CONFLICT, "R003", "중복 요청입니다."),
 
     // Application
-    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND,"A001", "해당 ID의 지원금 제도가 존재하지 않습니다."),
+    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND,"A001", "해당 ID의 지원금 신청이 존재하지 않습니다."),
 
     // Document
     DOCUMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "서류정보가 존재하지 않습니다."),
@@ -30,7 +30,7 @@ public enum ErrorCode {
 
 
     // Grant
-    GRANT_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "해당 ID의 신청내역이 존재하지 않습니다."),
+    GRANT_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "해당 ID의 지원금 제도가 존재하지 않습니다."),
 
 
     // Inquiry

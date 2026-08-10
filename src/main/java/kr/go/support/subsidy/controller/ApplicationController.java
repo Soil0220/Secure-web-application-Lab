@@ -3,10 +3,11 @@ package kr.go.support.subsidy.controller;
 import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
-import kr.go.support.subsidy.domain.application.Application;
-import kr.go.support.subsidy.domain.application.ApplicationStatus;
-import kr.go.support.subsidy.dto.application.ApplicationCreateDto;
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
+import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.dto.application.ApplicationResponseDto;
+import kr.go.support.subsidy.dto.application.ApplicationUpdateDto;
 import kr.go.support.subsidy.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,12 @@ public class ApplicationController {
     }
 
     // 지원금 신청
-    @PostMapping
+    @PostMapping("/{grantId}")
     public ResponseApi<Long> createApplication(
-            @Valid @RequestBody ApplicationCreateDto dto,
+            @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        Long applicationId = applicationService.createApplication(dto, sessionUser.getId());
+        Long applicationId = applicationService.createApplication(grantId, sessionUser.getId());
         return ResponseApi.success(applicationId);
     }
 
@@ -50,14 +51,13 @@ public class ApplicationController {
         return ResponseApi.success();
     }
 
-    //지원금 신청 상태 갱신
-    @PatchMapping("/{grantId}/admin")
+    //지원금 신청 상태 갱신(Admin)
+    @PatchMapping("/{applicationId}/admin")
     public ResponseApi<Long> updateApplicationStatus(
-            @PathVariable Long grantId,
-            @RequestParam ApplicationStatus status,
-            @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
+            @PathVariable Long applicationId,
+            @Valid @RequestBody ApplicationUpdateDto dto) {
 
-        Long updatedId = applicationService.updateApplication(sessionUser.getId(), grantId, status);
+        Long updatedId = applicationService.updateApplication(applicationId, dto);
         return ResponseApi.success(updatedId);
     }
 }

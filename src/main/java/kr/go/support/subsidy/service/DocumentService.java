@@ -50,9 +50,11 @@ public class DocumentService {
 
         //파일 로컬 저장
         String originFileName = dto.file().getOriginalFilename();
-        String storeFileName = fileManager.storeFile(dto.file());
-        String filePath = fileManager.getFullPath(storeFileName).toString();
 
+        String storeFileName = fileManager.storeFile(dto.file());
+        System.out.println("테스트2");
+        String filePath = fileManager.getFullPath(storeFileName).toString();
+        System.out.println("테스트3");
         //파일 DB 저장(origin 파일명으로 저장, storeFileName은 url에 포함)
         Document document = dto.toEntity(user, originFileName, storeFileName, dto.file().getSize(), filePath);
         return documentRepository.save(document).getId();

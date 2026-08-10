@@ -8,8 +8,6 @@ import kr.go.support.subsidy.domain.grant.Grant;
 import kr.go.support.subsidy.domain.grant.GrantRepository;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
-import kr.go.support.subsidy.dto.document.DocumentResponseDto;
-import kr.go.support.subsidy.dto.favorite.FavoriteCreateDto;
 import kr.go.support.subsidy.dto.favorite.FavoriteResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,15 +35,15 @@ public class FavoriteService {
 
     //지원금 제도 즐겨찾기 설정
     @Transactional
-    public Long createFavorite(Long userId, FavoriteCreateDto dto)
+    public Long createFavorite(Long userId, Long grantId)
     {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        Grant grant = grantRepository.findById(dto.grantId())
+        Grant grant = grantRepository.findById(grantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GRANT_NOT_FOUND));
 
-        Favorite favorite = dto.toEntity(user, grant);
+        Favorite favorite = Favorite.toEntity(user, grant);
         return favoriteRepository.save(favorite).getId();
     }
 

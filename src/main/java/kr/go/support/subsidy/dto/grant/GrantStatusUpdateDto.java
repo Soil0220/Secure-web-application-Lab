@@ -6,8 +6,6 @@ import kr.go.support.subsidy.domain.grant.GrantStatus;
 public record GrantStatusUpdateDto(
 
         @NotNull
-        Long grantId,
-        @NotNull
         GrantStatus status
 ) {}
 

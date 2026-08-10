@@ -2,6 +2,14 @@ package kr.go.support.subsidy.service;
 
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
+import kr.go.support.subsidy.domain.application.Application;
+import kr.go.support.subsidy.domain.application.ApplicationRepository;
+import kr.go.support.subsidy.domain.document.Document;
+import kr.go.support.subsidy.domain.document.DocumentRepository;
+import kr.go.support.subsidy.domain.favorite.Favorite;
+import kr.go.support.subsidy.domain.favorite.FavoriteRepository;
+import kr.go.support.subsidy.domain.inquiry.Inquiry;
+import kr.go.support.subsidy.domain.inquiry.InquiryRepository;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
@@ -20,6 +28,10 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class AccountService {
     private final UserRepository userRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final ApplicationRepository applicationRepository;
+    private final InquiryRepository inquiryRepository;
+    private final DocumentRepository documentRepository;
 
     //로그인
     public User login(UserLoginDto userLoginDto)
@@ -83,6 +95,19 @@ public class AccountService {
     public void deleteUser(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        //User 삭제로부터  DB 무결성 유지를 위한 연쇄 Soft Delete
+
         user.delete();
+
+        //favorite
+        favoriteRepository.findByUserId(userId).forEach(Favorite::delete);
+        //application
+        applicationRepository.findByUserId(userId).forEach(Application::delete);
+        //inquiry
+        inquiryRepository.findByUserId(userId).forEach(Inquiry::delete);
+        //document
+        documentRepository.findByUserId(userId).forEach(Document::delete);
+
     }
 }

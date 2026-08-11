@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/grant")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class GrantController {
 
     private final GrantService grantService;

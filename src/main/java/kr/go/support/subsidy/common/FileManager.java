@@ -19,9 +19,8 @@ import java.util.UUID;
 @Component
 public class FileManager {
 
-    // application.yml 등에 설정된 업로드 경로 (없으면 기본값 ./uploads)
-
-    private String uploadDir = "uploads";
+    @Value("${app.fileManager.uploadDir}")
+    private String uploadDir;
 
     // 절대 경로 가져오기
     public Path getFullPath(String storeFileName) {
@@ -45,11 +44,8 @@ public class FileManager {
             }
 
             // 파일 저장 (물리적 이관)
-            System.out.println(getFullPath(storeFileName).toString());
             File dest = new File(getFullPath(storeFileName).toString());
-            System.out.println("템템템");
             multipartFile.transferTo(dest);
-            System.out.println("템템템2");
             return storeFileName; // DB 저장용 난수화된 파일명 반환
 
         } catch (IOException e) {
@@ -73,7 +69,7 @@ public class FileManager {
     //리소스 반환
     public Resource getResource(String storeFileName){
 
-        // DB에 저장된 파일명 또는 상대경로와 기본 업로드 디렉토리 결합
+        // 로컬에 저장된 파일명으로 절대경로 변환 후 해당 파일 반환
         Path filePath = getFullPath(storeFileName);
         try {
             Resource resource = new UrlResource(filePath.toUri());

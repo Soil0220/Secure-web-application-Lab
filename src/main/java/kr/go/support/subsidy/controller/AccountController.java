@@ -1,43 +1,40 @@
 package kr.go.support.subsidy.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
+import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.domain.user.User;
+import kr.go.support.subsidy.dto.user.UserBankAccountDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
 import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import kr.go.support.subsidy.service.AccountService;
 
+import java.security.Security;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AccountController {
 
     private final AccountService accountService;
+    private final SecurityUtils securityUtils;
 
     //회원가입(Public)
     @PostMapping("/join/public")
     public ResponseApi<Void> join(
             @Valid @RequestBody UserJoinDto dto){
-
-        /*
-        SignUpType type = accountService.join(dto);
-
-        if(type == SignUpType.CREATED){
-            return ResponseApi.success();
-        } else {
-            String message = "기존 계정이 확인되어 요청하신 정보를 기반으로 복구 및 갱신하였습니다.";
-            return ResponseApi.success(message);
-        }
-         */
 
         accountService.join(dto);
         return ResponseApi.success();
@@ -47,7 +44,8 @@ public class AccountController {
     @PostMapping("/login/public")
     public ResponseApi<SessionUser> login(
             @Valid @RequestBody UserLoginDto userLoginDto,
-            HttpServletRequest request){
+            HttpServletRequest request,
+            HttpServletResponse response){
 
         User loginUser = accountService.login(userLoginDto);
 
@@ -62,6 +60,18 @@ public class AccountController {
         SessionUser sessionUser = new SessionUser(loginUser);
         session.setAttribute("loginUser", sessionUser);
 
+        String csrfToken = securityUtils.generateSecureToken();
+
+        // Double Submit Cookie 발급 (JS가 읽어 헤더에 담아야 하므로 httpOnly=false)
+        ResponseCookie csrfCookie = ResponseCookie.from("XSRF-TOKEN", csrfToken)
+                .path("/")
+                .httpOnly(false)
+                .secure(false)
+                .sameSite("Lax")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, csrfCookie.toString());
+
         return ResponseApi.success(sessionUser);
     }
 
@@ -72,6 +82,16 @@ public class AccountController {
         if(session != null) {
             session.invalidate();
         }
+        return ResponseApi.success();
+    }
+
+    //계좌설정
+    @PatchMapping
+    public ResponseApi<Void> setBankAccount(
+            @Valid @RequestBody UserBankAccountDto dto,
+            @SessionAttribute(name = "loginUser") SessionUser sessionUser){
+
+        accountService.setBankAccount(sessionUser.getId(), dto);
         return ResponseApi.success();
     }
 

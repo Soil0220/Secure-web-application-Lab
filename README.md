@@ -25,7 +25,7 @@
 ## 시스템 구조 및 설계 (Architecture)
 
 ### System Architecture
-![System Architecture](./images/SystemArchitecture.png)
+![SystemArchitecture](./images/SystemArchitecture.png)
 
 ### Database ERD
 ![DatabaseERD](./images/DatabaseERD.png)

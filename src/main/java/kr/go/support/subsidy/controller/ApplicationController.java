@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/application")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ApplicationController {
 
     private final ApplicationService applicationService;

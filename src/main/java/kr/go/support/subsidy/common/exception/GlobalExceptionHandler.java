@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.go.support.subsidy.common.ResponseApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -26,6 +27,8 @@ public class GlobalExceptionHandler {
     public ResponseApi<Void> handleBusinessException(BusinessException e, HttpServletResponse response) {
         ErrorCode errorCode = e.getErrorCode();
         response.setStatus(errorCode.getStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         return ResponseApi.error(errorCode.getCode(), e.getMessage());
     }
@@ -67,6 +70,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseApi<Void> handleAllUncaughtException(Exception e) {
         // 서버 내부 오류는 원인 파악을 위해 스택 트레이스를 로그에 상세히 남깁니다.
-        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다." + e.getMessage());
+        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다.");
     }
 }

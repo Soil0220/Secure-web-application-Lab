@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inquiry")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class InquiryController {
 
     private final InquiryService inquiryService;

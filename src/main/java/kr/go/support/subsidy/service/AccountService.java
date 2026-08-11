@@ -1,5 +1,6 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.application.Application;
@@ -12,15 +13,16 @@ import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.inquiry.InquiryRepository;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
+import kr.go.support.subsidy.dto.user.UserBankAccountDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
 import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.keygen.BytesKeyGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -32,6 +34,7 @@ public class AccountService {
     private final ApplicationRepository applicationRepository;
     private final InquiryRepository inquiryRepository;
     private final DocumentRepository documentRepository;
+    private final SecurityUtils securityUtils;
 
     //로그인
     public User login(UserLoginDto userLoginDto)
@@ -39,7 +42,7 @@ public class AccountService {
         User user = userRepository.findByUsername(userLoginDto.username())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        if(!user.getPassword().equals(userLoginDto.password())) {
+        if(!securityUtils.matches(userLoginDto.password(), user.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
 
@@ -57,27 +60,18 @@ public class AccountService {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL_USERNAME);
         }
 
-        userRepository.save(joinDto.toEntity());
+        String encodedPassword = securityUtils.encrypt(joinDto.password());
+        userRepository.save(joinDto.toEntity(encodedPassword));
 
-        /* 보안상 복구기능이 없는게 좋을거같지만 필요하다면 고려해보기
-        Optional<User> optionalUser = userRepository.findByEmailIncludingDeleted(joinDto.email());
+    }
+    //은행계좌 설정
+    @Transactional
+    public void setBankAccount(Long userId, UserBankAccountDto dto){
 
-        //기존 계정 있음(삭제여부 무관)
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-            // 활성 : 중복오류
-            if (!user.isDeleted()) {
-                throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
-            } else { // 비활성 : 계정복구절차 진행
-                user.restore(joinDto);
-                return SignUpType.RESTORED;
-            }
-        }
-        //기존 계정 없음
-        userRepository.save(joinDto.toEntity());
-        return SignUpType.CREATED;
-        */
+        user.updateAccount(dto.bankName(), dto.accountNum());
     }
 
     //계정조회(Admin)

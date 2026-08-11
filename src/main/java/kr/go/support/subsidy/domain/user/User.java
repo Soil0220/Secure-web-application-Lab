@@ -1,9 +1,8 @@
 package kr.go.support.subsidy.domain.user;
 
 import jakarta.persistence.*;
+import kr.go.support.subsidy.common.auth.AesBytesConverter;
 import kr.go.support.subsidy.common.BaseEntity;
-import kr.go.support.subsidy.common.BaseTimeEntity;
-import kr.go.support.subsidy.dto.user.UserJoinDto;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -44,7 +43,8 @@ public class User extends BaseEntity {
     @Column(length = 50)
     private String bankName;
 
-    @Column(length = 20)
+    @Column(length = 255)
+    @Convert(converter = AesBytesConverter.class)
     private String accountNum;
 
     @Enumerated(EnumType.STRING)

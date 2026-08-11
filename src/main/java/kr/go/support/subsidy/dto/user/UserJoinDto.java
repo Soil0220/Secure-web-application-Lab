@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.domain.user.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record UserJoinDto (
         @NotBlank
@@ -27,10 +28,10 @@ public record UserJoinDto (
         String phone
 
 ) {
-    public User toEntity() {
+    public User toEntity(String encodedPassword) {
         return User.builder()
                 .username(username)
-                .password(password)
+                .password(encodedPassword)
                 .name(name)
                 .email(email)
                 .phone(phone)

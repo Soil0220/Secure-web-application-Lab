@@ -6,15 +6,13 @@ import kr.go.support.subsidy.domain.document.Document;
 
 public record DocumentResponseDto (
         Long documentId,
-        String originFileName,
-        String filePath
+        String originFileName
 ){
     public static DocumentResponseDto from(Document document)
     {
         return new DocumentResponseDto(
           document.getId(),
-          document.getOriginFileName(),
-          document.getFilePath()
+          document.getOriginFileName()
         );
     }
 }

@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notice")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class NoticeController {
     private final NoticeService noticeService;
 

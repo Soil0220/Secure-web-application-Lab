@@ -18,14 +18,13 @@ public record DocumentCreateDto (
         MultipartFile file
 
 ) {
-        public Document toEntity(User user, String originFileName, String storeFileName, Long fileSize, String filePath){
+        public Document toEntity(User user, String originFileName, String storeFileName, Long fileSize){
             return Document.builder()
                     .user(user)
                     .docType(docType)
                     .originFileName(originFileName)
                     .storeFileName(storeFileName)
                     .fileSize(fileSize)
-                    .filePath(filePath)
                     .build();
         }
 }

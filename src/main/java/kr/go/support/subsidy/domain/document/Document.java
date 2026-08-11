@@ -35,8 +35,5 @@ public class Document extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String storeFileName;
 
-    @Column(nullable = false, length = 500)
-    private String filePath;
-
     private Long fileSize;
 }

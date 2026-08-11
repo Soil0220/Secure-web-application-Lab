@@ -1,6 +1,7 @@
 package kr.go.support.subsidy.common;
 
 import jakarta.servlet.http.HttpServletResponse;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import lombok.Getter;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
@@ -39,8 +40,8 @@ public class ResponseApi<T> {
         return new ResponseApi<>(false, code, message, null);
     }
 
-    public void send(HttpServletResponse response, int httpStatus, ObjectMapper objectMapper) throws IOException {
-        response.setStatus(httpStatus);
+    //필터전용 응답
+    public void send(HttpServletResponse response, ObjectMapper objectMapper) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 

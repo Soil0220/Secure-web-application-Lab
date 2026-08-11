@@ -15,6 +15,7 @@ public enum ErrorCode {
     SESSION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "R001", "로그인이 필요한 서비스입니다."),
     ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "R002", "어드민 권한이 필요합니다"),
     DUPLICATE_REQUEST(HttpStatus.CONFLICT, "R003", "중복 요청입니다."),
+    HEADER_NOT_REQUIRED(HttpStatus.BAD_REQUEST, "R004", "헤더 정보가 필요합니다."),
 
     // Application
     APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND,"A001", "해당 ID의 지원금 신청이 존재하지 않습니다."),

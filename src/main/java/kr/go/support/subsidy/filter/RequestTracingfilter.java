@@ -1,5 +1,7 @@
-package kr.go.support.subsidy.Interceptor;
+package kr.go.support.subsidy.filter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.go.support.subsidy.common.ResponseApi;
@@ -13,13 +15,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class RequestTracingInterceptor implements HandlerInterceptor {
+public class RequestTracingfilter extends OncePerRequestFilter {
 
     private static final String HEADER_REQUEST_ID = "X-Request-Id";
     private static final String HEADER_REQUEST_TIME = "X-Request-Time";
@@ -30,35 +34,32 @@ public class RequestTracingInterceptor implements HandlerInterceptor {
 
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String requestId = request.getHeader(HEADER_REQUEST_ID);
         String requestTime = request.getHeader(HEADER_REQUEST_TIME);
 
-        // 상태 변경 메서드(POST, PUT, PATCH, DELETE)에 대해서만 중복 체크
-        if (requestValidate(requestId, requestTime) && isStateChangingMethod(request.getMethod())) {
+        //이벤트 등록을 통해 비동기 방식으로 요청 로그 저장(추후 모니터링 페이지 분석용도)
+        LogRequestDto logRequestDto = new LogRequestDto(requestId, requestTime, request.getRequestURI());
+        eventPublisher.publishEvent(logRequestDto);
 
-            // 중복 요청 검증
-            if (logService.checkLog(requestId)) {throw new BusinessException(ErrorCode.DUPLICATE_REQUEST);}
-
-            // 로그 추적용 MDC 주입 (GET 요청이라도 requestId 추적은 유지)
-            MDC.put("requestId", requestId);
+        //필수 헤더 누락
+        if (!requestValidate(requestId, requestTime)){
+            ErrorCode errorCode = ErrorCode.HEADER_NOT_REQUIRED;
+            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            return;
         }
 
-        return true;
-    }
+        // 상태 변경 메서드(POST, PUT, PATCH, DELETE)에 대해서만 중복 체크
+        if (isStateChangingMethod(request.getMethod()) && logService.checkLog(requestId)) {
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        MDC.clear(); // ThreadLocal 정리
+            ErrorCode errorCode = ErrorCode.DUPLICATE_REQUEST;
+            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            return;
+        }
 
-        String requestId = request.getHeader(HEADER_REQUEST_ID);
-        String requestTime = request.getHeader(HEADER_REQUEST_TIME);
-
-        LogRequestDto logRequestDto = new LogRequestDto(requestId, requestTime, request.getRequestURI());
-
-        //이벤트 등록
-        eventPublisher.publishEvent(logRequestDto);
+        filterChain.doFilter(request, response);
 
     }
 

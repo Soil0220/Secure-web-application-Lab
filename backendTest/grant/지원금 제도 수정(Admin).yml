@@ -22,8 +22,8 @@ http:
         "content" : "청년의 일상을 책임집니다.",
         "amount" : 12,
         "cycle" : "WEEKLY",
-        "startDate" : "2026-08-12",
-        "endDate" : "2026-08-17"
+        "startDate" : "2026-08-12T17:35:27.123+09:00",
+        "endDate" : "2026-08-12T17:35:27.123+09:00"
       }
   auth: inherit
 

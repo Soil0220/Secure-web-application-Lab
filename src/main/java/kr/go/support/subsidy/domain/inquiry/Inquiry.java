@@ -8,7 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "user_inquiries")
@@ -42,12 +42,12 @@ public class Inquiry extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String answer;
 
-    private LocalDateTime answeredAt;
+    private Instant answeredAt;
 
     public void reply(String answer) {
         this.answer = answer;
         this.status = InquiryStatus.ANSWERED;
-        this.answeredAt = LocalDateTime.now();
+        this.answeredAt = Instant.now();
     }
 
     public void update(InquiryUpdateDto dto){

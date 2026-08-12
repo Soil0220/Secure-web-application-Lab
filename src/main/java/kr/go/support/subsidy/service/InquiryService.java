@@ -43,21 +43,23 @@ public class InquiryService {
 
     //문의 수정
     @Transactional
-    public void updateInquiry(Long userId, Long inquiryId, InquiryUpdateDto dto){
+    public Long updateInquiry(Long userId, Long inquiryId, InquiryUpdateDto dto){
         Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.update(dto);
+        return inquiryId;
     }
 
     //문의 삭제
     @Transactional
-    public void deleteInquiry(Long userId, Long inquiryId){
+    public Long deleteInquiry(Long userId, Long inquiryId){
 
         Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.delete();
+        return inquiryId;
     }
 
     //문의 답변(Admin)

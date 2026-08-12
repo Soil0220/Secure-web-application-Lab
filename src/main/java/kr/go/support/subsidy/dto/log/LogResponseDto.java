@@ -7,9 +7,11 @@ import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.log.Log;
 import kr.go.support.subsidy.dto.inquiry.InquiryResponseDto;
 
+import java.time.Instant;
+
 public record LogResponseDto(
         @NotBlank
-        String requestTime, // ISO-8601 형식 문자열
+        Instant requestTime, // ISO-8601 형식 문자열
 
         @NotNull
         @Size(max = 500)
@@ -17,7 +19,7 @@ public record LogResponseDto(
 ) {
         public static LogResponseDto from(Log log){
                 return new LogResponseDto(
-                        log.getRequestTime().toString(),
+                        log.getRequestTime(),
                         log.getApiUrl()
                 );
         }

@@ -43,23 +43,23 @@ public class InquiryController {
 
     //문의 수정
     @PatchMapping("/{inquiryId}")
-    public ResponseApi<Void> updateInquiry(
+    public ResponseApi<Long> updateInquiry(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long inquiryId,
             @Valid @RequestBody InquiryUpdateDto dto
     ){
-        inquiryService.updateInquiry(sessionUser.getId(), inquiryId, dto);
-        return ResponseApi.success();
+        Long response = inquiryService.updateInquiry(sessionUser.getId(), inquiryId, dto);
+        return ResponseApi.success(response);
     }
 
     //문의 삭제
     @DeleteMapping("/{inquiryId}")
-    public ResponseApi<Void> deleteInquiry(
+    public ResponseApi<Long> deleteInquiry(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long inquiryId){
 
-        inquiryService.deleteInquiry(sessionUser.getId(), inquiryId);
-        return ResponseApi.success();
+        Long response = inquiryService.deleteInquiry(sessionUser.getId(), inquiryId);
+        return ResponseApi.success(response);
     }
 
     //문의 답변(Admin)

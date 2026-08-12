@@ -8,6 +8,7 @@ import kr.go.support.subsidy.domain.grant.GrantCategory;
 import kr.go.support.subsidy.domain.grant.GrantCycle;
 import kr.go.support.subsidy.domain.grant.GrantStatus;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 public record GrantUpdateDto(
@@ -30,8 +31,8 @@ public record GrantUpdateDto(
         GrantCycle cycle,
 
         @NotNull
-        LocalDate startDate,
+        Instant startDate,
 
         @NotNull
-        LocalDate endDate
+        Instant endDate
 ) {}

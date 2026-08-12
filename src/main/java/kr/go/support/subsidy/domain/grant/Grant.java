@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -41,8 +42,8 @@ public class Grant extends BaseEntity {
     @Column(nullable = false)
     private GrantCycle cycle;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Instant startDate;
+    private Instant endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

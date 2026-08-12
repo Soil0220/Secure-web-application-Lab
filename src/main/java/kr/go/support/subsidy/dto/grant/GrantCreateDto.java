@@ -9,6 +9,7 @@ import kr.go.support.subsidy.domain.grant.GrantCategory;
 import kr.go.support.subsidy.domain.grant.GrantCycle;
 import kr.go.support.subsidy.domain.grant.GrantStatus;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 public record GrantCreateDto(
@@ -30,10 +31,10 @@ public record GrantCreateDto(
         GrantCycle cycle,
 
         @NotNull
-        LocalDate startDate,
+        Instant startDate,
 
         @NotNull
-        LocalDate endDate
+        Instant endDate
 ) {
         public Grant toEntity() {
                 return Grant.builder()

@@ -47,15 +47,16 @@ public class GrantService {
 
     //지원금 제도 수정(Admin)
     @Transactional
-    public void updateGrant(Long grantId, GrantUpdateDto dto){
+    public Long updateGrant(Long grantId, GrantUpdateDto dto){
         Grant grant = grantRepository.findById(grantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GRANT_NOT_FOUND));
         grant.Update(dto);
+        return grantId;
     }
 
     //지원금 제도 삭제(Admin)
     @Transactional
-    public void deleteGrant(Long grantId){
+    public Long deleteGrant(Long grantId){
         Grant grant = grantRepository.findById(grantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GRANT_NOT_FOUND));
 
@@ -68,6 +69,8 @@ public class GrantService {
 
         //application
         applicationRepository.findByGrantId(grantId).forEach(Application::delete);
+
+        return grantId;
     }
 
     //지원금 제도 상태 변경

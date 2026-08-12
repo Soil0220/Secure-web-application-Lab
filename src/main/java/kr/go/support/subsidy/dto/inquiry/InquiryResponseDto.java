@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.inquiry.InquiryStatus;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public record InquiryResponseDto (
@@ -12,7 +13,7 @@ public record InquiryResponseDto (
     String content,
     InquiryStatus status,
     String answer,
-    LocalDateTime answeredAt
+    Instant answeredAt
 
 ){
     public static InquiryResponseDto from(Inquiry inquiry){

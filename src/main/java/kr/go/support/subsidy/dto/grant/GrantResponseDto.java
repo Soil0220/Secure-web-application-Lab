@@ -6,6 +6,7 @@ import kr.go.support.subsidy.domain.grant.GrantCategory;
 import kr.go.support.subsidy.domain.grant.GrantCycle;
 import kr.go.support.subsidy.domain.grant.GrantStatus;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 public record GrantResponseDto (
@@ -15,8 +16,8 @@ public record GrantResponseDto (
         String content,
         Long amount,
         GrantCycle cycle,
-        LocalDate startDate,
-        LocalDate endDate,
+        Instant startDate,
+        Instant endDate,
         GrantStatus status
 ){
     public static GrantResponseDto from(Grant grant){

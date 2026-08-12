@@ -48,12 +48,12 @@ public class GrantController {
 
     //지원금 제도 수정(Admin)
     @PatchMapping("/update/{grantId}/admin")
-    public ResponseApi<Void> updateGrant(
+    public ResponseApi<Long> updateGrant(
             @PathVariable Long grantId,
             @Valid @RequestBody GrantUpdateDto dto){
-        grantService.updateGrant(grantId, dto);
+        Long response = grantService.updateGrant(grantId, dto);
 
-        return ResponseApi.success();
+        return ResponseApi.success(response);
     }
 
     //지원금 제도 상태 변경(Admin)
@@ -68,11 +68,11 @@ public class GrantController {
 
     //지원금 제도 삭제(Admin)
     @DeleteMapping("/{grantId}/admin")
-    public ResponseApi<Void> deleteGrant(
+    public ResponseApi<Long> deleteGrant(
             @PathVariable Long grantId){
 
-        grantService.deleteGrant(grantId);
+        Long response = grantService.deleteGrant(grantId);
 
-        return ResponseApi.success();
+        return ResponseApi.success(response);
     }
 }

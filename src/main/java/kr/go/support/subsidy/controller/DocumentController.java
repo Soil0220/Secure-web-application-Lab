@@ -41,18 +41,18 @@ public class DocumentController {
             @Valid @ModelAttribute DocumentCreateDto dto,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        Long documentId = documentService.createDocument(sessionUser.getId(), dto);
-        return ResponseApi.success(documentId);
+        Long response = documentService.createDocument(sessionUser.getId(), dto);
+        return ResponseApi.success(response);
     }
 
     //서류 삭제
     @DeleteMapping("/{documentId}")
-    public ResponseApi<Void> deleteDocument(
+    public ResponseApi<Long> deleteDocument(
             @PathVariable Long documentId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        documentService.deleteDocument(sessionUser.getId(), documentId);
-        return ResponseApi.success();
+        Long response = documentService.deleteDocument(sessionUser.getId(), documentId);
+        return ResponseApi.success(response);
     }
 
     //서류 다운로드

@@ -22,9 +22,21 @@ public class FileManager {
     @Value("${app.fileManager.uploadDir}")
     private String uploadDir;
 
-    // 절대 경로 가져오기
+    // 절대 경로 가져오기(경로 추적 공격 방어)
     public Path getFullPath(String storeFileName) {
-        return Paths.get(uploadDir).resolve(storeFileName).normalize().toAbsolutePath();
+
+        //업로드 폴더 경로
+        Path uploadBasePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+
+        //상위경로 이동, 혹은 절대경로 할당시 경로 문제 발생
+        Path targetPath = uploadBasePath.resolve(storeFileName).normalize();
+
+        //최종 경로가 기준 디렉토리 내부에 포함되는지 검증
+        if (!targetPath.startsWith(uploadBasePath)) {
+            throw new BusinessException(ErrorCode.PATH_TRAVERSAL);
+        }
+
+        return targetPath;
     }
 
     //파일저장

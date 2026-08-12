@@ -59,12 +59,13 @@ public class DocumentService {
 
     //서류 삭제
     @Transactional
-    public void deleteDocument(Long userId, Long documentId ){
+    public Long deleteDocument(Long userId, Long documentId ){
         Document document = documentRepository.findByIdAndUserId(documentId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
 
         //소프트 삭제 정책으로 인해 로컬파일은 제외하고 DB만 삭제처리
         document.delete();
+        return documentId;
     }
 
     //서류 다운로드

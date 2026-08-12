@@ -49,10 +49,11 @@ public class FavoriteService {
 
     //지원금 제도 즐겨찾기 해제
     @Transactional
-    public void deleteFavorite(Long userId, Long grantId){
+    public Long deleteFavorite(Long userId, Long grantId){
         Favorite favorite = favoriteRepository.findByUserIdAndGrantId(userId, grantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FAVORITE_NOT_FOUND));
 
         favorite.delete();
+        return favorite.getId();
     }
 }

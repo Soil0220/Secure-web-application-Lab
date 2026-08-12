@@ -49,10 +49,12 @@ public class ApplicationService {
 
     //지원금 신청취소
     @Transactional
-    public void cancelApplication(Long userId, Long grantId ){
+    public Long cancelApplication(Long userId, Long grantId ){
         Application application = applicationRepository.findByUserIdAndGrantId(userId, grantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
         application.delete();
+
+        return application.getId();
     }
 
     //지원금 신청 상태 갱신(Admin)

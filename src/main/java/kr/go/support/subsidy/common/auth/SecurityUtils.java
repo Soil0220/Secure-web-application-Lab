@@ -1,10 +1,12 @@
 package kr.go.support.subsidy.common.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.security.MessageDigest;
 import java.util.Base64;
 
 @Component
@@ -31,4 +33,11 @@ public class SecurityUtils {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
-}
+    //타이밍 공격 방지용 문자열 비교
+    public boolean isEqual(String a, String b) {
+        return MessageDigest.isEqual(
+                Utf8.encode(a),
+                Utf8.encode(b));
+        }
+
+    }

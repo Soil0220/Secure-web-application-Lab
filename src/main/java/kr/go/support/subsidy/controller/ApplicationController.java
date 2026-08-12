@@ -36,18 +36,18 @@ public class ApplicationController {
             @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        Long applicationId = applicationService.createApplication(grantId, sessionUser.getId());
-        return ResponseApi.success(applicationId);
+        Long response = applicationService.createApplication(grantId, sessionUser.getId());
+        return ResponseApi.success(response);
     }
 
     //지원금 신청 취소
     @DeleteMapping("/{grantId}")
-    public ResponseApi<Void> cancelApplication(
+    public ResponseApi<Long> cancelApplication(
             @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        applicationService.cancelApplication(sessionUser.getId(), grantId);
-        return ResponseApi.success();
+        Long response = applicationService.cancelApplication(sessionUser.getId(), grantId);
+        return ResponseApi.success(response);
     }
 
     //지원금 신청 상태 갱신(Admin)
@@ -56,7 +56,7 @@ public class ApplicationController {
             @PathVariable Long applicationId,
             @Valid @RequestBody ApplicationUpdateDto dto) {
 
-        Long updatedId = applicationService.updateApplication(applicationId, dto);
-        return ResponseApi.success(updatedId);
+        Long response = applicationService.updateApplication(applicationId, dto);
+        return ResponseApi.success(response);
     }
 }

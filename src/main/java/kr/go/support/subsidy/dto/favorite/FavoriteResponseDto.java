@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import kr.go.support.subsidy.domain.favorite.Favorite;
 import kr.go.support.subsidy.domain.grant.GrantCycle;
 import kr.go.support.subsidy.domain.grant.GrantStatus;
+
+import java.time.Instant;
 import java.time.LocalDate;
 
 public record FavoriteResponseDto (
@@ -13,8 +15,8 @@ public record FavoriteResponseDto (
         String content,
         Long amount,
         GrantCycle cycle,
-        LocalDate startDate,
-        LocalDate endDate,
+        Instant startDate,
+        Instant endDate,
         GrantStatus status
 ){
     public static FavoriteResponseDto from(Favorite favorite){

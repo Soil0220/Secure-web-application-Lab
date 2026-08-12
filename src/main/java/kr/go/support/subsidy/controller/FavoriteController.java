@@ -31,17 +31,17 @@ public class FavoriteController {
             @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        Long favoriteId = favoriteService.createFavorite(sessionUser.getId(), grantId);
-        return ResponseApi.success(favoriteId);
+        Long response = favoriteService.createFavorite(sessionUser.getId(), grantId);
+        return ResponseApi.success(response);
     }
 
     //지원금 제도 즐겨찾기 해제
     @DeleteMapping("/{grantId}")
-    public ResponseApi<Void> deleteFavorite(
+    public ResponseApi<Long> deleteFavorite(
             @PathVariable Long grantId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser
     ){
-        favoriteService.deleteFavorite(sessionUser.getId(), grantId);
-        return ResponseApi.success();
+        Long response = favoriteService.deleteFavorite(sessionUser.getId(), grantId);
+        return ResponseApi.success(response);
     }
 }

@@ -87,12 +87,12 @@ public class AccountController {
 
     //계좌설정
     @PatchMapping
-    public ResponseApi<Void> setBankAccount(
+    public ResponseApi<Long> setBankAccount(
             @Valid @RequestBody UserBankAccountDto dto,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
-        accountService.setBankAccount(sessionUser.getId(), dto);
-        return ResponseApi.success();
+        Long userId = accountService.setBankAccount(sessionUser.getId(), dto);
+        return ResponseApi.success(userId);
     }
 
     //계정조회(Admin)
@@ -105,11 +105,11 @@ public class AccountController {
 
     //계정삭제(Admin)
     @DeleteMapping("/{user_id}/admin")
-    public ResponseApi<Void> deleteUser(
+    public ResponseApi<Long> deleteUser(
             @PathVariable Long user_id){
 
-        accountService.deleteUser(user_id);
-        return ResponseApi.success();
+        Long response = accountService.deleteUser(user_id);
+        return ResponseApi.success(response);
     }
 
     //세션확인(Public)

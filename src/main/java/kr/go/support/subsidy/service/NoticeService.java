@@ -38,20 +38,22 @@ public class NoticeService {
 
     //공지사항 수정(Admin)
     @Transactional
-    public void updateNotice(Long noticeId, NoticeUpdateDto dto){
+    public Long updateNotice(Long noticeId, NoticeUpdateDto dto){
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
 
         notice.update(dto);
+        return noticeId;
     }
 
     //공지사항 삭제(Admin)
     @Transactional
-    public void deleteNotice(Long noticeId){
+    public Long deleteNotice(Long noticeId){
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
 
         notice.delete();
+        return noticeId;
     }
 }
 

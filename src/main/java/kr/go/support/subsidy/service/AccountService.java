@@ -11,6 +11,7 @@ import kr.go.support.subsidy.domain.favorite.Favorite;
 import kr.go.support.subsidy.domain.favorite.FavoriteRepository;
 import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.inquiry.InquiryRepository;
+import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
 import kr.go.support.subsidy.dto.user.UserBankAccountDto;
@@ -40,10 +41,10 @@ public class AccountService {
     public User login(UserLoginDto userLoginDto)
     {
         User user = userRepository.findByUsername(userLoginDto.username())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.LOGIN_FAILED));
 
         if(!securityUtils.matches(userLoginDto.password(), user.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+            throw new BusinessException(ErrorCode.LOGIN_FAILED);
         }
 
         return user;
@@ -66,12 +67,13 @@ public class AccountService {
     }
     //은행계좌 설정
     @Transactional
-    public void setBankAccount(Long userId, UserBankAccountDto dto){
+    public Long setBankAccount(Long userId, UserBankAccountDto dto){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         user.updateAccount(dto.bankName(), dto.accountNum());
+        return userId;
     }
 
     //계정조회(Admin)
@@ -86,12 +88,12 @@ public class AccountService {
 
     //계정삭제(Admin)
     @Transactional
-    public void deleteUser(Long userId){
-        User user = userRepository.findById(userId)
+    public Long deleteUser(Long userId){
+        //User 계정만 제거 가능
+        User user = userRepository.findByIdAndRole(userId, Role.USER)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         //User 삭제로부터  DB 무결성 유지를 위한 연쇄 Soft Delete
-
         user.delete();
 
         //favorite
@@ -103,5 +105,6 @@ public class AccountService {
         //document
         documentRepository.findByUserId(userId).forEach(Document::delete);
 
+        return userId;
     }
 }

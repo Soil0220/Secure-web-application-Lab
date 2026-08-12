@@ -37,20 +37,20 @@ public class NoticeController {
 
     //공지사항 수정(Admin)
     @PatchMapping("/{noticeId}/admin")
-    public ResponseApi<Void> updateNotice(
+    public ResponseApi<Long> updateNotice(
             @PathVariable Long noticeId,
             @Valid @RequestBody NoticeUpdateDto dto){
-        noticeService.updateNotice(noticeId, dto);
+        Long response = noticeService.updateNotice(noticeId, dto);
 
-        return ResponseApi.success();
+        return ResponseApi.success(response);
     }
 
     //공지사항 삭제(Admin)
     @DeleteMapping("/{noticeId}/admin")
-    public ResponseApi<Void> deleteNotice(
+    public ResponseApi<Long> deleteNotice(
             @PathVariable Long noticeId){
 
-        noticeService.deleteNotice(noticeId);
-        return ResponseApi.success();
+        Long response = noticeService.deleteNotice(noticeId);
+        return ResponseApi.success(response);
     }
 }

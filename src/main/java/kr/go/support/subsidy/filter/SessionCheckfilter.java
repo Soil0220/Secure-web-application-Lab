@@ -28,12 +28,13 @@ public class SessionCheckfilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String lookupPath = new UrlPathHelper().getLookupPathForRequest(request); // 세미콜론 및 경로 정규화 처리 완료된 URI
+        String lookupPath = urlPathHelper.getLookupPathForRequest(request); // 세미콜론 및 경로 정규화 처리 완료된 URI
 
         //비로그인 통과
         if (pathMatcher.match("/api/**/public", lookupPath)) {
@@ -58,6 +59,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
             return;
         }
 
+        //로그인 거부
         //Admin 권한 검사
         if (pathMatcher.match("/api/**/admin", lookupPath)) {
             if (sessionUser.getRole() != Role.ADMIN) {
@@ -67,7 +69,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
             }
         }
 
-        //모든 검증 통과
+        //로그인 통과
         filterChain.doFilter(request, response);
     }
 }

@@ -1,5 +1,6 @@
 package kr.go.support.subsidy.config;
 
+import kr.go.support.subsidy.filter.DoubleSubmitCookiefilter;
 import kr.go.support.subsidy.filter.RequestTracingfilter;
 import kr.go.support.subsidy.filter.SessionCheckfilter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final RequestTracingfilter requestTracingfilter;
     private final SessionCheckfilter sessionCheckfilter;
+    private final DoubleSubmitCookiefilter doubleSubmitCookiefilter;
 
     //CORS 필터 적용
     @Bean
@@ -29,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/*", config);
 
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -40,7 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<RequestTracingfilter> tracingFilterRegistration() {
         FilterRegistrationBean<RequestTracingfilter> bean = new FilterRegistrationBean<>(requestTracingfilter);
-        bean.addUrlPatterns("/api/**");
+        bean.addUrlPatterns("/api/*");
         bean.setOrder(1);
         return bean;
     }
@@ -49,10 +51,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<SessionCheckfilter> sessionFilterRegistration() {
         FilterRegistrationBean<SessionCheckfilter> bean = new FilterRegistrationBean<>(sessionCheckfilter);
-        bean.addUrlPatterns("/api/**");
+        bean.addUrlPatterns("/api/*");
         bean.setOrder(2);
         return bean;
     }
 
     //CSRF 검증
+    @Bean
+    public FilterRegistrationBean<DoubleSubmitCookiefilter> csrfFilterRegistration() {
+        FilterRegistrationBean<DoubleSubmitCookiefilter> bean = new FilterRegistrationBean<>(doubleSubmitCookiefilter);
+        bean.addUrlPatterns("/api/*");
+        bean.setOrder(3);
+        return bean;
+    }
 }

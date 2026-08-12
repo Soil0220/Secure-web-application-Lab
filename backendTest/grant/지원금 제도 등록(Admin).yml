@@ -10,9 +10,11 @@ http:
     - name: Origin
       value: http://localhost:3000
     - name: X-Request-Id
-      value: e1532-e34b-41d4-a716-446655440000
+      value: e12313-e39b-41d3-a716-446655440000
     - name: X-Request-Time
-      value: 2026-08-08T14:56:16.000Z
+      value: 2026-08-12T09:12:16.000Z
+    - name: XSRF-TOKEN
+      value: O_SSHkFcHijS9YQNtmFccqrpL26P5va5Pb9vRDQ5-bE
   body:
     type: json
     data: |-
@@ -22,8 +24,8 @@ http:
         "content" : "청년의 일상을 책임집니다.",
         "amount" : 10,
         "cycle" : "WEEKLY",
-        "startDate" : "2026-08-10",
-        "endDate" : "2026-08-17"
+        "startDate" : "2026-08-12T17:35:27.123+09:00",
+        "endDate" : "2026-08-12T17:35:27.123+09:00"
       }
   auth: inherit
 

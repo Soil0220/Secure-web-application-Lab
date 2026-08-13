@@ -3,6 +3,8 @@ package kr.go.support.subsidy.controller;
 import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.dto.grant.GrantCreateDto;
 import kr.go.support.subsidy.dto.grant.GrantResponseDto;
@@ -38,7 +40,7 @@ public class GrantController {
 
         //ADMIN권한 확인
         if(sessionUser.getRole() != Role.ADMIN){
-            return ResponseApi.error("403", "실행권한이 없습니다.");
+            throw new BusinessException(ErrorCode.ADMIN_REQUIRED);
         }
 
         Long response = grantService.createGrant(dto);

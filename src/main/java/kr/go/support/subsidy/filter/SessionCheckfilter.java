@@ -47,7 +47,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
 
         if (session == null){
             ErrorCode errorCode = ErrorCode.SESSION_NOT_FOUND;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 
@@ -55,7 +55,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
 
         if (sessionUser == null) {
             ErrorCode errorCode = ErrorCode.SESSION_NOT_FOUND;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 
@@ -64,7 +64,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
         if (pathMatcher.match("/api/**/admin", lookupPath)) {
             if (sessionUser.getRole() != Role.ADMIN) {
                 ErrorCode errorCode = ErrorCode.ADMIN_REQUIRED;
-                ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+                ResponseApi.sendError(response, objectMapper, errorCode);
                 return;
             }
         }

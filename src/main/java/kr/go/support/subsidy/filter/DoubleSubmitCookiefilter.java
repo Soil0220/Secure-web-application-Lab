@@ -44,14 +44,14 @@ public class DoubleSubmitCookiefilter extends OncePerRequestFilter {
         //헤더나 쿠키에 CSRF토큰 없거나 비어있을 시
         if(!requestValidate(header, cookie)){
             ErrorCode errorCode = ErrorCode.CSRF_TOKEN_NOT_FOUND;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
         
         //헤더와 쿠키 불일치 거부
         if(!securityUtils.isEqual(header, cookie.getValue())){
             ErrorCode errorCode = ErrorCode.INVALID_CSRF_TOKEN;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 

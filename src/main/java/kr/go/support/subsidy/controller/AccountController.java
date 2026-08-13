@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
+import kr.go.support.subsidy.common.exception.BusinessException;
+import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.dto.user.UserBankAccountDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
@@ -117,10 +119,9 @@ public class AccountController {
     public ResponseApi<SessionUser> getUserSession(HttpServletRequest request){
         HttpSession session = request.getSession(false);
 
-        //세션이 없거나 loginUser가 없음
+        //세션이 없거나 세션정보가 없음
         if(session == null || session.getAttribute("loginUser") == null){
-
-            return ResponseApi.error("401", "세션 정보가 유효하지 않습니다.");
+            throw  new BusinessException(ErrorCode.INVALID_SESSION);
         }
 
         SessionUser loginUser = (SessionUser) session.getAttribute("loginUser");

@@ -14,12 +14,12 @@ import java.util.Base64;
 public class SecurityUtils {
 
     //스프링 시큐리티 암호 컴포넌트 활용
-    private final BytesKeyGenerator csrfBytesKeyGenerator;
+    private final BytesKeyGenerator bytesKeyGenerator;
     private final PasswordEncoder passwordEncoder;
 
     // 32바이트 Base64 난수 생성
     public String generateSecureToken() {
-        byte[] key = csrfBytesKeyGenerator.generateKey();
+        byte[] key = bytesKeyGenerator.generateKey();
         return Base64.getUrlEncoder().withoutPadding().encodeToString(key);
     }
 

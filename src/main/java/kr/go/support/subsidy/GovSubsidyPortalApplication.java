@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class GovSubsidyPortalApplication {
     //TODO 파일 입력값 MIME, 확장자 등 입력값 검증 및 실행방지
-    //TODO XSS 공격 방어를 위한 입력값 검증
+    //TODO XSS SQL 인젝션 공격 방어를 위한 입력값 검증
     //TODO HTTPS 설정
     //TODO 세션과 CSRF 타임아웃 설정하기
     @PostConstruct

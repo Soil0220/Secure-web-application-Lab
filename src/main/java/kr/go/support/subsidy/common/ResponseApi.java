@@ -35,17 +35,20 @@ public class ResponseApi<T> {
         return new ResponseApi<>(true, "200", "SUCCESS", null);
     }
 
-    // 실패/에러 응답
+    // 실패,에러 응답(오류 핸들러 응답, 필터 전용  오류 응답시에만 사용, 직접사용x)
     public static <T> ResponseApi<T> error(String code, String message) {
         return new ResponseApi<>(false, code, message, null);
     }
 
-    //필터전용 응답
-    public void send(HttpServletResponse response, ObjectMapper objectMapper) throws IOException {
+    //필터전용 오류응답
+    public static void sendError(HttpServletResponse response, ObjectMapper objectMapper, ErrorCode errorCode) throws IOException {
+        ResponseApi<Void> responseData = ResponseApi.error(errorCode.getCode(), errorCode.getMessage());
+
+        response.setStatus(errorCode.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        String jsonResult = objectMapper.writeValueAsString(this);
+        String jsonResult = objectMapper.writeValueAsString(responseData);
         response.getWriter().write(jsonResult);
     }
 }

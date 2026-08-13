@@ -9,13 +9,14 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     //인증 및 인가
-    SESSION_NOT_FOUND(HttpStatus.UNAUTHORIZED, "R001", "로그인이 필요한 서비스입니다."),
+    SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "로그인이 필요한 서비스입니다."),
     ADMIN_REQUIRED(HttpStatus.FORBIDDEN, "R002", "어드민 권한이 필요합니다."),
     DUPLICATE_REQUEST(HttpStatus.CONFLICT, "R003", "중복 요청입니다."),
     TIMEOUT_REQUEST(HttpStatus.CONFLICT, "R004", "오래된 요청입니다."),
     HEADER_REQUIRED(HttpStatus.BAD_REQUEST, "R005", "헤더 정보가 필요합니다."),
     CSRF_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "R006", "CSRF 토큰이 존재하지 않습니다."),
     INVALID_CSRF_TOKEN(HttpStatus.UNAUTHORIZED, "R007", "CSRF 토큰이 일치하지 않습니다."),
+    INVALID_SESSION(HttpStatus.UNAUTHORIZED, "R008", "유효하지 않은 세션정보입니다."),
 
     // Attack
     PATH_TRAVERSAL(HttpStatus.BAD_REQUEST, "W001", "잘못된 요청입니다."),

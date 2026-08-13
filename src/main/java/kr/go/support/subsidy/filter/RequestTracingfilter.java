@@ -50,7 +50,7 @@ public class RequestTracingfilter extends OncePerRequestFilter {
         //필수 헤더 누락
         if (!requestValidate(requestId, requestTime)){
             ErrorCode errorCode = ErrorCode.HEADER_REQUIRED;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 
@@ -61,14 +61,14 @@ public class RequestTracingfilter extends OncePerRequestFilter {
         //중복 체크
         if (logService.checkLog(requestId)) {
             ErrorCode errorCode = ErrorCode.DUPLICATE_REQUEST;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 
         //타임아웃 체크
         if (logService.checkTime(Instant.parse(requestTime))) {
             ErrorCode errorCode = ErrorCode.TIMEOUT_REQUEST;
-            ResponseApi.error(errorCode.getCode(), errorCode.getMessage()).send(response, objectMapper);
+            ResponseApi.sendError(response, objectMapper, errorCode);
             return;
         }
 

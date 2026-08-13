@@ -6,11 +6,14 @@ import ApplicationManagement from './ApplicationManagement.jsx';
 import FavoriteManagement from './FavoriteManagement.jsx';
 import DocumentManagement from './DocumentManagement.jsx';
 import InquiryManagement from './InquiryManagement.jsx';
-import AccountManagement from './AccountManagement.jsx';
+import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
 
 const UserPage = () => {
     // 현재 선택된 메뉴 탭 상태 (기본값: 대시보드)
     const [activeTab, setActiveTab] = useState('dashboard');
+    const {logout} = useAuth();
+    const navigate = useNavigate();
 
     // 사용자 정보
     const userInfo = {
@@ -87,13 +90,15 @@ const UserPage = () => {
             <header style={styles.header}>
                 <div style={styles.headerInner}>
                     <div style={styles.logoGroup}>
-                        <span style={styles.govBadge}>GOV</span>
-                        <span style={styles.logoText}>지원금24</span>
+                        <Link to="/"><span style={styles.govBadge}>GOV</span>
+                        <span style={styles.logoText}>  지원금24</span></Link>
                     </div>
                     <div style={styles.userProfile}>
-                        <span style={styles.userIcon}>👤</span>
-                        <span style={styles.userName}>{userInfo.name}님</span>
-                        <button style={styles.logoutBtn}>로그아웃</button>
+                        <Link to="/account"><span style={styles.userName}>{userInfo.name}님</span></Link>
+                        <button style={styles.logoutBtn} onClick={() => {
+                            logout();
+                            navigate('/');
+                        }}>로그아웃</button>
                     </div>
                 </div>
             </header>
@@ -133,12 +138,6 @@ const UserPage = () => {
                         >
                             1:1 문의 내역
                         </li>
-                        <li
-                            style={activeTab === 'account' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('account')}
-                        >
-                            회원정보 & 수령계좌 관리
-                        </li>
                     </ul>
                 </aside>
 
@@ -158,9 +157,6 @@ const UserPage = () => {
                     )}
                     {activeTab === 'inquiries' && (
                         <InquiryManagement inquiries={inquiries} styles={styles} />
-                    )}
-                    {activeTab === 'account' && (
-                        <AccountManagement userInfo={userInfo} styles={styles} />
                     )}
                 </main>
             </div>
@@ -193,17 +189,17 @@ const styles = {
         gap: '8px',
     },
     govBadge: {
-        backgroundColor: '#0066ff',
-        color: '#ffffff',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        padding: '2px 6px',
+        backgroundColor: '#0056b3',
+        color: '#fff',
+        padding: '4px 8px',
         borderRadius: '4px',
+        fontWeight: 'bold',
+        fontSize: '14px',
     },
     logoText: {
         fontSize: '18px',
         fontWeight: 'bold',
-        color: '#1e293b',
+        color: '#111',
     },
     userProfile: {
         display: 'flex',

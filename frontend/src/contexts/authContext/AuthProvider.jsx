@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {AuthContext} from "./AuthContext.jsx";
 import {useLoading} from "../loadingContext/useLoading.jsx";
-import axios from "axios";
+import { postApi, getApi } from '../../components/RequestApi.jsx';
 
 export function AuthProvider({ children }) {
 
@@ -9,57 +9,36 @@ export function AuthProvider({ children }) {
     const {setLoading} = useLoading();
 
     const checkSession = async () => {
-        try{
+        try {
             setLoading(true);
-            const response = await axios.get('http://localhost:8080/user/session',{withCredentials: true});
-            if (response.status === 200) {
-                return {
-                    success: true,
-                    data: response.data,
-                    message: null
-                };
-            }
+            const response = await getApi('/user/session/public', {}, false);
+            return response.data;
         } catch (error) {
-
-            return {
-                success: false,
-                data: error.response.data,
-                message: error
-            };
+            //응답 데이터 존재시 접근
+            const customError = error.response?.data;
+            return customError;
         } finally {
             setLoading(false);
         }
     }
 
     const login = async (formData) => {
-        try{
-            const response = await axios.post('http://localhost:8080/user/login', formData,{withCredentials: true});
-            if (response.status === 200) {
-                setSession(response.data);
-                return {
-                    success: true,
-                    data: response.data,
-                    message: null
-                };
-            }
-        } catch (error) {
-            setSession(null);
-            return {
-                success: false,
-                data: error.response.data,
-                message: error
-            };
-        }
+        const response = await postApi('/user/login/public',formData ,false);
+        setSession(response.data.data);
     };
 
     const logout = async () => {
-        await axios.post('http://localhost:8080/user/logout', {},{withCredentials: true});
+        await postApi('/user/logout',{} ,true);
         setSession(null);
+    };
+
+    const signUp = async(formData) => {
+        await postApi('/user/join/public', formData, false)
     };
 
     return (
         <AuthContext.Provider
-            value={{ session, setSession, checkSession, login, logout }}
+            value={{ session, setSession, checkSession, login, logout, signUp }}
         >
             {children}
         </AuthContext.Provider>

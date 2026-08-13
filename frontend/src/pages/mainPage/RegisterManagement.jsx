@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import {useNavigate, Link} from 'react-router-dom'
-import axios from "axios";
+import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
 
 const RegisterPage = () => {
 
     const navigate = useNavigate();
+    const {signUp} = useAuth();
 
     // 스프링부트 회원가입 API 연동용 DTO 상태
     const [formData, setFormData] = useState({
@@ -37,12 +38,12 @@ const RegisterPage = () => {
             return;
         }
         try{
-            const response = await axios.post('http://localhost:8080/user/join', formData,{withCredentials: true});
-            if (response.status === 201) {
-                //회원가입 성공
-                alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
-                navigate('/login');
-            }
+            const submitData = { ...formData };
+            delete submitData.confirmPassword;
+            await signUp(submitData);
+
+            alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+            navigate('/login');
         } catch (error) {
             alert(error.response.data.message);
             setFormData((prev) => ({ ...prev, username: '', password: '', confirmPassword: '' }));

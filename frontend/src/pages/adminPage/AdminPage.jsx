@@ -4,6 +4,7 @@ import GrantManagement from './GrantManagement.jsx';
 import ApplicationManagement from './ApplicationManagement.jsx';
 import Dashboard from './Dashboard.jsx';
 import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
+import LogManagement from "./LogManagement.jsx";
 
 export default function AdminPage() {
     const {logout} = useAuth();
@@ -47,6 +48,12 @@ export default function AdminPage() {
                         >
                             게시판 & 민원 관리
                         </button>
+                        <button
+                            style={{ ...styles.menuItem, ...(activeTab === 'log' ? styles.menuItemActive : {}) }}
+                            onClick={() => setActiveTab('log')}
+                        >
+                            로그 관리
+                        </button>
                     </div>
                 </aside>
 
@@ -55,6 +62,7 @@ export default function AdminPage() {
                     {activeTab === 'program' && <GrantManagement />}
                     {activeTab === 'audit' && <ApplicationManagement />}
                     {activeTab === 'board' && <Dashboard />}
+                    {activeTab === 'log' && <LogManagement />}
                 </main>
             </div>
         </div>

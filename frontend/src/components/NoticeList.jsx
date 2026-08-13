@@ -1,34 +1,21 @@
 import { useState, useEffect } from 'react';
 import {useLoading} from "../contexts/loadingContext/UseLoading.jsx";
-import axios from "axios";
+import {useNotice} from "../contexts/noticeContext/useNotice.jsx";
 
-const NoticeList = ({reload}) => {
+const NoticeList = () => {
     const [notices, setNotices] = useState([]);
-    const {loading, setLoading} = useLoading(true);
+    const {loading} = useLoading(true);
+    const {getNotices} = useNotice();
     const [selectedNotice, setSelectedNotice] = useState(null); // 선택된 공지사항 (상세보기용)
 
 
-    // 공지사항 목록 불러오기
-    const fetchNotices = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/notices');
-            if (response.data.success) {
-                setNotices(response.data.data);
-            }
-        } catch (error) {
-            console.error('공지사항 목록 불러오기 실패:', error);
-            alert('공지사항을 불러오는 중 오류가 발생했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
         const run = async () => {
-            await fetchNotices();
+            const response = await getNotices();
+            setNotices(response.data);
         }
         run();
-    }, [reload]);
+    }, []);
 
     if(loading){
         return null;

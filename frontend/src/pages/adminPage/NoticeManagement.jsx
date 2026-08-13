@@ -1,7 +1,8 @@
 import { useState } from "react";
-import axios from 'axios';
+import {useNotice} from "../../contexts/noticeContext/UseNotice.jsx";
 
 const NoticeManagement = ({onClose}) => {
+
     // 폼 상태 관리
     const [formData, setFormData] = useState({
         title: '',
@@ -9,7 +10,8 @@ const NoticeManagement = ({onClose}) => {
         isPinned: false
     });
 
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
+    const {createNotice} = useNotice();
 
     // 입력값 핸들러
     const handleChange = (e) => {
@@ -28,35 +30,12 @@ const NoticeManagement = ({onClose}) => {
             alert('제목과 내용을 모두 입력해 주세요.');
             return;
         }
+        createNotice(formData);
 
-        setLoading(true);
-
-        try {
-            const response = await axios.post('http://localhost:8080/notices', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.data.success) {
-                alert(response.data.message || '공지사항이 정상적으로 등록되었습니다.');
-                // 등록 후 폼 초기화
-                setFormData({ title: '', content: '', isPinned: false });
-            }
-        } catch (error) {
-            console.error('공지사항 작성 오류:', error);
-
-            if (error.response) {
-                // 백엔드에서 내려준 에러 메시지 (400, 403, 500 등)
-                alert(error.response.data.message || '등록 처리에 실패했습니다.');
-            } else {
-                alert('서버와 통신할 수 없습니다.');
-            }
-        } finally {
-            setLoading(false);
-            onClose();
-        }
+        alert('공지사항이 정상적으로 등록되었습니다.');
+        // 등록 후 폼 초기화
+        setFormData({ title: '', content: '', isPinned: false });
+        onClose();
     };
 
     return (

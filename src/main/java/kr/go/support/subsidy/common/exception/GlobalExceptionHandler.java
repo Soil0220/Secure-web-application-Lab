@@ -70,6 +70,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseApi<Void> handleAllUncaughtException(Exception e) {
         // 서버 내부 오류는 원인 파악을 위해 스택 트레이스를 로그에 상세히 남깁니다.
-        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다.");
+        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다."+ e.getMessage());
     }
 }

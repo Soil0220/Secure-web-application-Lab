@@ -11,14 +11,16 @@ import java.time.Instant;
 
 public record LogResponseDto(
         @NotBlank
-        Instant requestTime, // ISO-8601 형식 문자열
-
+        String requestId,
+        @NotBlank
+        Instant requestTime,
         @NotNull
         @Size(max = 500)
         String apiUrl
 ) {
         public static LogResponseDto from(Log log){
                 return new LogResponseDto(
+                        log.getRequestId(),
                         log.getRequestTime(),
                         log.getApiUrl()
                 );

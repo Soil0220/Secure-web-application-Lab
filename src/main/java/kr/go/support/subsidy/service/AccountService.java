@@ -5,6 +5,8 @@ import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.application.Application;
 import kr.go.support.subsidy.domain.application.ApplicationRepository;
+import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocument;
+import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocumentRepository;
 import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentRepository;
 import kr.go.support.subsidy.domain.favorite.Favorite;
@@ -36,6 +38,7 @@ public class AccountService {
     private final InquiryRepository inquiryRepository;
     private final DocumentRepository documentRepository;
     private final SecurityUtils securityUtils;
+    private final ApplicationDocumentRepository applicationDocumentRepository;
 
     //로그인
     public User login(UserLoginDto userLoginDto)
@@ -104,7 +107,8 @@ public class AccountService {
         inquiryRepository.findByUserId(userId).forEach(Inquiry::delete);
         //document
         documentRepository.findByUserId(userId).forEach(Document::delete);
-
+        //applicationDocument
+        applicationDocumentRepository.findByUserId(userId).forEach(ApplicationDocument::delete);
         return userId;
     }
 }

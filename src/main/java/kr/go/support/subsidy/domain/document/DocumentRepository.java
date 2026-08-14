@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByUserId(Long userId);
     Optional<Document> findByIdAndUserId(Long documentId, Long userId);
+    List<Document> findAllByIdInAndUserId(List<Long> ids, Long userId);
 }

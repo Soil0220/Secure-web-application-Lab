@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
+import {useGrant} from "../../contexts/grantContext/UseGrant.jsx";
 
 export default function GrantManagement() {
-    const [programs, setPrograms] = useState([
-        { id: 1, category: '청년 / 취업', name: '청년월세 특별지원금', amount: '월 최대 20만원', period: '2026.01.01 ~ 2026.12.31', status: '모집중' },
-        { id: 2, category: '창업 / 소상공인', name: '초기 창업 패키지 지원', amount: '최대 1억원', period: '2026.03.01 ~ 2026.04.15', status: '모집예정' },
-        { id: 3, category: '생활 / 복지', name: '긴급 생활지원금', amount: '가구당 50만원', period: '2026.01.01 ~ 2026.02.28', status: '마감' },
-    ]);
 
+    const {grants, createGrant, getGrants} = useGrant();
     const [showModal, setShowModal] = useState(false);
-    const [newProg, setNewProg] = useState({ name: '', category: '청년 / 취업', amount: '', period: '', status: '모집예정' });
+    const [newProg, setNewProg] = useState({title: '', category: '',cycle: '', content: '',  amount: '', startDate: '',endDate: '', status: '' });
 
+
+    //초기 진입시 지원금 제도 불러오기
+    useEffect(() => {
+
+        const run = async () => {
+            await getGrants();
+        };
+        run();
+    }, []);
+
+    //지원금 제도 생성
     const handleCreate = () => {
-        if (!newProg.name) return alert('사업명을 입력해주세요.');
-        setPrograms([...programs, { id: Date.now(), ...newProg }]);
+        createGrant(newProg);
         setShowModal(false);
-        setNewProg({ name: '', category: '청년 / 취업', amount: '', period: '', status: '모집예정' });
+        setNewProg({title: '', category: '',cycle: '', content: '',  amount: '', startDate: '',endDate: '', status: '' });
     };
 
     return (
@@ -26,15 +33,18 @@ export default function GrantManagement() {
 
             {/* 사업 카드 목록 */}
             <div style={styles.grid}>
-                {programs.map((p) => (
-                    <div key={p.id} style={styles.card}>
+                {grants.map((p) => (
+                    <div key={p.grantId} style={styles.card}>
                         <div style={styles.cardHeader}>
                             <span style={styles.category}>{p.category}</span>
                             <span style={{ ...styles.badge, ...statusStyle[p.status] }}>{p.status}</span>
                         </div>
-                        <h3 style={styles.cardTitle}>{p.name}</h3>
+                        <h3 style={styles.cardTitle}>{p.title}</h3>
+                        <p style={styles.cardInfo}><b>주기:</b> {p.cycle}</p>
+                        <p style={styles.cardInfo}><b>설명:</b> {p.content}</p>
                         <p style={styles.cardInfo}><b>지원금액:</b> {p.amount}</p>
-                        <p style={styles.cardInfo}><b>신청기간:</b> {p.period}</p>
+                        <p style={styles.cardInfo}><b>시작기간:</b> {p.startDate}</p>
+                        <p style={styles.cardInfo}><b>종료기간:</b> {p.endDate}</p>
                     </div>
                 ))}
             </div>
@@ -44,10 +54,13 @@ export default function GrantManagement() {
                 <div style={styles.modalOverlay}>
                     <div style={styles.modal}>
                         <h3>신규 지원사업 등록</h3>
-                        <input style={styles.input} placeholder="사업명" value={newProg.name} onChange={e => setNewProg({...newProg, name: e.target.value})} />
-                        <input style={styles.input} placeholder="카테고리 (예: 청년/취업)" value={newProg.category} onChange={e => setNewProg({...newProg, category: e.target.value})} />
+                        <input style={styles.input} placeholder="사업명" value={newProg.title} onChange={e => setNewProg({...newProg, title: e.target.value})} />
+                        <input style={styles.input} placeholder="카테고리" value={newProg.category} onChange={e => setNewProg({...newProg, category: e.target.value})} />
+                        <input style={styles.input} placeholder="지급 주기" value={newProg.cycle} onChange={e => setNewProg({...newProg, cycle: e.target.value})} />
+                        <input style={styles.input} placeholder="지원 내용" value={newProg.content} onChange={e => setNewProg({...newProg, content: e.target.value})} />
                         <input style={styles.input} placeholder="지원 금액" value={newProg.amount} onChange={e => setNewProg({...newProg, amount: e.target.value})} />
-                        <input style={styles.input} placeholder="신청 기간" value={newProg.period} onChange={e => setNewProg({...newProg, period: e.target.value})} />
+                        <input style={styles.input} placeholder="시작 기간" value={newProg.startDate} onChange={e => setNewProg({...newProg, startDate: e.target.value})} />
+                        <input style={styles.input} placeholder="종료 기간" value={newProg.endDate} onChange={e => setNewProg({...newProg, endDate: e.target.value})} />
                         <div style={styles.modalBtns}>
                             <button style={styles.primaryBtn} onClick={handleCreate}>등록</button>
                             <button style={styles.cancelBtn} onClick={() => setShowModal(false)}>취소</button>

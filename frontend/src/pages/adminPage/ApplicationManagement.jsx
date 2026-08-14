@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import {useApplication} from "../../contexts/applicationContext/UseApplication.jsx";
 
 export default function ApplicationManagement() {
+    /*
     const [applicants, setApplicants] = useState([
         { id: 1, name: '김철수', program: '청년월세 특별지원금', date: '2026-07-28', status: '접수완료', doc: '등본_김철수.pdf' },
         { id: 2, name: '이영희', program: '초기 창업 패키지 지원', date: '2026-07-29', status: '심사중', doc: '사업계획서_이영희.pdf' },
         { id: 3, name: '박민수', program: '긴급 생활지원금', date: '2026-07-30', status: '승인', doc: '소득증명_박민수.pdf' },
     ]);
+     */
 
+    const {apllications, setApplications, getAllApplications} = useApplication();
     const [selected, setSelected] = useState(null);
 
     const handleAudit = (id, newStatus) => {

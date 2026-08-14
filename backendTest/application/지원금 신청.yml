@@ -5,19 +5,23 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/application/3
+  url: http://localhost:8080/api/application
   headers:
     - name: Origin
       value: http://localhost:3000
     - name: X-Request-Id
-      value: e1521-e21b-4764-a716-446655440000
+      value: e1522-e22b-3264-a716-446655440000
     - name: X-Request-Time
-      value: 2026-08-12T09:11:16.000Z
+      value: 2026-08-14T12:00:16.000Z
     - name: XSRF-TOKEN
-      value: eYd9To7EI3eEnZrHar8YvJJl6K_kh3oVoMDWe12r7HM
+      value: dfFD7qUrFyxLY4ADOQzHuGEONlQIiEmVnhaoDDk1gRc
   body:
     type: json
-    data: ""
+    data: |-
+      {
+        "grantId" : "1",
+        "documentIds" : [1]
+      }
   auth: inherit
 
 settings:

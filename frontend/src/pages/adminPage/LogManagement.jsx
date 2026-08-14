@@ -1,47 +1,24 @@
-import  { useState } from "react";
+import {useEffect, useState} from "react";
+import {useLog} from "../../contexts/logContext/UseLog.jsx";
 
-function LogManagement() {
+export function LogManagement() {
     const [search, setSearch] = useState("");
+    const {logs, getLogs} = useLog();
 
-    const logs = [
-        {
-            user: "김철수",
-            requestId: "REQ-20260728-001",
-            requestTime: "2026-07-28 09:12:31",
-            url: "/api/subsidy/apply"
-        },
-        {
-            user: "이영희",
-            requestId: "REQ-20260729-002",
-            requestTime: "2026-07-29 10:24:17",
-            url: "/api/user/profile"
-        },
-        {
-            user: "박민수",
-            requestId: "REQ-20260730-003",
-            requestTime: "2026-07-30 11:03:42",
-            url: "/api/subsidy/list"
-        },
-        {
-            user: "김철수",
-            requestId: "REQ-20260730-004",
-            requestTime: "2026-07-30 13:18:09",
-            url: "/api/inquiry/create"
-        },
-        {
-            user: "정수진",
-            requestId: "REQ-20260730-005",
-            requestTime: "2026-07-30 14:42:51",
-            url: "/api/notice/list"
-        }
-    ];
 
     const filteredLogs = logs.filter((log) =>
-        log.user.includes(search) ||
         log.requestId.includes(search) ||
         log.requestTime.includes(search) ||
-        log.url.includes(search)
+        log.apiUrl.includes(search)
     );
+
+    useEffect(() => {
+
+        const run = async () => {
+            await getLogs();
+        };
+        run();
+    }, []);
 
     return (
         <>
@@ -170,7 +147,7 @@ function LogManagement() {
                 <div className="log-search">
                     <input
                         type="text"
-                        placeholder="사용자, 요청 ID, URL 등을 검색하세요"
+                        placeholder="요청 ID, URL 등을 검색하세요"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -185,7 +162,6 @@ function LogManagement() {
 
                     {/* 테이블 헤더 */}
                     <div className="log-header">
-                        <div>사용자</div>
                         <div>요청 ID</div>
                         <div>요청 시간</div>
                         <div>URL</div>
@@ -198,10 +174,9 @@ function LogManagement() {
                                 className="log-row"
                                 key={log.requestId}
                             >
-                                <div>{log.user}</div>
                                 <div>{log.requestId}</div>
                                 <div>{log.requestTime}</div>
-                                <div>{log.url}</div>
+                                <div>{log.apiUrl}</div>
                             </div>
                         ))
                     ) : (

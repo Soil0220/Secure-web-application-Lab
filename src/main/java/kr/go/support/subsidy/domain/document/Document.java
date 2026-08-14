@@ -1,6 +1,7 @@
 package kr.go.support.subsidy.domain.document;
 
 import kr.go.support.subsidy.common.BaseEntity;
+import kr.go.support.subsidy.domain.application.Application;
 import kr.go.support.subsidy.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,5 +36,6 @@ public class Document extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String storeFileName;
 
+    @Column(nullable = false)
     private Long fileSize;
 }

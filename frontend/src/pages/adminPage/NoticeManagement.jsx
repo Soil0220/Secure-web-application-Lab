@@ -11,7 +11,7 @@ const NoticeManagement = ({onClose}) => {
     });
 
     const [loading] = useState(false);
-    const {createNotice} = useNotice();
+    const {createNotice, getNotices} = useNotice();
 
     // 입력값 핸들러
     const handleChange = (e) => {
@@ -22,6 +22,8 @@ const NoticeManagement = ({onClose}) => {
         }));
     };
 
+
+
     // 폼 제출 (REST API 호출)
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +33,6 @@ const NoticeManagement = ({onClose}) => {
             return;
         }
         createNotice(formData);
-
         alert('공지사항이 정상적으로 등록되었습니다.');
         // 등록 후 폼 초기화
         setFormData({ title: '', content: '', isPinned: false });

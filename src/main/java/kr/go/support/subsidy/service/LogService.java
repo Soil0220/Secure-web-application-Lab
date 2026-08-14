@@ -4,6 +4,7 @@ import kr.go.support.subsidy.domain.log.LogRepository;
 import kr.go.support.subsidy.dto.log.LogRequestDto;
 import kr.go.support.subsidy.dto.log.LogResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +45,13 @@ public class LogService {
         Instant now = Instant.now();
         long diffSeconds = Math.abs(Duration.between(requestTime, now).getSeconds());
         return diffSeconds > 60L;
+    }
+
+    //TODO 단위별 로그요청 기능 추가필요 그 전까지는 테이블 비우기
+    //1분 단위로 로그 테이블 비우기
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void clearLogs() {
+        logRepository.deleteAllInBatch();
     }
 }

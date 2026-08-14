@@ -6,6 +6,7 @@ import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.Role;
+import kr.go.support.subsidy.dto.application.ApplicationCreateDto;
 import kr.go.support.subsidy.dto.application.ApplicationResponseDto;
 import kr.go.support.subsidy.dto.application.ApplicationUpdateDto;
 import kr.go.support.subsidy.service.ApplicationService;
@@ -30,13 +31,20 @@ public class ApplicationController {
         return ResponseApi.success(response);
     }
 
+    //전체 지원금 조회(Admin)
+    @GetMapping("/admin")
+    public ResponseApi<List<ApplicationResponseDto>> getAllApplications(){
+        List<ApplicationResponseDto> response = applicationService.getAllApplications();
+        return ResponseApi.success(response);
+    }
+
     // 지원금 신청
-    @PostMapping("/{grantId}")
+    @PostMapping
     public ResponseApi<Long> createApplication(
-            @PathVariable Long grantId,
+            @Valid @RequestBody ApplicationCreateDto dto,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        Long response = applicationService.createApplication(grantId, sessionUser.getId());
+        Long response = applicationService.createApplication(sessionUser.getId(), dto);
         return ResponseApi.success(response);
     }
 

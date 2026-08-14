@@ -3,16 +3,14 @@ import {useLoading} from "../contexts/loadingContext/UseLoading.jsx";
 import {useNotice} from "../contexts/noticeContext/useNotice.jsx";
 
 const NoticeList = () => {
-    const [notices, setNotices] = useState([]);
     const {loading} = useLoading(true);
-    const {getNotices} = useNotice();
+    const {notices, getNotices} = useNotice();
     const [selectedNotice, setSelectedNotice] = useState(null); // 선택된 공지사항 (상세보기용)
 
 
     useEffect(() => {
         const run = async () => {
-            const response = await getNotices();
-            setNotices(response.data);
+            await getNotices();
         }
         run();
     }, []);

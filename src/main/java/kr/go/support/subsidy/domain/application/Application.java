@@ -10,7 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "user_applications", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "grant_id"})
+        @UniqueConstraint(columnNames = {"user_id", "grant_id", "active_flag"})
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,6 +36,14 @@ public class Application extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApplicationStatus status;
+
+    //소프트 딜리트 시 userId와 grantId의 중복방지를 유지하기 위한 DB 가상 컬럼 설정(삭제 시점에 NULL값이 자동으로 들어감)
+    @Column(columnDefinition = "BIGINT GENERATED ALWAYS AS (IF(deleted_at IS NULL, 0, NULL)) STORED",
+            name = "active_flag",
+            insertable = false,
+            updatable = false
+    )
+    private Long activeFlag;
 
     public void updateApplicationStatus(ApplicationStatus status){
         this.status = status;

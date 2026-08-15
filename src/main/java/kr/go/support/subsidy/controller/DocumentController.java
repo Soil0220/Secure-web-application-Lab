@@ -74,4 +74,23 @@ public class DocumentController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(downloadDto.resource());
     }
+
+    //신청서 서류 다운로드(Admin)
+    @GetMapping("/{applicationDocumentId}/admin")
+    public ResponseEntity<Resource> downloadApplicationDocument(
+            @PathVariable Long applicationDocumentId) {
+
+        DocumentDownloadDto downloadDto = documentService.downloadApplicationDocument(applicationDocumentId);
+
+        // 한글,특수문자 파일명 인코딩
+        String encodedFileName = UriUtils.encode(downloadDto.originFileName(), StandardCharsets.UTF_8);
+
+        // HTTP 헤더 설정 (Content-Disposition 브라우저가 다운로드 창을 띄우도록 명령)
+        String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM) // 모든 파일 형식을 바이너리로 안전하게 전송
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(downloadDto.resource());
+    }
 }

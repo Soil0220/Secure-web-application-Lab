@@ -3,6 +3,8 @@ package kr.go.support.subsidy.service;
 import kr.go.support.subsidy.common.FileManager;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
+import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocument;
+import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocumentRepository;
 import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentRepository;
 import kr.go.support.subsidy.domain.user.User;
@@ -29,6 +31,7 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
     private final FileManager fileManager;
+    private final ApplicationDocumentRepository applicationDocumentRepository;
 
     //유저별 서류 조회
     public List<DocumentResponseDto> getDocuments(Long userId) {
@@ -84,4 +87,18 @@ public class DocumentService {
             // 파일 자원과 원본 파일명을 DTO로 묶어 반환
             return new DocumentDownloadDto(resource, document.getOriginFileName());
     }
+
+    //신청서 서류 다운로드(Admin)
+    public DocumentDownloadDto downloadApplicationDocument(Long applicationDocumentId) {
+
+        ApplicationDocument applicationDocument = applicationDocumentRepository.findById(applicationDocumentId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
+
+        // 물리 파일 자원(Resource) 읽기
+        Resource resource = fileManager.getResource(applicationDocument.getStoreFileName());
+
+        // 파일 자원과 원본 파일명을 DTO로 묶어 반환
+        return new DocumentDownloadDto(resource, applicationDocument.getOriginFileName());
+    }
+
 }

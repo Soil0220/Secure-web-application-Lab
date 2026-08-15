@@ -1,5 +1,18 @@
+import {useInquiry} from "../../contexts/inquiryContext/UseInquiry.jsx";
+import {useEffect} from "react";
 
-export default function InquiryManagement({ inquiries, styles }) {
+export default function InquiryManagement({ styles }) {
+
+    const {inquiries, getInquiries} = useInquiry();
+
+    useEffect(() => {
+        const run = async () => {
+            await getInquiries();
+        };
+        run();
+    }, []);
+
+
     return (
         <div>
             <div style={styles.titleRow}>
@@ -7,7 +20,7 @@ export default function InquiryManagement({ inquiries, styles }) {
                 <button style={styles.primaryBtn}>+ 새 문의 작성</button>
             </div>
             {inquiries.map((inq) => (
-                <div key={inq.id} style={styles.dataCard}>
+                <div key={inq.inquiryId} style={styles.dataCard}>
                     <div style={styles.cardHeader}>
                         <span style={styles.cardDetail}>{inq.date}</span>
                         <span style={{ ...styles.statusBadge, backgroundColor: inq.statusBg, color: inq.statusColor }}>

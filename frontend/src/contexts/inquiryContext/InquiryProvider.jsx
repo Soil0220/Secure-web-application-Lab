@@ -1,17 +1,17 @@
-import {ApplicationContext} from "./ApplicationContext.jsx";
 import {useState} from "react";
-import {useLoading} from "../loadingContext/UseLoading.jsx";
+import {InquiryContext} from "./InquiryContext.jsx";
 import {getApi, patchApi} from "../../components/RequestApi.jsx";
+import {useLoading} from "../loadingContext/UseLoading.jsx";
 
-export function ApplicationProvider({ children }) {
+export function InquiryProvider({ children }) {
 
-    const [applications, setApplications] = useState([]);
+    const [inquiries, setInquiries] = useState([]);
     const {setLoading} = useLoading();
 
-    const getApplications = async () => {
+    const getInquiries = async () => {
         try {
-            const response = await getApi('/application', {}, true);
-            setApplications(response.data.data);
+            const response = await getApi('/inquiry', {}, true);
+            setInquiries(response.data.data);
             return response.data;
         } catch (error) {
             //응답 데이터 존재시 접근
@@ -22,23 +22,10 @@ export function ApplicationProvider({ children }) {
         }
     }
 
-    const getAllApplications = async () => {
+    const getAllInquiries = async () => {
         try {
-            const response = await getApi('/application/admin', {}, true);
-            setApplications(response.data.data);
-            return response.data;
-        } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
-        } finally {
-            setLoading(false);
-        }
-    }
-    const updateApplicationStatus = async (applicationId, status) => {
-        try {
-            const response = await patchApi(`/application/${applicationId}/admin`, {"status" : status}, true);
-            getAllApplications();
+            const response = await getApi('/inquiry/admin', {}, true);
+            setInquiries(response.data.data);
             return response.data;
         } catch (error) {
             //응답 데이터 존재시 접근
@@ -49,12 +36,25 @@ export function ApplicationProvider({ children }) {
         }
     }
 
+    const updateInquiry = async (inquiryId, answer) => {
+        try {
+            const response = await patchApi(`/inquiry/${inquiryId}/admin`, {"answer" : answer}, true);
+            await getAllInquiries();
+            return response.data;
+        } catch (error) {
+            //응답 데이터 존재시 접근
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
-        <ApplicationContext.Provider
-            value={{applications, setApplications, getApplications, getAllApplications, updateApplicationStatus}}
+        <InquiryContext.Provider
+            value={{inquiries, setInquiries, getAllInquiries, getInquiries, updateInquiry}}
         >
             {children}
-        </ApplicationContext.Provider>
+        </InquiryContext.Provider>
     );
 }

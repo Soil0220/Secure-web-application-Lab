@@ -1,26 +1,22 @@
-import { useState } from 'react';
-import NoticeManagement from './NoticeManagement.jsx';
+import {useEffect, useState} from 'react';
+import NoticeCreate from './NoticeCreate.jsx';
 import NoticeList from "../../components/NoticeList.jsx";
+import {useInquiry} from "../../contexts/inquiryContext/UseInquiry.jsx";
 
-export default function Dashboard() {
+export default function DashboardManagement() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [reload, setReload] = useState(0);
-    const [tab, setTab] = useState('notice'); // 'notice' | 'qna'
-
-    const [qnas, setQnas] = useState([
-        { id: 1, user: '홍길동', title: '신청 서류 수정은 어떻게 하나요?', status: '답변대기', reply: '' },
-        { id: 2, title: '지급 대상자 선정 기준 문의', user: '강감찬', status: '답변완료', reply: '선정 기준은 공지사항 15번 항목 참고 부탁드립니다.' }
-    ]);
-
+    const [tab, setTab] = useState('notice');
+    const {inquiries, getAllInquiries, updateInquiry} = useInquiry();
     const [selectedQna, setSelectedQna] = useState(null);
     const [replyText, setReplyText] = useState('');
 
-    const handleReplySubmit = () => {
+    //문의 답변
+    const handleReplySubmit = async (inquiryId) => {
         if (!replyText) return alert('답변을 입력해주세요.');
-        setQnas(qnas.map(q => q.id === selectedQna.id ? { ...q, status: '답변완료', reply: replyText } : q));
+        await updateInquiry(inquiryId, replyText);
         setSelectedQna(null);
-        setReplyText('');
     };
 
     //공지글 종료후 콜백함수
@@ -29,7 +25,13 @@ export default function Dashboard() {
         setReload(prev => prev + 1);
     };
 
+    useEffect(() => {
+        const run = async () => {
+            await getAllInquiries();
 
+        };
+        run();
+    }, []);
 
     return (
         <div>
@@ -59,7 +61,7 @@ export default function Dashboard() {
                     {isOpen && (
                         <div style={styles.overlay} onClick={() => setIsOpen(false)}>
                             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                                <NoticeManagement onClose={handleClose} />
+                                <NoticeCreate onClose={handleClose} />
                             </div>
                         </div>
                     )}
@@ -70,10 +72,10 @@ export default function Dashboard() {
             {tab === 'qna' && (
                 <div>
                     <ul style={styles.list}>
-                        {qnas.map(q => (
-                            <li key={q.id} style={styles.listItem} onClick={() => { setSelectedQna(q); setReplyText(q.reply); }}>
-                                <span><b>[{q.user}]</b> {q.title}</span>
-                                <span style={q.status === '답변완료' ? styles.statusDone : styles.statusWait}>{q.status}</span>
+                        {inquiries.map(q => (
+                            <li key={q.inquiryId} style={styles.listItem} onClick={() => { setSelectedQna(q); setReplyText(q.answer); }}>
+                                <span><b>[{q.username}]</b> {q.title}</span>
+                                <span style={q.status === 'ANSWERED' ? styles.statusDone : styles.statusWait}>{q.status}</span>
                             </li>
                         ))}
                     </ul>
@@ -92,7 +94,7 @@ export default function Dashboard() {
                                     placeholder="답변 내용을 작성하세요..."
                                 />
                                 <div style={styles.modalBtns}>
-                                    <button style={styles.primaryBtn} onClick={handleReplySubmit}>답변 등록</button>
+                                    <button style={styles.primaryBtn} onClick={() => handleReplySubmit(selectedQna.inquiryId)}>답변 등록</button>
                                     <button style={styles.cancelBtn} onClick={() => setSelectedQna(null)}>취소</button>
                                 </div>
                             </div>

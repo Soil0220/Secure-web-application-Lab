@@ -1,22 +1,31 @@
-import { useState } from 'react';
+import React from 'react';
+import {useEffect, useState} from 'react';
 import {useApplication} from "../../contexts/applicationContext/UseApplication.jsx";
+import {useDocument} from "../../contexts/documentContext/UseDocument.jsx";
 
 export default function ApplicationManagement() {
-    /*
-    const [applicants, setApplicants] = useState([
-        { id: 1, name: '김철수', program: '청년월세 특별지원금', date: '2026-07-28', status: '접수완료', doc: '등본_김철수.pdf' },
-        { id: 2, name: '이영희', program: '초기 창업 패키지 지원', date: '2026-07-29', status: '심사중', doc: '사업계획서_이영희.pdf' },
-        { id: 3, name: '박민수', program: '긴급 생활지원금', date: '2026-07-30', status: '승인', doc: '소득증명_박민수.pdf' },
-    ]);
-     */
 
-    const {apllications, setApplications, getAllApplications} = useApplication();
+    const {applications, getAllApplications, updateApplicationStatus} = useApplication();
+    const {getDocument} = useDocument();
     const [selected, setSelected] = useState(null);
 
-    const handleAudit = (id, newStatus) => {
-        setApplicants(applicants.map(a => a.id === id ? { ...a, status: newStatus } : a));
-        setSelected(prev => prev ? { ...prev, status: newStatus } : null);
+
+    //신청서 상태변경
+    const handleAudit = async (applicationId, status) => {
+        await updateApplicationStatus(applicationId, status);
     };
+
+    const handleDocumentClick = async (documentId, documentName) => {
+        await getDocument(documentId, documentName);
+    };
+
+
+
+    useEffect(() => {
+        const run = async () => {
+            await getAllApplications();};
+        run();
+    }, []);
 
     return (
         <div>
@@ -35,15 +44,15 @@ export default function ApplicationManagement() {
                         </tr>
                         </thead>
                         <tbody>
-                        {applicants.map(app => (
+                        {applications.map(app => (
                             <tr
-                                key={app.id}
-                                style={{ ...styles.trRow, backgroundColor: selected?.id === app.id ? '#F0F7FF' : 'transparent' }}
+                                key={app.applicationId}
+                                style={{ ...styles.trRow, backgroundColor: selected?.applicationId === app.applicationId ? '#F0F7FF' : 'transparent' }}
                                 onClick={() => setSelected(app)}
                             >
-                                <td style={styles.td}><b>{app.name}</b></td>
-                                <td style={styles.td}>{app.program}</td>
-                                <td style={styles.td}>{app.date}</td>
+                                <td style={styles.td}><b>{app.username}</b></td>
+                                <td style={styles.td}>{app.title}</td>
+                                <td style={styles.td}>{app.createdAt}</td>
                                 <td style={styles.td}><span style={statusBadge[app.status]}>{app.status}</span></td>
                             </tr>
                         ))}
@@ -55,14 +64,38 @@ export default function ApplicationManagement() {
                 {selected && (
                     <div style={styles.detailPanel}>
                         <h3>서류 심사 상세</h3>
-                        <p><b>신청자명:</b> {selected.name}</p>
-                        <p><b>신청 사업:</b> {selected.program}</p>
-                        <p><b>제출 서류:</b> <a href="#doc" onClick={(e) => { e.preventDefault(); alert('서류 미리보기 기능'); }}>{selected.doc}</a></p>
+                        <p><b>신청자명:</b> {selected.username}</p>
+                        <p><b>신청 사업:</b> {selected.title}</p>
+                        <p>
+                            <b>제출 서류:</b>{' '}
+                            {selected?.documents && selected.documents.length > 0 ? (
+                                selected.documents.map((doc, index) => (
+                                    <React.Fragment key={doc.documentId || index}>
+                                        <a
+                                            href="#doc"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleDocumentClick(doc.documentId, doc.originFilename); // 원하는 함수 실행 및 documentId 전달
+                                            }}
+                                        >
+                                            {doc.originFilename}
+                                        </a>
+                                        {/* 서류가 여러 개일 경우 쉼표 구분자 추가 */}
+                                        {index < selected.documents.length - 1 && ', '}
+                                    </React.Fragment>
+                                ))
+                            ) : (
+                                <span>제출된 서류가 없습니다.</span>
+                            )}
+                        </p>
                         <p><b>현재 상태:</b> {selected.status}</p>
-
                         <div style={styles.actionBtns}>
-                            <button style={styles.approveBtn} onClick={() => handleAudit(selected.id, '승인')}>승인 처리</button>
-                            <button style={styles.rejectBtn} onClick={() => handleAudit(selected.id, '반려')}>반려 처리</button>
+                            <button type="button" style={styles.approveBtn} onClick={(e) => {
+                                e.stopPropagation();
+                                handleAudit(selected.applicationId, "APPROVED")}}>승인 처리</button>
+                            <button type="button" style={styles.rejectBtn} onClick={(e) => {
+                                e.stopPropagation();
+                                handleAudit(selected.applicationId, "REJECTED")}}>반려 처리</button>
                         </div>
                     </div>
                 )}
@@ -72,10 +105,10 @@ export default function ApplicationManagement() {
 }
 
 const statusBadge = {
-    '접수완료': { color: '#E65100', fontWeight: 'bold' },
-    '심사중': { color: '#0D47A1', fontWeight: 'bold' },
-    '승인': { color: '#1B5E20', fontWeight: 'bold' },
-    '반려': { color: '#B71C1C', fontWeight: 'bold' },
+    'SUBMITTED': { color: '#E65100', fontWeight: 'bold' },
+    'UNDER_REVIEW': { color: '#0D47A1', fontWeight: 'bold' },
+    'APPROVED': { color: '#1B5E20', fontWeight: 'bold' },
+    'REJECTED': { color: '#B71C1C', fontWeight: 'bold' },
 };
 
 const styles = {

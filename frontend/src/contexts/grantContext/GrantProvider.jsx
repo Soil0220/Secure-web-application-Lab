@@ -25,7 +25,7 @@ export function GrantProvider({ children }) {
     const createGrant = async (formData) => {
         try {
             const response = await postApi('/grant/admin', formData, true);
-            getGrants();
+            await getGrants();
             return response.data;
         } catch (error) {
             //응답 데이터 존재시 접근

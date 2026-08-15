@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {Link} from 'react-router-dom';
 import GrantManagement from './GrantManagement.jsx';
 import ApplicationManagement from './ApplicationManagement.jsx';
-import Dashboard from './Dashboard.jsx';
+import DashboardManagement from './DashboardManagement.jsx';
 import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
 import LogManagement from "./LogManagement.jsx";
 
@@ -61,7 +61,7 @@ export default function AdminPage() {
                 <main style={styles.mainContent}>
                     {activeTab === 'program' && <GrantManagement />}
                     {activeTab === 'audit' && <ApplicationManagement />}
-                    {activeTab === 'board' && <Dashboard />}
+                    {activeTab === 'board' && <DashboardManagement />}
                     {activeTab === 'log' && <LogManagement />}
                 </main>
             </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {useNotice} from "../../contexts/noticeContext/UseNotice.jsx";
 
-const NoticeManagement = ({onClose}) => {
+const NoticeCreate = ({onClose}) => {
 
     // 폼 상태 관리
     const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const NoticeManagement = ({onClose}) => {
     });
 
     const [loading] = useState(false);
-    const {createNotice, getNotices} = useNotice();
+    const {createNotice} = useNotice();
 
     // 입력값 핸들러
     const handleChange = (e) => {
@@ -152,4 +152,4 @@ const styles = {
     }
 };
 
-export default NoticeManagement;
+export default NoticeCreate;

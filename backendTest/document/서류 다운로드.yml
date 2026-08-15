@@ -14,7 +14,7 @@ http:
     - name: X-Request-Time
       value: 2026-08-12T11:53:16.000Z
     - name: XSRF-TOKEN
-      value: PmJIgwqrwAKU5HsDzvnyCmvXSJ5CcyHs4nmQSgx-Tik
+      value: dr12q9VkzHiO21qsXDvr4YigAdruidYa4J9-oF-Lc8o
   body:
     type: json
     data: ""

@@ -44,9 +44,10 @@ public class ApplicationService {
     //전체 지원금 조회(Admin)
     public List<ApplicationResponseDto> getAllApplications() {
 
-        List<ApplicationResponseDto> result = applicationRepository.findAll().stream()
+        List<ApplicationResponseDto> result = applicationRepository.findAllWithUserAndGrant().stream()
                 .map(ApplicationResponseDto::from)
                 .toList();
+
         return result;
     }
 

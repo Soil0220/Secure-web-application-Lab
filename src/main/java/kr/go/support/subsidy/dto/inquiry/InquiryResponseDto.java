@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 public record InquiryResponseDto (
     Long inquiryId,
+    String username,
     String title,
     String content,
     InquiryStatus status,
@@ -19,6 +20,7 @@ public record InquiryResponseDto (
     public static InquiryResponseDto from(Inquiry inquiry){
         return new InquiryResponseDto(
                 inquiry.getId(),
+                inquiry.getUser().getUsername(),
                 inquiry.getTitle(),
                 inquiry.getContent(),
                 inquiry.getStatus(),

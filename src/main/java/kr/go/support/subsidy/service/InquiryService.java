@@ -6,10 +6,7 @@ import kr.go.support.subsidy.domain.inquiry.Inquiry;
 import kr.go.support.subsidy.domain.inquiry.InquiryRepository;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
-import kr.go.support.subsidy.dto.inquiry.InquiryAnswerDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryRequestDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryResponseDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryUpdateDto;
+import kr.go.support.subsidy.dto.inquiry.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +22,15 @@ public class InquiryService {
 
     //유저별 문의 조회
     public List<InquiryResponseDto> getInquiries(Long userId){
-        List<InquiryResponseDto> result = inquiryRepository.findByUserId(userId).stream()
+        List<InquiryResponseDto> result = inquiryRepository.findByUserIdWithUser(userId).stream()
+                .map(InquiryResponseDto::from)
+                .toList();
+        return result;
+    }
+
+    //모든 문의 조회(admin)
+    public List<InquiryResponseDto> getAllInquiries(){
+        List<InquiryResponseDto> result = inquiryRepository.findAllWithUser().stream()
                 .map(InquiryResponseDto::from)
                 .toList();
         return result;
@@ -64,12 +69,12 @@ public class InquiryService {
 
     //문의 답변(Admin)
     @Transactional
-    public Long updateInquiry(Long userId, Long inquryId, InquiryAnswerDto dto){
-        Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquryId, userId)
+    public InquiryAnswerResponseDto updateInquiry(Long inquryId, InquiryAnswerDto dto){
+        Inquiry inquiry = inquiryRepository.findById(inquryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
 
         inquiry.reply(dto.answer());
-        return  inquryId;
+        return  new InquiryAnswerResponseDto(inquiry.getAnswer(), inquiry.getAnsweredAt());
     }
 
 }

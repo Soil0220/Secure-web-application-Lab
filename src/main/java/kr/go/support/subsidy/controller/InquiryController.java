@@ -4,10 +4,7 @@ package kr.go.support.subsidy.controller;
 import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
-import kr.go.support.subsidy.dto.inquiry.InquiryAnswerDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryRequestDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryResponseDto;
-import kr.go.support.subsidy.dto.inquiry.InquiryUpdateDto;
+import kr.go.support.subsidy.dto.inquiry.*;
 import kr.go.support.subsidy.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +27,12 @@ public class InquiryController {
         return ResponseApi.success(response);
     }
 
+    //모든 문의 조회(Admin)
+    @GetMapping("/admin")
+    public ResponseApi<List<InquiryResponseDto>>  getUserInquiries(){
+        List<InquiryResponseDto> response = inquiryService.getAllInquiries();
+        return ResponseApi.success(response);
+    }
 
     //문의 등록
     @PostMapping
@@ -64,12 +67,11 @@ public class InquiryController {
 
     //문의 답변(Admin)
     @PatchMapping("/{inquiryId}/admin")
-    public ResponseApi<Long> updateInquiry(
-            @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+    public ResponseApi<InquiryAnswerResponseDto> updateInquiry(
             @PathVariable Long inquiryId,
             @Valid @RequestBody InquiryAnswerDto dto){
 
-        Long response = inquiryService.updateInquiry(sessionUser.getId(), inquiryId, dto);
+        InquiryAnswerResponseDto response = inquiryService.updateInquiry(inquiryId, dto);
         return ResponseApi.success(response);
     }
 }

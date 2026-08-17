@@ -10,11 +10,11 @@ http:
     - name: Origin
       value: http://localhost:3000
     - name: X-Request-Id
-      value: e15422-e5423-42d3-a716-446655440000
+      value: e15422-e53-42d3-a716-446655440000
     - name: X-Request-Time
-      value: 2026-08-15T11:23:16.000Z
+      value: 2026-08-17T08:06:16.000Z
     - name: XSRF-TOKEN
-      value: 8Yzm4fghufEHHO_r5SAsSlw8reZ9Egq1_HI3pF5aTuo
+      value: 9U8asE9oW9n36i4nvW9qRolrpydjaDja9KunYMCnqD0
   body:
     type: json
     data: ""

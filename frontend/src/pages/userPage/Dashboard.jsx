@@ -1,8 +1,7 @@
-
 export default function Dashboard({ applications, styles }) {
     return (
         <div>
-            <h2 style={styles.contentTitle}>마이페이지 대시보드</h2>
+            <h2 style={{ ...styles.contentTitle, marginBottom: '24px' }}>마이페이지 대시보드</h2>
 
             {/* 신청 요약 카드 */}
             <div style={styles.summaryGrid}>
@@ -20,20 +19,32 @@ export default function Dashboard({ applications, styles }) {
                 </div>
             </div>
 
-            <h3 style={{ ...styles.sectionTitle, marginTop: '24px' }}>최근 신청 내역</h3>
-            {applications.map((app) => (
-                <div key={app.id} style={styles.dataCard}>
-                    <div style={styles.cardHeader}>
-                        <span style={styles.categoryText}>{app.category}</span>
-                        <span style={{ ...styles.statusBadge, backgroundColor: app.statusBg, color: app.statusColor }}>
-              {app.status}
-            </span>
+            {/* "최근 신청 내역" 제목과 요약 카드 사이의 간격을 넓히고 밑줄이 생기지 않도록 분리 */}
+            <h3 style={{
+                ...styles.sectionTitle,
+                marginTop: '36px',
+                marginBottom: '16px',
+                borderBottom: 'none',
+                paddingBottom: '0'
+            }}>
+                최근 신청 내역
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {applications.map((app) => (
+                    <div key={app.id} style={styles.dataCard}>
+                        <div style={styles.cardHeader}>
+                            <span style={styles.categoryText}>{app.category}</span>
+                            <span style={{ ...styles.statusBadge, backgroundColor: app.statusBg, color: app.statusColor }}>
+                                {app.status}
+                            </span>
+                        </div>
+                        <h4 style={styles.cardTitle}>{app.title}</h4>
+                        <p style={styles.cardDetail}><strong>지원금액:</strong> {app.amount}</p>
+                        <p style={styles.cardDetail}><strong>신청일자:</strong> {app.applyDate}</p>
                     </div>
-                    <h4 style={styles.cardTitle}>{app.title}</h4>
-                    <p style={styles.cardDetail}><strong>지원금액:</strong> {app.amount}</p>
-                    <p style={styles.cardDetail}><strong>신청일자:</strong> {app.applyDate}</p>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }

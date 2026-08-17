@@ -1,13 +1,80 @@
-import {useState, useEffect} from 'react';
-import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
-import {useLoading} from "../../contexts/loadingContext/UseLoading.jsx";
+import { useState, useEffect, useRef } from 'react';
+import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
+import { useLoading } from "../../contexts/loadingContext/UseLoading.jsx";
+import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
+import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
 import NoticeList from "../../components/NoticeList.jsx";
-import {Link} from 'react-router-dom';
+import ApplicationForm from "../../components/ApplicationForm.jsx";
+import { Link } from 'react-router-dom';
+
+// 1. Enum 상수 매핑 정의
+const CATEGORY_MAP = {
+    YOUTH: "청년",
+    BUSINESS_STARTUP: "창업",
+    LIVING_WELFARE: "생활 / 복지",
+    HOUSING: "주거",
+    HEALTH_CARE: "건강 / 의료"
+};
+
+const CYCLE_MAP = {
+    LUMP_SUM: "일시금",
+    DAILY: "매일",
+    WEEKLY: "매주",
+    MONTHLY: "매월",
+    YEARLY: "매년"
+};
+
+const STATUS_MAP = {
+    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
+    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
+    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
+};
+
+// 날짜 포맷팅 (YYYY.MM.DD)
+const formatDate = (isoString) => {
+    if (!isoString) return "-";
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}.${month}.${day}`;
+};
+
+// 5개 카테고리 정보 데이터
+const CATEGORY_CARDS = [
+    {
+        category: "청년",
+        title: "청년 지원 혜택",
+        desc: "청년월세 특별지원, 자산 형성 지원금 등 청년층의 자립과 주거·일자리를 지원합니다."
+    },
+    {
+        category: "창업",
+        title: "창업 / 소상공인 혜택",
+        desc: "초기 창업 패키지, 사업화 자금, 경영 안정 자금 등 유망 창업 기업과 소상공인을 지원합니다."
+    },
+    {
+        category: "생활 / 복지",
+        title: "생활 / 복지 혜택",
+        desc: "긴급 생계지원금, 저소득층 자립 지원, 취약계층 맞춤형 바우처 등 생활 안정을 지원합니다."
+    },
+    {
+        category: "주거",
+        title: "주거 금융 혜택",
+        desc: "전월세 보증금 이자 지원, 주거급여, 공공임대주택 연계 등 주거비 부담을 경감해 드립니다."
+    },
+    {
+        category: "건강 / 의료",
+        title: "건강 / 의료 혜택",
+        desc: "고액 의료비 지원, 본인부담상한제, 정신건강 검진비 등 국민의 건강증진과 의료비를 지원합니다."
+    }
+];
 
 const MainPage = () => {
-
-    const {session, setSession, checkSession, logout} = useAuth();
-    const {loading, setLoading} = useLoading();
+    const { session, setSession, checkSession, logout } = useAuth();
+    const { loading, setLoading } = useLoading();
 
     // 2. 현재 선택된 메인 메뉴 탭 상태
     const [activeTab, setActiveTab] = useState('지원금종류');
@@ -18,13 +85,12 @@ const MainPage = () => {
     };
 
     useEffect(() => {
-
         const run = async () => {
             setLoading(true);
             const response = await checkSession();
-            if(response.success){
+            if (response.success) {
                 setSession(response.data);
-            } else{
+            } else {
                 setSession(null);
             }
             setLoading(false);
@@ -33,10 +99,9 @@ const MainPage = () => {
         run();
     }, []);
 
-    if(loading){
+    if (loading) {
         return null;
     }
-
 
     return (
         <div style={styles.container}>
@@ -47,31 +112,28 @@ const MainPage = () => {
                         {session ? (
                             <>
                                 {session.role === 'ADMIN' ? (
-                                    <>
-                                        <Link to="/admin"><button style={styles.topLinkBtn}>
-                                        <span style={styles.icon}>👤</span> 관리자페이지
-                                        </button></Link>
-                                    </>) : (
-                                    <>
-                                        <Link to="/user"><button style={styles.topLinkBtn}>
-                                        <span style={styles.icon}>👤</span> 마이페이지
-                                        </button></Link>
-                                    </>)}
-
+                                    <Link to="/admin">
+                                        <button style={styles.topLinkBtn}>관리자페이지</button>
+                                    </Link>
+                                ) : (
+                                    <Link to="/user">
+                                        <button style={styles.topLinkBtn}>마이페이지</button>
+                                    </Link>
+                                )}
                                 <span style={styles.divider}>|</span>
-                                <button style={styles.topLinkBtn} onClick={() => {logout()}}>
+                                <button style={styles.topLinkBtn} onClick={() => { logout(); }}>
                                     로그아웃
                                 </button>
                             </>
                         ) : (
                             <>
-                                <Link to="/login"><button style={styles.topLinkBtn}>
-                                    <span style={styles.icon}>🔓</span> 로그인
-                                </button></Link>
+                                <Link to="/login">
+                                    <button style={styles.topLinkBtn}>로그인</button>
+                                </Link>
                                 <span style={styles.divider}>|</span>
-                                <Link to="/register"><button style={styles.topLinkBtn}>
-                                    <span style={styles.icon}>👤+</span> 회원가입
-                                </button></Link>
+                                <Link to="/register">
+                                    <button style={styles.topLinkBtn}>회원가입</button>
+                                </Link>
                             </>
                         )}
                     </div>
@@ -118,49 +180,255 @@ const MainPage = () => {
     );
 };
 
-//탭 정의
+// ------------------- 탭 컴포넌트 정의 -------------------
 
 // 1. 지원금종류
-const TabSupportTypes = () => (
-    <div>
-        <h2 style={styles.sectionTitle}>지금 많이 찾는 지원금 혜택</h2>
-        <div style={styles.cardGrid}>
-            <div style={styles.card}>
-                <span style={styles.cardCategory}>청년 / 취업</span>
-                <h3>청년월세 특별지원금</h3>
-                <p>무주택 청년의 주거비 부담 경감을 위해 월세를 지원합니다.</p>
+const TabSupportTypes = () => {
+    const { session } = useAuth();
+    const { grants, getGrants } = useGrant();
+    const { createFavorite, getFavorites, deleteFavorite } = useFavorite();
+
+    // 즐겨찾기 활성화 상태 관리 (grantId: boolean)
+    const [favoriteMap, setFavoriteMap] = useState({});
+
+    // 마우스 드래그 가로 스크롤 관련 State/Ref
+    const scrollRef = useRef(null);
+    const [isMouseDown, setIsMouseDown] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+
+    const isUser = session && (session.role === 'USER' || session.role === 'User');
+
+    // 지원금 목록 및 즐겨찾기 목록 초기 조회
+    useEffect(() => {
+        const fetchData = async () => {
+            await getGrants();
+
+            // 유저 세션이 있는 경우 즐겨찾기 목록 가져와서 맵핑 생성
+            if (isUser) {
+                try {
+                    const response = await getFavorites();
+                    const favList = Array.isArray(response) ? response : response?.data || [];
+
+                    const newFavMap = {};
+                    favList.forEach((fav) => {
+                        if (fav.grantId) {
+                            newFavMap[fav.grantId] = true;
+                        }
+                    });
+                    setFavoriteMap(newFavMap);
+                } catch (error) {
+                    console.error("즐겨찾기 목록 조회 실패:", error);
+                }
+            }
+        };
+
+        fetchData();
+    }, [session]);
+
+    // 즐겨찾기 토글 이벤트 핸들러 (등록 / 삭제)
+    const handleFavoriteToggle = async (grantId) => {
+        if (!grantId) return;
+
+        const isFavorited = !!favoriteMap[grantId];
+
+        try {
+            if (isFavorited) {
+                await deleteFavorite(grantId);
+                setFavoriteMap((prev) => ({
+                    ...prev,
+                    [grantId]: false
+                }));
+            } else {
+                await createFavorite(grantId);
+                setFavoriteMap((prev) => ({
+                    ...prev,
+                    [grantId]: true
+                }));
+            }
+        } catch (error) {
+            console.error("즐겨찾기 처리 실패:", error);
+        }
+    };
+
+    // 마우스 드래그 이벤트 핸들러
+    const handleMouseDown = (e) => {
+        setIsMouseDown(true);
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseLeaveOrUp = () => {
+        setIsMouseDown(false);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isMouseDown) return;
+        e.preventDefault();
+        const x = e.pageX - scrollRef.current.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        scrollRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    return (
+        <div>
+            {/* (1) 카테고리별 설명 - 드래그 스크롤 영역 */}
+            <div style={styles.sectionHeaderRow}>
+                <h2 style={styles.sectionTitleNoBorder}>지금 많이 찾는 지원금 혜택</h2>
             </div>
-            <div style={styles.card}>
-                <span style={styles.cardCategory}>창업 / 소상공인</span>
-                <h3>초기 창업 패키지 지원</h3>
-                <p>유망 창업아이템을 보유한 초기창업기업의 사업화를 지원합니다.</p>
+
+            <div
+                ref={scrollRef}
+                style={{
+                    ...styles.dragContainer,
+                    cursor: isMouseDown ? 'grabbing' : 'grab',
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeaveOrUp}
+                onMouseUp={handleMouseLeaveOrUp}
+                onMouseMove={handleMouseMove}
+            >
+                {CATEGORY_CARDS.map((item, idx) => (
+                    <div key={idx} style={styles.dragCard}>
+                        <span style={styles.cardCategory}>{item.category}</span>
+                        <h3 style={styles.cardHeaderTitle}>{item.title}</h3>
+                        <p style={styles.cardDescription}>{item.desc}</p>
+                    </div>
+                ))}
             </div>
-            <div style={styles.card}>
-                <span style={styles.cardCategory}>생활 / 복지</span>
-                <h3>긴급 생활지원금</h3>
-                <p>갑작스러운 위기상황으로 생계유지가 곤란한 가구를 지원합니다.</p>
+
+            {/* 구분선 */}
+            <div style={styles.sectionDivider} />
+
+            {/* (2) 실제 요청 응답 기반 현재 지원금 목록 */}
+            <div style={styles.sectionHeaderRow}>
+                <h2 style={styles.sectionTitleNoBorder}>현재 모집 중인 지원금 사업</h2>
+                <span style={styles.totalBadge}>
+                    총 <strong style={{ color: "#0056b3" }}>{grants?.length || 0}</strong>건
+                </span>
+            </div>
+
+            <div style={styles.grantList}>
+                {grants && grants.length > 0 ? (
+                    grants.map((grant) => {
+                        const statusInfo = STATUS_MAP[grant.status] || {
+                            label: grant.status || "미정",
+                            bg: "#f1f5f9",
+                            color: "#475569",
+                        };
+
+                        const isFavorited = !!favoriteMap[grant.grantId];
+
+                        return (
+                            <div key={grant.grantId || grant.title} style={styles.grantCard}>
+                                <div style={styles.grantCardHeader}>
+                                    <div style={styles.headerLeft}>
+                                        <span style={styles.grantNumber}>
+                                            {grant.grantId ? `정책 NO.${String(grant.grantId).padStart(5, "0")}` : "신규 정책"}
+                                        </span>
+                                        {grant.category && (
+                                            <>
+                                                <span style={styles.headerDivider}>|</span>
+                                                <span style={styles.categoryTag}>
+                                                    {CATEGORY_MAP[grant.category] || grant.category}
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    <div style={styles.headerRight}>
+                                        {isUser && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleFavoriteToggle(grant.grantId)}
+                                                style={styles.favoriteBtn}
+                                                title={isFavorited ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                                            >
+                                                {isFavorited ? (
+                                                    <span style={styles.starFilled}>★</span>
+                                                ) : (
+                                                    <span style={styles.starEmpty}>☆</span>
+                                                )}
+                                            </button>
+                                        )}
+                                        <span
+                                            style={{
+                                                ...styles.statusBadge,
+                                                backgroundColor: statusInfo.bg,
+                                                color: statusInfo.color,
+                                            }}
+                                        >
+                                            {statusInfo.label}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <h3 style={styles.grantTitle}>{grant.title}</h3>
+                                <p style={styles.grantContent}>{grant.content}</p>
+
+                                <div style={styles.metaRow}>
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>지원금액</span>
+                                        <span style={styles.metaValueHighlight}>
+                                            {grant.amount ? (isNaN(grant.amount) ? grant.amount : `${Number(grant.amount).toLocaleString()}만원`) : "-"}
+                                        </span>
+                                    </div>
+                                    <div style={styles.metaDivider} />
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>지급주기</span>
+                                        <span style={styles.metaValue}>
+                                            {CYCLE_MAP[grant.cycle] || grant.cycle || "-"}
+                                        </span>
+                                    </div>
+                                    <div style={styles.metaDivider} />
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>신청기간</span>
+                                        <span style={styles.metaValue}>
+                                            {formatDate(grant.startDate)} ~ {formatDate(grant.endDate)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div style={styles.emptyCard}>
+                        <p style={styles.emptyText}>현재 등록된 지원금 사업이 존재하지 않습니다.</p>
+                    </div>
+                )}
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 // 2. 지원금신청
-const TabSupportApply = () => (
-    <div>
-        <h2 style={styles.sectionTitle}>지원금 원스톱 신청</h2>
-        <div style={styles.infoBox}>
-            <p style={{ margin: 0, fontWeight: 'bold' }}>💡 신청 전 확인해주세요!</p>
-            <p style={{ margin: '8px 0 0 0', color: '#666' }}>
-                로그인 후 신청 시 기본 정보가 자동 입력되어 더 빠른 신청이 가능합니다.
-            </p>
+const TabSupportApply = () => {
+    // 모달 열림/닫힘 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    return (
+        <div>
+            <h2 style={styles.sectionTitle}>지원금 원스톱 신청</h2>
+            <div style={styles.infoBox}>
+                <p style={{ margin: 0, fontWeight: 'bold' }}>💡 신청 전 확인해주세요!</p>
+                <p style={{ margin: '8px 0 0 0', color: '#666' }}>
+                    로그인 후 신청 시 기본 정보가 자동 입력되어 더 빠른 신청이 가능합니다.
+                </p>
+            </div>
+            <div style={{ marginTop: '20px' }}>
+                <button style={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
+                    내게 맞는 지원금 신청하기
+                </button>
+            </div>
+
+            {/* 지원금 신청 모달 연동 */}
+            <ApplicationForm
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
-        <div style={{ marginTop: '20px' }}>
-            <button style={styles.primaryBtn} onClick={() => alert('신청 자격 조회')}>
-                내게 맞는 지원금 조회 및 신청하기
-            </button>
-        </div>
-    </div>
-);
+    );
+};
 
 // 3. 공지사항
 const TabNotice = () => (
@@ -191,7 +459,7 @@ const TabCustomerCenter = () => (
     </div>
 );
 
-//css
+// ------------------- 스타일 객체 -------------------
 
 const styles = {
     container: {
@@ -200,9 +468,8 @@ const styles = {
         minHeight: '100vh',
         color: '#333',
         width: '100%',
-        boxSizing: 'border-box', //  전체 박스 사이즈 계산 통일
+        boxSizing: 'border-box',
     },
-    // 최상단 우측 로그인/회원가입 바
     topHeader: {
         borderBottom: '1px solid #e9ecef',
         backgroundColor: '#fff',
@@ -216,13 +483,13 @@ const styles = {
         padding: '8px 20px',
         display: 'flex',
         justifyContent: 'flex-end',
-        boxSizing: 'border-box', //  패딩이 전체 너비를 넘지 않도록 설정
+        boxSizing: 'border-box',
     },
     authMenu: {
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
-        flexWrap: 'wrap', //  모바일 등 좁은 화면에서 줄바꿈 대응
+        flexWrap: 'wrap',
     },
     topLinkBtn: {
         background: 'none',
@@ -238,7 +505,6 @@ const styles = {
     divider: {
         color: '#dee2e6',
     },
-    // 메인 네비게이션
     mainNav: {
         backgroundColor: '#fff',
         borderBottom: '2px solid #0056b3',
@@ -255,7 +521,7 @@ const styles = {
         justifyContent: 'space-between',
         minHeight: '70px',
         boxSizing: 'border-box',
-        flexWrap: 'wrap', //  화면 폭이 매우 좁을 때 로고와 메뉴 상하 분리 대응
+        flexWrap: 'wrap',
         gap: '10px',
     },
     logoArea: {
@@ -283,13 +549,13 @@ const styles = {
         margin: 0,
         padding: 0,
         height: '100%',
-        flexWrap: 'wrap', //  메뉴가 화면 밖으로 넘치지 않고 유연하게 배치됨
+        flexWrap: 'wrap',
     },
     menuItem: {
-        padding: '12px 20px', //  세로 패딩 지정으로 높이 반응형 대응
+        padding: '12px 20px',
         display: 'flex',
         alignItems: 'center',
-        fontSize: '16px', //  모바일 고려 살짝 조정
+        fontSize: '16px',
         fontWeight: 'bold',
         color: '#333',
         cursor: 'pointer',
@@ -301,7 +567,6 @@ const styles = {
         borderBottom: '3px solid #0056b3',
         backgroundColor: '#f1f5f9',
     },
-    // 동적 콘텐츠 영역
     contentArea: {
         padding: '30px 20px',
         width: '100%',
@@ -316,19 +581,202 @@ const styles = {
         borderRadius: '12px',
         boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
         minHeight: '400px',
-        boxSizing: 'border-box', //  패딩 포함 반응형 너비 계산
+        boxSizing: 'border-box',
     },
     sectionTitle: {
         fontSize: '20px',
         fontWeight: 'bold',
         color: '#111111',
         marginBottom: '20px',
-        borderBottom: '2px solid #111111', //  글자색과 맞춰 밑줄도 진하게 매칭
+        borderBottom: '2px solid #111111',
         paddingBottom: '10px',
     },
+    sectionTitleNoBorder: {
+        fontSize: '20px',
+        fontWeight: 'bold',
+        color: '#111111',
+        margin: 0,
+    },
+    sectionHeaderRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        marginBottom: '16px',
+        borderBottom: '2px solid #111111',
+        paddingBottom: '10px',
+    },
+    dragHint: {
+        fontSize: '12px',
+        color: '#666666',
+        fontWeight: '500',
+    },
+    totalBadge: {
+        fontSize: '14px',
+        color: '#666666',
+    },
+
+    /* 가로 드래그 스크롤 관련 스타일 */
+    dragContainer: {
+        display: 'flex',
+        gap: '16px',
+        overflowX: 'auto',
+        paddingBottom: '12px',
+        userSelect: 'none',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+    },
+    dragCard: {
+        minWidth: '280px',
+        maxWidth: '280px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        padding: '20px',
+        backgroundColor: '#f8fafc',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+        boxSizing: 'border-box',
+        flexShrink: 0,
+    },
+    cardHeaderTitle: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#111111',
+        margin: '8px 0',
+    },
+    cardDescription: {
+        fontSize: '13px',
+        color: '#475569',
+        lineHeight: '1.5',
+        margin: 0,
+    },
+    sectionDivider: {
+        height: '1px',
+        backgroundColor: '#e2e8f0',
+        margin: '32px 0 24px 0',
+    },
+
+    /* 실시간 지원금 리스트 스타일 */
+    grantList: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+    },
+    grantCard: {
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        padding: '20px 24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
+    },
+    grantCardHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    headerLeft: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+    },
+    headerRight: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+    },
+    favoriteBtn: {
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '0 4px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        lineHeight: 1,
+    },
+    starEmpty: {
+        fontSize: '20px',
+        color: '#94a3b8',
+    },
+    starFilled: {
+        fontSize: '20px',
+        color: '#f59e0b',
+    },
+    grantNumber: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#888888',
+        letterSpacing: '0.03em',
+    },
+    headerDivider: {
+        fontSize: '11px',
+        color: '#cbd5e1',
+    },
+    categoryTag: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+        color: '#0056b3',
+    },
+    statusBadge: {
+        padding: "4px 10px",
+        borderRadius: "4px",
+        fontSize: "12px",
+        fontWeight: "bold",
+    },
+    grantTitle: {
+        fontSize: '17px',
+        fontWeight: 'bold',
+        color: '#111111',
+        margin: 0,
+    },
+    grantContent: {
+        fontSize: '14px',
+        color: '#333333',
+        lineHeight: '1.5',
+        margin: 0,
+        whiteSpace: 'pre-line',
+    },
+    metaRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        backgroundColor: '#f8f9fa',
+        border: '1px solid #e2e8f0',
+        padding: '10px 16px',
+        borderRadius: '6px',
+        marginTop: '4px',
+        flexWrap: 'wrap',
+    },
+    metaItem: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+    },
+    metaLabel: {
+        fontSize: '13px',
+        color: '#666666',
+        fontWeight: '500',
+    },
+    metaValue: {
+        fontSize: '13px',
+        color: '#111111',
+        fontWeight: 'bold',
+    },
+    metaValueHighlight: {
+        fontSize: '14px',
+        color: '#0056b3',
+        fontWeight: 'bold',
+    },
+    metaDivider: {
+        width: '1px',
+        height: '12px',
+        backgroundColor: '#cbd5e1',
+    },
+
+    /* 공통 기본 카드가이드 */
     cardGrid: {
         display: 'grid',
-        //  minmax를 250px로 내려서 소형 화면에서도 카드가 깨지지 않게 유연화
         gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
         gap: '20px',
         width: '100%',
@@ -362,28 +810,19 @@ const styles = {
         fontWeight: 'bold',
         borderRadius: '6px',
         cursor: 'pointer',
-        maxWidth: '100%', //  버튼이 화면 너비를 넘지 않도록 제한
+        maxWidth: '100%',
     },
-    listGroup: {
-        listStyle: 'none',
-        padding: 0,
+    emptyCard: {
+        padding: "40px",
+        textAlign: "center",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        border: "1px solid #e2e8f0",
+    },
+    emptyText: {
+        fontSize: "14px",
+        color: "#666666",
         margin: 0,
-        width: '100%',
-    },
-    listItem: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '14px 0',
-        borderBottom: '1px solid #edf2f7',
-        fontSize: '15px',
-        cursor: 'pointer',
-        gap: '10px', //  제목과 날짜 사이 간격 보장
-    },
-    date: {
-        color: '#a0aec0',
-        fontSize: '13px',
-        whiteSpace: 'nowrap', //  날짜 줄바꿈 방지
     },
 };
 

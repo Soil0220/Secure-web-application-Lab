@@ -1,69 +1,287 @@
-import {useEffect, useState} from 'react';
-import {useGrant} from "../../contexts/grantContext/UseGrant.jsx";
+import { useEffect, useState } from 'react';
+import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
+
+// 1. Enum 상수 매핑 정의
+const CATEGORY_MAP = {
+    YOUTH_EMPLOYMENT: "청년",
+    BUSINESS_STARTUP: "창업",
+    LIVING_WELFARE: "생활 / 복지",
+    HOUSING_FINANCE: "주거",
+    HEALTH_CARE: "건강 / 의료"
+};
+
+const CYCLE_MAP = {
+    LUMP_SUM: "일시금",
+    DAILY: "매일",
+    WEEKLY: "매주",
+    MONTHLY: "매월",
+    YEARLY: "매년"
+};
+
+const STATUS_MAP = {
+    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
+    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
+    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
+};
+
+// 날짜 포맷팅 (YYYY.MM.DD)
+const formatDate = (isoString) => {
+    if (!isoString) return "-";
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}.${month}.${day}`;
+};
 
 export default function GrantManagement() {
-
-    const {grants, createGrant, getGrants} = useGrant();
+    const { grants, createGrant, getGrants } = useGrant();
     const [showModal, setShowModal] = useState(false);
-    const [newProg, setNewProg] = useState({title: '', category: '',cycle: '', content: '',  amount: '', startDate: '',endDate: '', status: '' });
 
+    // 신규 등록 폼 상태 (Enum 기본값 설정)
+    const [newProg, setNewProg] = useState({
+        title: '',
+        category: 'YOUTH_EMPLOYMENT',
+        cycle: 'MONTHLY',
+        content: '',
+        amount: '',
+        startDate: '',
+        endDate: '',
+        status: 'PREPARING'
+    });
 
-    //초기 진입시 지원금 제도 불러오기
+    // 초기 진입시 지원금 제도 불러오기
     useEffect(() => {
-
         const run = async () => {
             await getGrants();
         };
         run();
     }, []);
 
-    //지원금 제도 생성
-    const handleCreate = () => {
-        createGrant(newProg);
+// 지원금 제도 생성
+    const handleCreate = async () => {
+        // [수정] 날짜 문자열을 Instant 포맷(ISO 8601)으로 변환
+        // 예: "2026-08-17" -> "2026-08-17T00:00:00Z"
+        const formattedData = {
+            ...newProg,
+            startDate: newProg.startDate ? `${newProg.startDate}T00:00:00Z` : null,
+            endDate: newProg.endDate ? `${newProg.endDate}T00:00:00Z` : null,
+        };
+
+        await createGrant(formattedData); // 변환된 데이터를 전송
         setShowModal(false);
-        setNewProg({title: '', category: '',cycle: '', content: '',  amount: '', startDate: '',endDate: '', status: '' });
+        setNewProg({
+            title: '',
+            category: 'YOUTH_EMPLOYMENT',
+            cycle: 'MONTHLY',
+            content: '',
+            amount: '',
+            startDate: '',
+            endDate: '',
+            status: 'PREPARING'
+        });
     };
 
     return (
-        <div>
+        <div style={styles.container}>
+            {/* 1. Header 영역 */}
             <div style={styles.headerRow}>
-                <h2 style={styles.title}>지원 사업 관리</h2>
-                <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>+ 신규 지원사업 등록</button>
+                <div style={styles.titleGroup}>
+                    <h2 style={styles.contentTitle}>지원 사업 관리</h2>
+                    <span style={styles.totalBadge}>
+                        총 <strong style={{ color: "#0056b3" }}>{grants?.length || 0}</strong>건
+                    </span>
+                </div>
+                <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>
+                    + 신규 지원사업 등록
+                </button>
             </div>
 
-            {/* 사업 카드 목록 */}
-            <div style={styles.grid}>
-                {grants.map((p) => (
-                    <div key={p.grantId} style={styles.card}>
-                        <div style={styles.cardHeader}>
-                            <span style={styles.category}>{p.category}</span>
-                            <span style={{ ...styles.badge, ...statusStyle[p.status] }}>{p.status}</span>
-                        </div>
-                        <h3 style={styles.cardTitle}>{p.title}</h3>
-                        <p style={styles.cardInfo}><b>주기:</b> {p.cycle}</p>
-                        <p style={styles.cardInfo}><b>설명:</b> {p.content}</p>
-                        <p style={styles.cardInfo}><b>지원금액:</b> {p.amount}</p>
-                        <p style={styles.cardInfo}><b>시작기간:</b> {p.startDate}</p>
-                        <p style={styles.cardInfo}><b>종료기간:</b> {p.endDate}</p>
+            {/* 2. 사업 카드 목록 */}
+            <div style={styles.cardList}>
+                {grants && grants.length > 0 ? (
+                    grants.map((p) => {
+                        const statusInfo = STATUS_MAP[p.status] || {
+                            label: p.status || "미정",
+                            bg: "#f1f5f9",
+                            color: "#475569",
+                        };
+
+                        return (
+                            <div key={p.grantId || p.title} style={styles.dataCard}>
+                                {/* 상단 Header: 고유 번호/카테고리 & 상태 배지 */}
+                                <div style={styles.cardHeader}>
+                                    <div style={styles.headerLeft}>
+                                        <span style={styles.grantNumber}>
+                                            {p.grantId ? `정책 NO.${String(p.grantId).padStart(5, "0")}` : "신규 정책"}
+                                        </span>
+                                        {p.category && (
+                                            <>
+                                                <span style={styles.headerDivider}>|</span>
+                                                <span style={styles.categoryTag}>
+                                                    {CATEGORY_MAP[p.category] || p.category}
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <span
+                                        style={{
+                                            ...styles.statusBadge,
+                                            backgroundColor: statusInfo.bg,
+                                            color: statusInfo.color,
+                                        }}
+                                    >
+                                        {statusInfo.label}
+                                    </span>
+                                </div>
+
+                                {/* 타이틀 및 상세 설명 */}
+                                <h3 style={styles.cardTitle}>{p.title}</h3>
+                                <p style={styles.cardContent}>{p.content}</p>
+
+                                {/* 메타 정보 레이아웃 (지원금액, 지급주기, 신청기간) */}
+                                <div style={styles.metaRow}>
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>지원금액</span>
+                                        <span style={styles.metaValueHighlight}>
+                                            {p.amount ? (isNaN(p.amount) ? p.amount : `${Number(p.amount).toLocaleString()}만원`) : "-"}
+                                        </span>
+                                    </div>
+                                    <div style={styles.metaDivider} />
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>지급주기</span>
+                                        <span style={styles.metaValue}>
+                                            {CYCLE_MAP[p.cycle] || p.cycle || "-"}
+                                        </span>
+                                    </div>
+                                    <div style={styles.metaDivider} />
+                                    <div style={styles.metaItem}>
+                                        <span style={styles.metaLabel}>신청기간</span>
+                                        <span style={styles.metaValue}>
+                                            {formatDate(p.startDate)} ~ {formatDate(p.endDate)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div style={styles.emptyCard}>
+                        <p style={styles.emptyText}>등록된 지원 사업이 존재하지 않습니다.</p>
                     </div>
-                ))}
+                )}
             </div>
 
-            {/* 신규 등록 모달 */}
+            {/* 3. 신규 등록 모달 (배경 클릭 시 닫힘, 내부 클릭은 전파 방지) */}
             {showModal && (
-                <div style={styles.modalOverlay}>
-                    <div style={styles.modal}>
-                        <h3>신규 지원사업 등록</h3>
-                        <input style={styles.input} placeholder="사업명" value={newProg.title} onChange={e => setNewProg({...newProg, title: e.target.value})} />
-                        <input style={styles.input} placeholder="카테고리" value={newProg.category} onChange={e => setNewProg({...newProg, category: e.target.value})} />
-                        <input style={styles.input} placeholder="지급 주기" value={newProg.cycle} onChange={e => setNewProg({...newProg, cycle: e.target.value})} />
-                        <input style={styles.input} placeholder="지원 내용" value={newProg.content} onChange={e => setNewProg({...newProg, content: e.target.value})} />
-                        <input style={styles.input} placeholder="지원 금액" value={newProg.amount} onChange={e => setNewProg({...newProg, amount: e.target.value})} />
-                        <input style={styles.input} placeholder="시작 기간" value={newProg.startDate} onChange={e => setNewProg({...newProg, startDate: e.target.value})} />
-                        <input style={styles.input} placeholder="종료 기간" value={newProg.endDate} onChange={e => setNewProg({...newProg, endDate: e.target.value})} />
+                <div style={styles.modalOverlay} onClick={() => setShowModal(false)}>
+                    <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <div style={styles.modalHeader}>
+                            <div style={styles.modalTitleGroup}>
+                                <span style={styles.modalBadge}>CREATE</span>
+                                <h3 style={styles.modalTitle}>신규 지원사업 등록</h3>
+                            </div>
+                        </div>
+
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>사업명 <span style={styles.requiredIcon}>*</span></label>
+                            <input
+                                style={styles.input}
+                                placeholder="사업명을 입력하세요"
+                                value={newProg.title}
+                                onChange={e => setNewProg({ ...newProg, title: e.target.value })}
+                            />
+                        </div>
+
+                        <div style={styles.inputRow}>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>카테고리 <span style={styles.requiredIcon}>*</span></label>
+                                <select
+                                    style={styles.select}
+                                    value={newProg.category}
+                                    onChange={e => setNewProg({ ...newProg, category: e.target.value })}
+                                >
+                                    {Object.entries(CATEGORY_MAP).map(([key, label]) => (
+                                        <option key={key} value={key}>{label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>지급 주기 <span style={styles.requiredIcon}>*</span></label>
+                                <select
+                                    style={styles.select}
+                                    value={newProg.cycle}
+                                    onChange={e => setNewProg({ ...newProg, cycle: e.target.value })}
+                                >
+                                    {Object.entries(CYCLE_MAP).map(([key, label]) => (
+                                        <option key={key} value={key}>{label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style={styles.formGroup}>
+                            <label style={styles.label}>지원 내용 <span style={styles.requiredIcon}>*</span></label>
+                            <textarea
+                                style={styles.textarea}
+                                placeholder="지원 내용을 상세히 입력하세요"
+                                value={newProg.content}
+                                onChange={e => setNewProg({ ...newProg, content: e.target.value })}
+                            />
+                        </div>
+
+                        <div style={styles.inputRow}>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>지원 금액(만원) <span style={styles.requiredIcon}>*</span></label>
+                                <input
+                                    style={styles.input}
+                                    placeholder="예: 10"
+                                    value={newProg.amount}
+                                    onChange={e => setNewProg({ ...newProg, amount: e.target.value })}
+                                />
+                            </div>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>상태 <span style={styles.requiredIcon}>*</span></label>
+                                <select
+                                    style={styles.select}
+                                    value={newProg.status}
+                                    onChange={e => setNewProg({ ...newProg, status: e.target.value })}
+                                >
+                                    {Object.entries(STATUS_MAP).map(([key, val]) => (
+                                        <option key={key} value={key}>{val.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style={styles.inputRow}>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>시작 기간 <span style={styles.requiredIcon}>*</span></label>
+                                <input
+                                    type="date"
+                                    style={styles.input}
+                                    value={newProg.startDate}
+                                    onChange={e => setNewProg({ ...newProg, startDate: e.target.value })}
+                                />
+                            </div>
+                            <div style={{ ...styles.formGroup, flex: 1 }}>
+                                <label style={styles.label}>종료 기간 <span style={styles.requiredIcon}>*</span></label>
+                                <input
+                                    type="date"
+                                    style={styles.input}
+                                    value={newProg.endDate}
+                                    onChange={e => setNewProg({ ...newProg, endDate: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
                         <div style={styles.modalBtns}>
-                            <button style={styles.primaryBtn} onClick={handleCreate}>등록</button>
-                            <button style={styles.cancelBtn} onClick={() => setShowModal(false)}>취소</button>
+                            <button style={styles.modalPrimaryBtn} onClick={handleCreate}>
+                                등록하기
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -72,26 +290,278 @@ export default function GrantManagement() {
     );
 }
 
-const statusStyle = {
-    '모집중': { backgroundColor: '#E6F4EA', color: '#137333' },
-    '모집예정': { backgroundColor: '#E8F0FE', color: '#1A73E8' },
-    '마감': { backgroundColor: '#F1F3F4', color: '#5F6368' }
-};
-
+// 지원금24 스타일 객체
 const styles = {
-    headerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-    title: { fontSize: '20px', fontWeight: 'bold', color: '#111' },
-    primaryBtn: { backgroundColor: '#0056B3', color: '#FFF', border: 'none', padding: '10px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' },
-    cancelBtn: { backgroundColor: '#EEE', color: '#333', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' },
-    card: { border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', backgroundColor: '#FFF' },
-    cardHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: '8px' },
-    category: { fontSize: '13px', color: '#0056B3', fontWeight: 'bold' },
-    badge: { fontSize: '12px', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' },
-    cardTitle: { fontSize: '17px', fontWeight: 'bold', margin: '0 0 10px 0', color: '#222' },
-    cardInfo: { fontSize: '14px', color: '#555', margin: '4px 0' },
-    modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-    modal: { backgroundColor: '#FFF', padding: '24px', borderRadius: '12px', width: '400px', display: 'flex', flexDirection: 'column', gap: '12px' },
-    input: { padding: '10px', borderRadius: '6px', border: '1px solid #CCC' },
-    modalBtns: { display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '10px' }
+    container: {
+        fontFamily: "'Noto Sans KR', sans-serif",
+        backgroundColor: "#ffffff",
+        width: "100%",
+        boxSizing: "border-box",
+    },
+    headerRow: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "20px",
+        borderBottom: "2px solid #111111",
+        paddingBottom: "10px",
+    },
+    titleGroup: {
+        display: "flex",
+        alignItems: "baseline",
+        gap: "12px",
+    },
+    contentTitle: {
+        fontSize: "20px",
+        fontWeight: "bold",
+        color: "#111111",
+        margin: 0,
+    },
+    totalBadge: {
+        fontSize: "14px",
+        color: "#666666",
+    },
+    primaryBtn: {
+        backgroundColor: "#0056b3",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "6px",
+        padding: "9px 16px",
+        fontSize: "14px",
+        fontWeight: "bold",
+        cursor: "pointer",
+        transition: "background-color 0.15s ease",
+    },
+    cardList: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+    },
+    dataCard: {
+        backgroundColor: "#ffffff",
+        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
+        padding: "20px 24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
+    },
+    cardHeader: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    headerLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+    },
+    grantNumber: {
+        fontSize: "12px",
+        fontWeight: "bold",
+        color: "#888888",
+        letterSpacing: "0.03em",
+    },
+    headerDivider: {
+        fontSize: "11px",
+        color: "#cbd5e1",
+    },
+    categoryTag: {
+        fontSize: "12px",
+        fontWeight: "bold",
+        color: "#0056b3",
+    },
+    statusBadge: {
+        padding: "4px 10px",
+        borderRadius: "4px",
+        fontSize: "12px",
+        fontWeight: "bold",
+    },
+    cardTitle: {
+        fontSize: "17px",
+        fontWeight: "bold",
+        color: "#111111",
+        margin: 0,
+    },
+    cardContent: {
+        fontSize: "14px",
+        color: "#333333",
+        lineHeight: "1.5",
+        margin: 0,
+        whiteSpace: "pre-line",
+    },
+    metaRow: {
+        display: "flex",
+        alignItems: "center",
+        gap: "16px",
+        backgroundColor: "#f8f9fa",
+        border: "1px solid #e2e8f0",
+        padding: "10px 16px",
+        borderRadius: "6px",
+        marginTop: "4px",
+        flexWrap: "wrap",
+    },
+    metaItem: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+    },
+    metaLabel: {
+        fontSize: "13px",
+        color: "#666666",
+        fontWeight: "500",
+    },
+    metaValue: {
+        fontSize: "13px",
+        color: "#111111",
+        fontWeight: "bold",
+    },
+    metaValueHighlight: {
+        fontSize: "14px",
+        color: "#0056b3",
+        fontWeight: "bold",
+    },
+    metaDivider: {
+        width: "1px",
+        height: "12px",
+        backgroundColor: "#cbd5e1",
+    },
+    emptyCard: {
+        padding: "40px",
+        textAlign: "center",
+        backgroundColor: "#ffffff",
+        borderRadius: "8px",
+        border: "1px solid #e2e8f0",
+    },
+    emptyText: {
+        fontSize: "14px",
+        color: "#666666",
+        margin: 0,
+    },
+
+    /* 모달 레이아웃 */
+    modalOverlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        backdropFilter: "blur(2px)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1000,
+    },
+    modal: {
+        backgroundColor: "#ffffff",
+        padding: "28px",
+        borderRadius: "8px",
+        width: "500px",
+        maxHeight: "85vh",
+        overflowY: "auto",
+        border: "1px solid #e2e8f0",
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+    },
+    modalHeader: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "4px",
+        paddingBottom: "12px",
+        borderBottom: "1px solid #e2e8f0",
+    },
+    modalTitleGroup: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+    },
+    modalBadge: {
+        backgroundColor: "#0056b3",
+        color: "#ffffff",
+        fontSize: "11px",
+        fontWeight: "bold",
+        padding: "2px 6px",
+        borderRadius: "4px",
+    },
+    modalTitle: {
+        fontSize: "16px",
+        fontWeight: "bold",
+        color: "#111111",
+        margin: 0,
+    },
+    formGroup: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px",
+    },
+    inputRow: {
+        display: "flex",
+        gap: "12px",
+    },
+    label: {
+        fontSize: "13px",
+        fontWeight: "bold",
+        color: "#0056b3",
+    },
+    requiredIcon: {
+        color: "#dc2626",
+    },
+    input: {
+        padding: "10px 12px",
+        borderRadius: "6px",
+        border: "1px solid #cbd5e1",
+        backgroundColor: "#ffffff",
+        fontSize: "14px",
+        color: "#111111",
+        outline: "none",
+        boxSizing: "border-box",
+        width: "100%",
+    },
+    select: {
+        padding: "10px 12px",
+        borderRadius: "6px",
+        border: "1px solid #cbd5e1",
+        backgroundColor: "#ffffff",
+        fontSize: "14px",
+        color: "#111111",
+        outline: "none",
+        boxSizing: "border-box",
+        width: "100%",
+        cursor: "pointer",
+    },
+    textarea: {
+        padding: "10px 12px",
+        borderRadius: "6px",
+        border: "1px solid #cbd5e1",
+        backgroundColor: "#ffffff",
+        fontSize: "14px",
+        color: "#111111",
+        outline: "none",
+        boxSizing: "border-box",
+        width: "100%",
+        height: "100px",
+        resize: "vertical",
+        lineHeight: "1.5",
+        fontFamily: "inherit",
+    },
+    modalBtns: {
+        display: "flex",
+        marginTop: "8px",
+    },
+    modalPrimaryBtn: {
+        width: "100%",
+        padding: "11px 0",
+        backgroundColor: "#0056b3",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "6px",
+        fontSize: "14px",
+        fontWeight: "bold",
+        cursor: "pointer",
+    },
 };

@@ -14,43 +14,46 @@ import {ApplicationProvider} from "./contexts/applicationContext/ApplicationProv
 import {DocumentProvider} from "./contexts/documentContext/DocumentProvider.jsx";
 import {InquiryProvider} from "./contexts/inquiryContext/InquiryProvider.jsx";
 import {FavoriteProvider} from "./contexts/favoriteContext/FavoriteProvider.jsx";
+import {AccountProvider} from "./contexts/accountContext/AccountProvider.jsx";
 
 
 function App() {
 
     return (
         <LoadingProvider>
-            <FavoriteProvider>
-                <DocumentProvider>
-                    <InquiryProvider>
-                        <ApplicationProvider>
-                            <GrantProvider>
-                                <LogProvider>
-                                    <NoticeProvider>
-                                        <AuthProvider>
-                                            <BrowserRouter>
-                                                <Routes>
-                                                    {/* 계정 페이지 */}
-                                                    <Route path="/account" element={<AccountPage />} />
+            <AccountProvider>
+                <FavoriteProvider>
+                    <DocumentProvider>
+                        <InquiryProvider>
+                            <ApplicationProvider>
+                                <GrantProvider>
+                                    <LogProvider>
+                                        <NoticeProvider>
+                                            <AuthProvider>
+                                                <BrowserRouter>
+                                                    <Routes>
+                                                        {/* 계정 페이지 */}
+                                                        <Route path="/account" element={<AccountPage />} />
 
-                                                    {/* 일반 사용자 페이지 */}
-                                                    <Route path="/" element={<MainPage />} />
-                                                    <Route path="/login" element={<Login />} />
-                                                    <Route path="/register" element={<Register />} />
-                                                    <Route path="/user" element={<UserPage />} />
+                                                        {/* 일반 사용자 페이지 */}
+                                                        <Route path="/" element={<MainPage />} />
+                                                        <Route path="/login" element={<Login />} />
+                                                        <Route path="/register" element={<Register />} />
+                                                        <Route path="/user" element={<UserPage />} />
 
-                                                    {/* 관리자 전용 라우트 (권한 검증 감싸기) */}
-                                                    <Route path="/admin" element={<AdminPage />} />
-                                                </Routes>
-                                            </BrowserRouter>
-                                        </AuthProvider>
-                                    </NoticeProvider>
-                                </LogProvider>
-                            </GrantProvider>
-                        </ApplicationProvider>
-                    </InquiryProvider>
-                </DocumentProvider>
-            </FavoriteProvider>
+                                                        {/* 관리자 전용 라우트 (권한 검증 감싸기) */}
+                                                        <Route path="/admin" element={<AdminPage />} />
+                                                    </Routes>
+                                                </BrowserRouter>
+                                            </AuthProvider>
+                                        </NoticeProvider>
+                                    </LogProvider>
+                                </GrantProvider>
+                            </ApplicationProvider>
+                        </InquiryProvider>
+                    </DocumentProvider>
+                </FavoriteProvider>
+            </AccountProvider>
         </LoadingProvider>
     );
 }

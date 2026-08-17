@@ -6,23 +6,14 @@ import ApplicationManagement from './ApplicationManagement.jsx';
 import FavoriteManagement from './FavoriteManagement.jsx';
 import DocumentManagement from './DocumentManagement.jsx';
 import InquiryManagement from './InquiryManagement.jsx';
-import {Link, useNavigate} from "react-router-dom";
-import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
 
 const UserPage = () => {
     // 현재 선택된 메뉴 탭 상태 (기본값: 대시보드)
     const [activeTab, setActiveTab] = useState('dashboard');
-    const {logout} = useAuth();
+    const {session, logout } = useAuth();
     const navigate = useNavigate();
-
-    // 사용자 정보
-    const userInfo = {
-        name: '홍길동',
-        email: 'hong@example.com',
-        phone: '010-1234-5678',
-        bank: '국민은행',
-        account: '123-456-789012',
-    };
 
     // 신청 내역 데이터
     const applications = [
@@ -33,8 +24,8 @@ const UserPage = () => {
             amount: '월 최대 20만원',
             period: '2026.01.01 ~ 2026.12.31',
             status: '심사중',
-            statusColor: '#0066ff',
-            statusBg: '#e6f0ff',
+            statusColor: '#0056b3',
+            statusBg: '#eef6ff',
             applyDate: '2026.03.10',
         },
         {
@@ -44,7 +35,7 @@ const UserPage = () => {
             amount: '최대 1억원',
             period: '2026.03.01 ~ 2026.04.15',
             status: '지급완료',
-            statusColor: '#10b981',
+            statusColor: '#137333',
             statusBg: '#e6f4ea',
             applyDate: '2026.03.02',
         },
@@ -60,7 +51,7 @@ const UserPage = () => {
             period: '2026.04.01 ~ 2026.05.31',
             tag: '모집중',
             tagBg: '#e6f4ea',
-            tagColor: '#10b981',
+            tagColor: '#137333',
         },
     ];
 
@@ -72,15 +63,15 @@ const UserPage = () => {
             date: '2026.03.12',
             status: '답변완료',
             statusBg: '#e6f4ea',
-            statusColor: '#10b981',
+            statusColor: '#137333',
         },
         {
             id: 2,
             title: '지급 계좌 변경은 어떻게 하나요?',
             date: '2026.03.15',
             status: '접수중',
-            statusBg: '#fef3c7',
-            statusColor: '#d97706',
+            statusBg: '#fef7e0',
+            statusColor: '#b06000',
         },
     ];
 
@@ -90,11 +81,15 @@ const UserPage = () => {
             <header style={styles.header}>
                 <div style={styles.headerInner}>
                     <div style={styles.logoGroup}>
-                        <Link to="/"><span style={styles.govBadge}>GOV</span>
-                        <span style={styles.logoText}>  지원금24</span></Link>
+                        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={styles.govBadge}>GOV</span>
+                            <span style={styles.logoText}>지원금24</span>
+                        </Link>
                     </div>
                     <div style={styles.userProfile}>
-                        <Link to="/account"><span style={styles.userName}>{userInfo.name}님</span></Link>
+                        <Link to="/account" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <span style={styles.userName}>{session.name}님</span>
+                        </Link>
                         <button style={styles.logoutBtn} onClick={() => {
                             logout();
                             navigate('/');
@@ -107,36 +102,64 @@ const UserPage = () => {
             <div style={styles.mainContainer}>
                 {/* 좌측 사이드바 메뉴 */}
                 <aside style={styles.sidebar}>
+                    <div style={styles.sidebarHeader}>
+                        <span style={styles.sidebarTitle}>마이 메뉴</span>
+                    </div>
                     <ul style={styles.menuList}>
-                        <li
-                            style={activeTab === 'dashboard' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('dashboard')}
-                        >
-                            대시보드
+                        <li>
+                            <button
+                                style={{
+                                    ...styles.menuItem,
+                                    ...(activeTab === 'dashboard' ? styles.menuItemActive : {})
+                                }}
+                                onClick={() => setActiveTab('dashboard')}
+                            >
+                                대시보드
+                            </button>
                         </li>
-                        <li
-                            style={activeTab === 'applications' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('applications')}
-                        >
-                            지원금 신청 내역
+                        <li>
+                            <button
+                                style={{
+                                    ...styles.menuItem,
+                                    ...(activeTab === 'applications' ? styles.menuItemActive : {})
+                                }}
+                                onClick={() => setActiveTab('applications')}
+                            >
+                                지원금 신청 내역
+                            </button>
                         </li>
-                        <li
-                            style={activeTab === 'recommend' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('recommend')}
-                        >
-                            맞춤 지원금 & 관심목록
+                        <li>
+                            <button
+                                style={{
+                                    ...styles.menuItem,
+                                    ...(activeTab === 'recommend' ? styles.menuItemActive : {})
+                                }}
+                                onClick={() => setActiveTab('recommend')}
+                            >
+                                맞춤 지원금 & 관심목록
+                            </button>
                         </li>
-                        <li
-                            style={activeTab === 'documents' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('documents')}
-                        >
-                            자주 쓰는 서류 / 증빙 제출
+                        <li>
+                            <button
+                                style={{
+                                    ...styles.menuItem,
+                                    ...(activeTab === 'documents' ? styles.menuItemActive : {})
+                                }}
+                                onClick={() => setActiveTab('documents')}
+                            >
+                                자주 쓰는 서류
+                            </button>
                         </li>
-                        <li
-                            style={activeTab === 'inquiries' ? styles.menuItemActive : styles.menuItem}
-                            onClick={() => setActiveTab('inquiries')}
-                        >
-                            1:1 문의 내역
+                        <li>
+                            <button
+                                style={{
+                                    ...styles.menuItem,
+                                    ...(activeTab === 'inquiries' ? styles.menuItemActive : {})
+                                }}
+                                onClick={() => setActiveTab('inquiries')}
+                            >
+                                1:1 문의 내역
+                            </button>
                         </li>
                     </ul>
                 </aside>
@@ -164,29 +187,36 @@ const UserPage = () => {
     );
 };
 
-// 공통 스타일 정의
+// 지원금24 브랜드 디자인 시스템 공통 스타일 정의
 const styles = {
     pageBackground: {
-        backgroundColor: '#f1f5f9',
+        backgroundColor: '#f8f9fa',
         minHeight: '100vh',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        fontFamily: "'Noto Sans KR', sans-serif",
+        color: '#333',
+        width: '100%',
+        boxSizing: 'border-box',
     },
     header: {
         backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
-        padding: '12px 32px',
+        borderBottom: '2px solid #0056b3',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)',
+        width: '100%',
     },
     headerInner: {
         maxWidth: '1200px',
+        width: '100%',
         margin: '0 auto',
+        padding: '0 20px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        minHeight: '70px',
+        boxSizing: 'border-box',
     },
     logoGroup: {
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
     },
     govBadge: {
         backgroundColor: '#0056b3',
@@ -197,95 +227,123 @@ const styles = {
         fontSize: '14px',
     },
     logoText: {
-        fontSize: '18px',
+        fontSize: '22px',
         fontWeight: 'bold',
-        color: '#111',
+        color: '#111111',
+        marginLeft: '8px',
     },
     userProfile: {
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
-        fontSize: '14px',
-        color: '#334155',
-    },
-    userIcon: {
-        fontSize: '16px',
+        fontSize: '13px',
+        fontWeight: '500',
+        color: '#495057',
     },
     userName: {
         fontWeight: 'bold',
+        color: '#111111',
     },
     logoutBtn: {
         border: 'none',
         background: 'none',
-        color: '#64748b',
+        color: '#495057',
         cursor: 'pointer',
-        fontSize: '14px',
-        marginLeft: '8px',
+        fontSize: '13px',
+        fontWeight: '500',
+        padding: 0,
     },
     mainContainer: {
         maxWidth: '1200px',
+        width: '100%',
         margin: '24px auto',
         display: 'flex',
         gap: '24px',
-        padding: '0 16px',
+        padding: '0 20px',
+        boxSizing: 'border-box',
     },
     sidebar: {
         width: '240px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        padding: '20px',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.03)',
+        height: 'fit-content',
+        boxSizing: 'border-box',
         flexShrink: 0,
+    },
+    sidebarHeader: {
+        paddingBottom: '12px',
+        marginBottom: '12px',
+        borderBottom: '2px solid #111111',
+    },
+    sidebarTitle: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#111111',
     },
     menuList: {
         listStyle: 'none',
-        padding: '8px',
+        padding: 0,
         margin: 0,
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
     },
     menuItem: {
+        textAlign: 'left',
         padding: '12px 16px',
-        margin: '4px 0',
         borderRadius: '8px',
-        fontSize: '14px',
+        border: 'none',
+        backgroundColor: 'transparent',
+        fontSize: '15px',
         fontWeight: '500',
-        color: '#475569',
+        color: '#495057',
         cursor: 'pointer',
-        transition: 'background-color 0.2s',
+        transition: 'all 0.2s ease',
+        width: '100%',
+        boxSizing: 'border-box',
     },
     menuItemActive: {
-        padding: '12px 16px',
-        margin: '4px 0',
-        borderRadius: '8px',
-        fontSize: '14px',
+        backgroundColor: '#eef6ff',
+        color: '#0056b3',
         fontWeight: 'bold',
-        color: '#0066ff',
-        backgroundColor: '#e6f0ff',
-        cursor: 'pointer',
+        borderLeft: '4px solid #0056b3',
+        borderRadius: '4px 8px 8px 4px',
     },
     contentCard: {
-        flexGrow: 1,
+        flex: 1,
+        minWidth: 0,
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        padding: '32px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        padding: '30px 24px',
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.03)',
         minHeight: '500px',
+        boxSizing: 'border-box',
     },
     titleRow: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '20px',
+        borderBottom: '2px solid #111111',
+        paddingBottom: '10px',
     },
     contentTitle: {
         fontSize: '20px',
         fontWeight: 'bold',
-        color: '#0f172a',
-        margin: '0 0 20px 0',
+        color: '#111111',
+        margin: 0,
     },
     sectionTitle: {
-        fontSize: '16px',
+        fontSize: '18px',
         fontWeight: 'bold',
-        color: '#1e293b',
-        marginBottom: '12px',
+        color: '#111111',
+        marginBottom: '16px',
+        borderBottom: '2px solid #111111',
+        paddingBottom: '8px',
     },
     summaryGrid: {
         display: 'grid',
@@ -295,25 +353,27 @@ const styles = {
     },
     summaryBox: {
         border: '1px solid #e2e8f0',
-        borderRadius: '10px',
+        borderRadius: '8px',
         padding: '16px',
-        backgroundColor: '#f8fafc',
+        backgroundColor: '#f8f9fa',
     },
     summaryLabel: {
         fontSize: '13px',
-        color: '#64748b',
+        color: '#666666',
         marginBottom: '6px',
     },
     summaryValue: {
         fontSize: '22px',
         fontWeight: 'bold',
+        color: '#111111',
     },
     dataCard: {
         border: '1px solid #e2e8f0',
-        borderRadius: '10px',
+        borderRadius: '8px',
         padding: '20px',
         marginBottom: '12px',
         backgroundColor: '#ffffff',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     },
     cardHeader: {
         display: 'flex',
@@ -324,31 +384,31 @@ const styles = {
     categoryText: {
         fontSize: '13px',
         fontWeight: 'bold',
-        color: '#0066ff',
+        color: '#0056b3',
     },
     statusBadge: {
         fontSize: '12px',
         fontWeight: 'bold',
-        padding: '4px 8px',
-        borderRadius: '12px',
+        padding: '4px 12px',
+        borderRadius: '20px',
     },
     cardTitle: {
-        fontSize: '16px',
+        fontSize: '17px',
         fontWeight: 'bold',
-        color: '#1e293b',
+        color: '#111111',
         margin: '0 0 8px 0',
     },
     cardDetail: {
         fontSize: '13px',
-        color: '#64748b',
+        color: '#666666',
         margin: '4px 0',
     },
     primaryBtn: {
-        backgroundColor: '#0066ff',
+        backgroundColor: '#0056b3',
         color: '#ffffff',
         border: 'none',
         padding: '10px 16px',
-        borderRadius: '8px',
+        borderRadius: '6px',
         fontSize: '14px',
         fontWeight: 'bold',
         cursor: 'pointer',
@@ -361,7 +421,7 @@ const styles = {
         display: 'block',
         fontSize: '13px',
         fontWeight: 'bold',
-        color: '#475569',
+        color: '#111111',
         marginBottom: '6px',
     },
     input: {
@@ -369,9 +429,12 @@ const styles = {
         maxWidth: '400px',
         padding: '10px 12px',
         borderRadius: '6px',
-        border: '1px solid #cbd5e1',
+        border: '1px solid #e2e8f0',
+        backgroundColor: '#ffffff',
         fontSize: '14px',
+        color: '#111111',
         boxSizing: 'border-box',
+        outline: 'none',
     },
     hr: {
         border: 'none',

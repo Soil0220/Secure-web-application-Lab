@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import {useNavigate, Link} from 'react-router-dom'
-import {useAuth} from "../../contexts/authContext/UseAuth.jsx";
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
 
 const RegisterPage = () => {
-
     const navigate = useNavigate();
-    const {signUp} = useAuth();
+    const { signUp } = useAuth();
 
     // 스프링부트 회원가입 API 연동용 DTO 상태
     const [formData, setFormData] = useState({
@@ -37,7 +36,8 @@ const RegisterPage = () => {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-        try{
+
+        try {
             const submitData = { ...formData };
             delete submitData.confirmPassword;
             await signUp(submitData);
@@ -45,10 +45,9 @@ const RegisterPage = () => {
             alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
             navigate('/login');
         } catch (error) {
-            alert(error.response.data.message);
+            alert(error.response?.data?.message || '회원가입 중 오류가 발생했습니다.');
             setFormData((prev) => ({ ...prev, username: '', password: '', confirmPassword: '' }));
         }
-
     };
 
     return (
@@ -57,19 +56,25 @@ const RegisterPage = () => {
             <header style={styles.header}>
                 <div style={styles.headerInner}>
                     <div style={styles.logoArea}>
-                        <Link to="/"><span style={styles.logoBadge}>GOV</span>
-                            <span style={styles.logoText}> 지원금24</span></Link>
+                        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={styles.logoBadge}>GOV</span>
+                            <span style={styles.logoText}>지원금24</span>
+                        </Link>
                     </div>
-                    <Link to="/"><button style={styles.homeBtn}>
-                        메인으로 돌아가기 ➔
-                    </button></Link>
+                    <Link to="/" style={{ textDecoration: 'none' }}>
+                        <button style={styles.homeBtn}>
+                            메인으로 돌아가기 ➔
+                        </button>
+                    </Link>
                 </div>
             </header>
 
             {/* 회원가입 메인 컨테이너 */}
             <main style={styles.mainContent}>
                 <div style={styles.authCard}>
-                    <h2 style={styles.title}>회원가입</h2>
+                    <div style={styles.titleHeader}>
+                        <h2 style={styles.title}>회원가입</h2>
+                    </div>
                     <p style={styles.subtitle}>
                         지원금24 서비스 이용을 위해 기본 정보를 입력해 주세요.
                     </p>
@@ -94,7 +99,7 @@ const RegisterPage = () => {
                                 <button
                                     type="button"
                                     style={styles.subBtn}
-                                    onClick={() => alert('아이디 중복확인 기능')}
+                                    onClick={() => alert('아이디 중복확인 기능 준비중입니다.')}
                                 >
                                     중복확인
                                 </button>
@@ -193,7 +198,7 @@ const RegisterPage = () => {
                                     type="checkbox"
                                     checked={agreed}
                                     onChange={(e) => setAgreed(e.target.checked)}
-                                    style={{ marginRight: '8px' }}
+                                    style={{ marginRight: '8px', cursor: 'pointer' }}
                                 />
                                 [필수] 개인정보 수집 및 이용에 동의합니다.
                             </label>
@@ -207,9 +212,11 @@ const RegisterPage = () => {
                     {/* 하단 로그인 유도 영역 */}
                     <div style={styles.bottomPrompt}>
                         <span>이미 계정이 있으신가요?</span>
-                        <Link to="/login"><button style={styles.loginLinkBtn}>
-                            로그인하기
-                        </button></Link>
+                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                            <button style={styles.loginLinkBtn}>
+                                로그인하기
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </main>
@@ -217,17 +224,17 @@ const RegisterPage = () => {
     );
 };
 
-/* 스타일 정의 (공통 디자인 반영) */
+/* 스타일 정의 (지원금24 브랜드 디자인 가이드) */
 const styles = {
     container: {
         fontFamily: "'Noto Sans KR', sans-serif",
         backgroundColor: '#f8f9fa',
         minHeight: '100vh',
-        color: '#333',
+        color: '#111111',
     },
     header: {
-        backgroundColor: '#fff',
-        borderBottom: '1px solid #e9ecef',
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
     },
     headerInner: {
         maxWidth: '1200px',
@@ -240,22 +247,20 @@ const styles = {
     logoArea: {
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
         cursor: 'pointer',
     },
     logoBadge: {
         backgroundColor: '#0056b3',
-        color: '#fff',
+        color: '#ffffff',
         padding: '4px 8px',
         borderRadius: '4px',
         fontWeight: 'bold',
-        fontSize: '14px',
+        fontSize: '13px',
     },
     logoText: {
         fontSize: '22px',
         fontWeight: 'bold',
-        color: '#111',
-        alignItems: 'center',
+        color: '#111111',
     },
     homeBtn: {
         background: 'none',
@@ -266,36 +271,43 @@ const styles = {
         cursor: 'pointer',
     },
     mainContent: {
-        padding: '40px 20px',
+        padding: '40px 20px 60px',
         display: 'flex',
         justifyContent: 'center',
     },
     authCard: {
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
         width: '100%',
         maxWidth: '520px',
-        padding: '40px 32px',
+        padding: '36px 32px',
         borderRadius: '12px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         border: '1px solid #e2e8f0',
+        boxSizing: 'border-box',
+    },
+    titleHeader: {
+        borderBottom: '2px solid #111111',
+        paddingBottom: '10px',
+        marginBottom: '12px',
+        textAlign: 'center',
     },
     title: {
-        fontSize: '26px',
+        fontSize: '22px',
         fontWeight: 'bold',
         color: '#111111',
-        margin: '0 0 8px 0',
-        textAlign: 'center',
+        margin: 0,
     },
     subtitle: {
         fontSize: '14px',
-        color: '#666',
+        color: '#666666',
         textAlign: 'center',
-        margin: '0 0 28px 0',
+        margin: '0 0 24px 0',
+        lineHeight: '1.5',
     },
     form: {
         display: 'flex',
         flexDirection: 'column',
-        gap: '18px',
+        gap: '16px',
     },
     inputGroup: {
         display: 'flex',
@@ -303,71 +315,78 @@ const styles = {
         gap: '6px',
     },
     label: {
-        fontSize: '14px',
+        fontSize: '13px',
         fontWeight: 'bold',
         color: '#111111',
     },
     required: {
-        color: '#e53e3e',
+        color: '#d93025',
     },
     input: {
-        padding: '12px 14px',
+        padding: '10px 12px',
         borderRadius: '6px',
-        border: '1px solid #cbd5e0',
-        fontSize: '15px',
+        border: '1px solid #e2e8f0',
+        backgroundColor: '#ffffff',
+        fontSize: '14px',
         outline: 'none',
+        boxSizing: 'border-box',
+        width: '100%',
+        color: '#111111',
     },
     inputWithBtn: {
         display: 'flex',
         gap: '8px',
     },
     subBtn: {
-        backgroundColor: '#4a5568',
-        color: '#fff',
+        backgroundColor: '#475569',
+        color: '#ffffff',
         border: 'none',
         padding: '0 16px',
         borderRadius: '6px',
-        fontSize: '14px',
+        fontSize: '13px',
         fontWeight: 'bold',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
+        transition: 'background-color 0.15s ease',
     },
     termsBox: {
-        backgroundColor: '#f7fafc',
+        backgroundColor: '#f8f9fa',
         padding: '14px',
         borderRadius: '6px',
         border: '1px solid #e2e8f0',
-        marginTop: '6px',
+        marginTop: '4px',
     },
     checkboxLabel: {
         display: 'flex',
         alignItems: 'center',
-        fontSize: '14px',
-        color: '#2d3748',
+        fontSize: '13px',
+        color: '#333333',
         cursor: 'pointer',
-        fontWeight: 'bold',
+        fontWeight: '500',
     },
     submitBtn: {
         backgroundColor: '#0056b3',
-        color: '#fff',
+        color: '#ffffff',
         border: 'none',
-        padding: '14px',
+        padding: '12px',
         borderRadius: '6px',
-        fontSize: '16px',
+        fontSize: '15px',
         fontWeight: 'bold',
         cursor: 'pointer',
-        marginTop: '10px',
+        marginTop: '8px',
+        width: '100%',
+        transition: 'background-color 0.15s ease',
     },
     bottomPrompt: {
         marginTop: '28px',
         paddingTop: '20px',
-        borderTop: '1px solid #edf2f7',
+        borderTop: '1px solid #e2e8f0',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '10px',
+        gap: '8px',
         fontSize: '14px',
-        color: '#4a5568',
+        color: '#666666',
     },
     loginLinkBtn: {
         background: 'none',
@@ -377,6 +396,7 @@ const styles = {
         cursor: 'pointer',
         fontSize: '14px',
         textDecoration: 'underline',
+        padding: 0,
     },
 };
 

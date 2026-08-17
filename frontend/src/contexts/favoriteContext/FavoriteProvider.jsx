@@ -1,7 +1,7 @@
 
 import {FavoriteContext} from "./FavoriteContext.jsx";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
-import {getApi} from "../../components/RequestApi.jsx";
+import {deleteApi, getApi, postApi} from "../../components/RequestApi.jsx";
 import {useState} from "react";
 
 export function FavoriteProvider({ children }) {
@@ -23,9 +23,37 @@ export function FavoriteProvider({ children }) {
         }
     }
 
+    const createFavorite = async (grantId) => {
+        try {
+            const response = await postApi(`/favorite/${grantId}`, {}, true);
+            await getFavorites();
+            return response.data;
+        } catch (error) {
+            //응답 데이터 존재시 접근
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const deleteFavorite = async (grantId) => {
+        try {
+            const response = await deleteApi(`/favorite/${grantId}`, {}, true);
+            await getFavorites();
+            return response.data;
+        } catch (error) {
+            //응답 데이터 존재시 접근
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <FavoriteContext.Provider
-            value={{favorites, setFavorites, getFavorites}}
+            value={{favorites, setFavorites, getFavorites, createFavorite, deleteFavorite}}
         >
             {children}
         </FavoriteContext.Provider>

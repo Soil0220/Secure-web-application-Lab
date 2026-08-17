@@ -1,17 +1,19 @@
 import {DocumentContext} from "./DocumentContext.jsx";
-import {getApi} from "../../components/RequestApi.jsx";
+import {getApi, postApi} from "../../components/RequestApi.jsx";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
-import axios from "axios";
+import {useState} from "react";
 
 
 export function DocumentProvider({ children }) {
 
     const {setLoading} = useLoading();
+    const [documents, setDocuments] = useState([]);
 
-    const getDocument = async (documentId, documentName) => {
+    //신청서에 담긴 파일 다운로드
+    const downloadApplicationDocument = async (documentId, documentName) => {
         try {
             const response = await getApi(
-                `/document/${documentId}/admin`, { }, true, { responseType: 'blob' });
+                `/document/application/${documentId}`, { }, true, { responseType: 'blob' });
 
             // 전달받은 blob으로 다운로드 처리
             const blob = new Blob([response.data]);
@@ -32,9 +34,66 @@ export function DocumentProvider({ children }) {
         }
     }
 
+    //유저별 개인 서류함 조회
+    const getDocuments = async () => {
+        try {
+            const response = await getApi('/document', {}, true);
+            setDocuments(response.data.data);
+            return response.data;
+        } catch (error) {
+            //응답 데이터 존재시 접근
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    //유저별 개인 서류함 파일 다운로드
+    const downloadDocument = async (documentId, documentName) => {
+        try {
+            const response = await getApi(
+                `/document/${documentId}`, { }, true, { responseType: 'blob' });
+
+            // 전달받은 blob으로 다운로드 처리
+            const blob = new Blob([response.data]);
+            const downloadUrl = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = documentName; // 원하는 파일명
+            document.body.appendChild(link);
+            link.click();
+
+            // 메모리 해제 및 cleanup
+            link.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (error) {
+            console.error('파일 다운로드 실패:', error);
+            setLoading(false);
+        }
+    }
+
+    //유저별 개인 서류함 파일 업로드
+    const uploadDocument = async (file, docType) => {
+        const formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('docType', docType);
+
+        try {
+            const response = await postApi('/document', formData, {});
+            return response.data;
+        } catch (error) {
+            console.error('파일 업로드 실패:', error);
+            setLoading(false);
+        }
+    };
+
+
     return (
         <DocumentContext.Provider
-            value={{getDocument}}
+            value={{downloadApplicationDocument, downloadDocument, uploadDocument, documents, getDocuments, setDocuments}}
         >
             {children}
         </DocumentContext.Provider>

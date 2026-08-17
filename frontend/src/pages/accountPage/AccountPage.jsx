@@ -1,40 +1,88 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAccount } from "../../contexts/accountContext/useAccount"; // useAccount 경로에 맞게 확인해주세요
 
 function AccountPage() {
-    const [isEditing, setIsEditing] = useState(false);
+    const { account, getAccount, updateBankAccount } = useAccount();
 
-    const [userInfo, setUserInfo] = useState({
-        name: "홍길동",
-        email: "honggildong@example.com",
-        phone: "010-1234-5678",
-        bank: "국민은행",
-        accountNumber: "123456-01-123456"
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // 계좌 수정용 임시 State만 유지
+    const [editInfo, setEditInfo] = useState({
+        bankName: "",
+        accountNum: ""
     });
 
-    const [editInfo, setEditInfo] = useState(userInfo);
+    // 1. useState 대신 렌더링 시점에 직접 계산 (파생 상태) -> useEffect 불필요!
+    const userInfo = {
+        name: account?.name || "",
+        email: account?.email || "",
+        phone: account?.phone || "",
+        bankName: account?.bankName || "",
+        accountNum: account?.accountNum || ""
+    };
 
+    // 2. 페이지 진입 시 계정 정보 로드 (외부 데이터 패칭)
+    useEffect(() => {
+        const fetchAccountData = async () => {
+            try {
+                if (getAccount) {
+                    await getAccount();
+                }
+            } catch (error) {
+                console.error("계정 정보 조회 실패:", error);
+            }
+        };
+
+        fetchAccountData();
+    }, []);
+
+    // 수정 모드 진입 시 최신 userInfo 값으로 editInfo 초기화
     const handleEdit = () => {
-        setEditInfo({ ...userInfo });
+        setEditInfo({
+            bankName: userInfo.bankName,
+            accountNum: userInfo.accountNum
+        });
         setIsEditing(true);
     };
 
     const handleCancel = () => {
-        setEditInfo({ ...userInfo });
+        setEditInfo({
+            bankName: userInfo.bankName,
+            accountNum: userInfo.accountNum
+        });
         setIsEditing(false);
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setEditInfo((prev) => ({
             ...prev,
             [name]: value
         }));
     };
 
-    const handleSave = () => {
-        setUserInfo({ ...editInfo });
-        setIsEditing(false);
+    // 계좌정보 변경 저장 핸들러
+    const handleSave = async () => {
+        try {
+            setLoading(true);
+
+            if (updateBankAccount) {
+                await updateBankAccount(editInfo.bankName, editInfo.accountNum);
+            }
+
+            if (getAccount) {
+                await getAccount();
+            }
+
+            setIsEditing(false);
+            alert("계좌정보가 성공적으로 수정되었습니다.");
+        } catch (error) {
+            console.error("계좌정보 수정 실패:", error);
+            alert("계좌정보 수정 중 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleBack = () => {
@@ -45,168 +93,127 @@ function AccountPage() {
         <>
             <style>{`
                 .account-page {
+                    font-family: 'Noto Sans KR', sans-serif;
                     width: 100%;
                     box-sizing: border-box;
-
                     display: flex;
                     justify-content: center;
-
-                    padding: 20px 0;
+                    padding: 20px;
                 }
-
-                /* 전체 회원정보 카드 */
 
                 .account-container {
-                    width: 88%;
-                    max-width: 900px;
-
+                    width: 100%;
+                    max-width: 1100px;
                     box-sizing: border-box;
-
-                    padding: 32px 34px 28px;
-
+                    padding: 32px;
                     background: #ffffff;
-
-                    border: 1px solid #dfe7f0;
-                    border-radius: 16px;
-
-                    box-shadow: 0 4px 14px rgba(40, 70, 100, 0.06);
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
                 }
-
-                /* 제목 + 돌아가기 */
 
                 .account-title-row {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-
                     margin-bottom: 8px;
+                    border-bottom: 2px solid #111111;
+                    padding-bottom: 12px;
                 }
 
                 .account-title {
                     margin: 0;
-
-                    color: #111827;
-
-                    font-size: 27px;
-                    font-weight: 700;
+                    color: #111111;
+                    font-size: 22px;
+                    font-weight: bold;
                 }
 
                 .account-subtitle {
-                    margin: 8px 0 28px;
-
-                    color: #8491a3;
-
+                    margin: 12px 0 24px;
+                    color: #666666;
                     font-size: 14px;
                 }
 
-                /* 돌아가기 버튼 */
-
                 .back-button {
-                    height: 38px;
-
-                    padding: 0 15px;
-
-                    border: 1px solid #d7e0ea;
-                    border-radius: 7px;
-
+                    height: 36px;
+                    padding: 0 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 6px;
                     background: #ffffff;
-                    color: #64748b;
-
+                    color: #333333;
                     font-family: inherit;
                     font-size: 13px;
-                    font-weight: 600;
-
+                    font-weight: bold;
                     cursor: pointer;
-
-                    transition: 0.15s;
+                    transition: all 0.15s ease;
                 }
 
                 .back-button:hover {
-                    background: #f4f8fd;
-                    border-color: #c5d4e5;
-                    color: #0066cc;
+                    background: #f8f9fa;
+                    border-color: #0056b3;
+                    color: #0056b3;
                 }
 
-                /* 내부 섹션 */
+                .account-sections-wrapper {
+                    display: flex;
+                    gap: 20px;
+                    width: 100%;
+                }
 
                 .account-section {
-                    margin-bottom: 20px;
-
-                    border: 1px solid #dfe7f0;
-                    border-radius: 10px;
-
+                    flex: 1;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
                     overflow: hidden;
+                    background: #ffffff;
                 }
-
-                /* 섹션 헤더 */
 
                 .section-header {
                     display: flex;
                     align-items: center;
-
-                    min-height: 55px;
-
+                    min-height: 50px;
                     padding: 0 20px;
-
-                    background: #f4f8fd;
-
-                    border-bottom: 1px solid #dfe7f0;
+                    background: #f8f9fa;
+                    border-bottom: 1px solid #e2e8f0;
                 }
 
                 .section-icon {
-                    width: 32px;
-                    height: 32px;
-
+                    width: 28px;
+                    height: 28px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
                     margin-right: 10px;
-
-                    border-radius: 8px;
-
-                    background: #e5efff;
-
-                    color: #0066cc;
-
-                    font-size: 15px;
+                    border-radius: 6px;
+                    background: #eef6ff;
+                    color: #0056b3;
+                    font-size: 14px;
+                    font-weight: bold;
                 }
 
                 .section-title {
                     margin: 0;
-
-                    color: #26384d;
-
-                    font-size: 16px;
-                    font-weight: 700;
+                    color: #111111;
+                    font-size: 15px;
+                    font-weight: bold;
                 }
 
                 .editing-badge {
                     margin-left: auto;
-
-                    padding: 5px 10px;
-
-                    border-radius: 20px;
-
-                    background: #fff3dc;
-                    color: #c27a00;
-
+                    padding: 4px 10px;
+                    border-radius: 4px;
+                    background: #fef7e0;
+                    color: #b06000;
                     font-size: 12px;
-                    font-weight: 600;
+                    font-weight: bold;
                 }
-
-                /* 정보 행 */
 
                 .info-row {
                     display: grid;
-
-                    grid-template-columns: 135px 1fr;
-
-                    min-height: 60px;
-
+                    grid-template-columns: 120px 1fr;
+                    min-height: 52px;
                     align-items: center;
-
-                    border-bottom: 1px solid #edf1f5;
+                    border-bottom: 1px solid #edf2f7;
                 }
 
                 .info-row:last-child {
@@ -215,160 +222,131 @@ function AccountPage() {
 
                 .info-label {
                     padding-left: 20px;
-
-                    color: #718096;
-
+                    color: #666666;
                     font-size: 14px;
-                    font-weight: 600;
+                    font-weight: bold;
                 }
 
                 .info-value {
-                    padding: 0 20px;
-
-                    color: #26384d;
-
-                    font-size: 15px;
+                    padding: 8px 20px;
+                    color: #111111;
+                    font-size: 14px;
                 }
-
-                /* 수정 입력창 */
 
                 .info-input {
                     width: 100%;
-                    height: 39px;
-
+                    height: 38px;
                     box-sizing: border-box;
-
-                    padding: 0 11px;
-
+                    padding: 0 12px;
                     background-color: #ffffff !important;
-                    color: #26384d !important;
-
+                    color: #111111 !important;
                     border: 1px solid #cbd5e1 !important;
                     border-radius: 6px;
-
                     outline: none;
-
                     font-family: inherit;
                     font-size: 14px;
+                    transition: all 0.15s ease;
                 }
 
                 .info-input:focus {
                     background-color: #ffffff !important;
-                    color: #26384d !important;
-
-                    border-color: #4d94ff !important;
-
-                    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.08);
+                    color: #111111 !important;
+                    border-color: #0056b3 !important;
+                    box-shadow: inset 0 0 0 1px #0056b3;
                 }
-
-                /* 계좌 안내 */
 
                 .account-notice {
                     display: flex;
                     align-items: center;
-                    gap: 7px;
-
-                    margin: 14px 0 0;
-                    padding: 11px 13px;
-
-                    border-radius: 7px;
-
-                    background: #f7faff;
-
-                    color: #718096;
-
-                    font-size: 12px;
+                    gap: 8px;
+                    margin: 20px 0 0;
+                    padding: 12px 16px;
+                    border-radius: 6px;
+                    background: #f8f9fa;
+                    border: 1px solid #e2e8f0;
+                    color: #666666;
+                    font-size: 13px;
                 }
 
                 .notice-icon {
-                    color: #4d94ff;
-
-                    font-weight: 700;
+                    color: #0056b3;
+                    font-weight: bold;
                 }
-
-                /* 하단 버튼 */
 
                 .account-footer {
                     display: flex;
-
                     justify-content: flex-end;
-
-                    margin-top: 20px;
+                    margin-top: 24px;
                 }
 
                 .edit-button,
                 .save-button,
                 .cancel-button {
                     height: 42px;
-
                     padding: 0 20px;
-
-                    border-radius: 7px;
-
+                    border-radius: 6px;
                     font-family: inherit;
-
                     font-size: 14px;
-                    font-weight: 600;
-
+                    font-weight: bold;
                     cursor: pointer;
+                    transition: background-color 0.15s ease;
                 }
 
                 .edit-button,
                 .save-button {
                     border: none;
-
-                    background: #0066cc;
+                    background: #0056b3;
                     color: #ffffff;
                 }
 
                 .edit-button:hover,
                 .save-button:hover {
-                    background: #0055aa;
+                    background: #004494;
+                }
+
+                .save-button:disabled {
+                    background: #94a3b8;
+                    cursor: not-allowed;
                 }
 
                 .cancel-button {
                     margin-right: 8px;
-
-                    border: 1px solid #d5dde7;
-
+                    border: 1px solid #cbd5e1;
                     background: #ffffff;
-                    color: #64748b;
+                    color: #333333;
                 }
 
                 .cancel-button:hover {
-                    background: #f7f9fc;
+                    background: #f8f9fa;
                 }
 
-                /* 반응형 */
-
-                @media (max-width: 800px) {
-                    .account-page {
-                        padding: 10px 0;
+                @media (max-width: 850px) {
+                    .account-sections-wrapper {
+                        flex-direction: column;
+                        gap: 16px;
                     }
 
                     .account-container {
-                        width: 94%;
-                        padding: 26px 22px;
+                        padding: 24px 20px;
                     }
                 }
 
                 @media (max-width: 600px) {
                     .account-container {
-                        width: 96%;
-                        padding: 22px 16px;
+                        padding: 20px 16px;
                     }
 
                     .account-title {
-                        font-size: 24px;
+                        font-size: 20px;
                     }
 
                     .back-button {
-                        height: 35px;
-                        padding: 0 11px;
+                        height: 34px;
+                        padding: 0 10px;
                     }
 
                     .info-row {
-                        grid-template-columns: 100px 1fr;
+                        grid-template-columns: 90px 1fr;
                     }
 
                     .info-label {
@@ -376,272 +354,136 @@ function AccountPage() {
                     }
 
                     .info-value {
-                        padding: 0 14px;
+                        padding: 8px 14px;
                     }
                 }
             `}</style>
 
-
             <div className="account-page">
-
                 <div className="account-container">
-
-                    {/* 제목 + 돌아가기 */}
                     <div className="account-title-row">
-
-                        <h1 className="account-title">
-                            회원정보
-                        </h1>
-
-                        <button
-                            className="back-button"
-                            onClick={handleBack}
-                        >
+                        <h1 className="account-title">회원정보</h1>
+                        <button className="back-button" onClick={handleBack}>
                             ← 돌아가기
                         </button>
-
                     </div>
 
                     <p className="account-subtitle">
                         회원정보와 지원금 수령 계좌를 확인하고 관리할 수 있습니다.
                     </p>
 
-
-                    {/* =========================
-                        기본 회원정보
-                    ========================= */}
-
-                    <div className="account-section">
-
-                        <div className="section-header">
-
-                            <div className="section-icon">
-                                👤
+                    <div className="account-sections-wrapper">
+                        {/* 1. 기본 회원정보 */}
+                        <div className="account-section">
+                            <div className="section-header">
+                                <div className="section-icon">👤</div>
+                                <h2 className="section-title">기본 회원정보</h2>
                             </div>
 
-                            <h2 className="section-title">
-                                기본 회원정보
-                            </h2>
+                            <div className="info-row">
+                                <div className="info-label">이름</div>
+                                <div className="info-value">{userInfo.name || "-"}</div>
+                            </div>
 
-                            {isEditing && (
-                                <span className="editing-badge">
-                                    수정 중
-                                </span>
-                            )}
+                            <div className="info-row">
+                                <div className="info-label">이메일</div>
+                                <div className="info-value">{userInfo.email || "-"}</div>
+                            </div>
 
+                            <div className="info-row">
+                                <div className="info-label">휴대전화</div>
+                                <div className="info-value">{userInfo.phone || "-"}</div>
+                            </div>
                         </div>
 
-
-                        {/* 이름 */}
-                        <div className="info-row">
-
-                            <div className="info-label">
-                                이름
-                            </div>
-
-                            <div className="info-value">
-
-                                {isEditing ? (
-                                    <input
-                                        className="info-input"
-                                        type="text"
-                                        name="name"
-                                        value={editInfo.name}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    userInfo.name
+                        {/* 2. 지원금 수령 계좌 */}
+                        <div className="account-section">
+                            <div className="section-header">
+                                <div
+                                    className="section-icon"
+                                    style={{
+                                        background: "#e6f4ea",
+                                        color: "#137333"
+                                    }}
+                                >
+                                    ₩
+                                </div>
+                                <h2 className="section-title">지원금 수령 계좌</h2>
+                                {isEditing && (
+                                    <span className="editing-badge">수정 중</span>
                                 )}
-
                             </div>
 
+                            <div className="info-row">
+                                <div className="info-label">은행명</div>
+                                <div className="info-value">
+                                    {isEditing ? (
+                                        <input
+                                            className="info-input"
+                                            type="text"
+                                            name="bankName"
+                                            placeholder="예: 국민은행"
+                                            value={editInfo.bankName}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        userInfo.bankName || "미등록"
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="info-row">
+                                <div className="info-label">계좌번호</div>
+                                <div className="info-value">
+                                    {isEditing ? (
+                                        <input
+                                            className="info-input"
+                                            type="text"
+                                            name="accountNum"
+                                            placeholder="계좌번호 입력 (- 제외)"
+                                            value={editInfo.accountNum}
+                                            onChange={handleChange}
+                                        />
+                                    ) : (
+                                        userInfo.accountNum || "미등록"
+                                    )}
+                                </div>
+                            </div>
                         </div>
-
-
-                        {/* 이메일 */}
-                        <div className="info-row">
-
-                            <div className="info-label">
-                                이메일
-                            </div>
-
-                            <div className="info-value">
-
-                                {isEditing ? (
-                                    <input
-                                        className="info-input"
-                                        type="email"
-                                        name="email"
-                                        value={editInfo.email}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    userInfo.email
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* 휴대전화 */}
-                        <div className="info-row">
-
-                            <div className="info-label">
-                                휴대전화
-                            </div>
-
-                            <div className="info-value">
-
-                                {isEditing ? (
-                                    <input
-                                        className="info-input"
-                                        type="tel"
-                                        name="phone"
-                                        value={editInfo.phone}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    userInfo.phone
-                                )}
-
-                            </div>
-
-                        </div>
-
                     </div>
 
-
-                    {/* =========================
-                        지원금 수령 계좌
-                    ========================= */}
-
-                    <div className="account-section">
-
-                        <div className="section-header">
-
-                            <div
-                                className="section-icon"
-                                style={{
-                                    background: "#e8f8f0",
-                                    color: "#16a66a"
-                                }}
-                            >
-                                ₩
-                            </div>
-
-                            <h2 className="section-title">
-                                지원금 수령 계좌
-                            </h2>
-
-                        </div>
-
-
-                        {/* 은행명 */}
-                        <div className="info-row">
-
-                            <div className="info-label">
-                                은행명
-                            </div>
-
-                            <div className="info-value">
-
-                                {isEditing ? (
-                                    <input
-                                        className="info-input"
-                                        type="text"
-                                        name="bank"
-                                        value={editInfo.bank}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    userInfo.bank
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        {/* 계좌번호 */}
-                        <div className="info-row">
-
-                            <div className="info-label">
-                                계좌번호
-                            </div>
-
-                            <div className="info-value">
-
-                                {isEditing ? (
-                                    <input
-                                        className="info-input"
-                                        type="text"
-                                        name="accountNumber"
-                                        value={editInfo.accountNumber}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    userInfo.accountNumber
-                                )}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    {/* 계좌 안내 */}
                     <div className="account-notice">
-
-                        <span className="notice-icon">
-                            ⓘ
-                        </span>
-
+                        <span className="notice-icon">ⓘ</span>
                         <span>
-                            등록된 계좌로 지원금이 지급됩니다.
-                            계좌정보를 변경할 경우 정확한 정보를 입력해주세요.
+                            등록된 계좌로 지원금이 지급됩니다. 계좌정보를 변경할 경우 정확한 정보를 입력해주세요.
                         </span>
-
                     </div>
 
-
-                    {/* 하단 버튼 */}
                     <div className="account-footer">
-
                         {!isEditing ? (
-
-                            <button
-                                className="edit-button"
-                                onClick={handleEdit}
-                            >
-                                정보 수정
+                            <button className="edit-button" onClick={handleEdit}>
+                                계좌 정보 수정
                             </button>
-
                         ) : (
-
                             <>
                                 <button
                                     className="cancel-button"
                                     onClick={handleCancel}
+                                    disabled={loading}
                                 >
                                     취소
                                 </button>
-
                                 <button
                                     className="save-button"
                                     onClick={handleSave}
+                                    disabled={loading}
                                 >
-                                    저장
+                                    {loading ? "저장 중..." : "저장"}
                                 </button>
                             </>
-
                         )}
-
                     </div>
-
                 </div>
-
             </div>
         </>
     );

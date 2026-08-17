@@ -7,28 +7,24 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionUser;
-import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.UrlPathHelper;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-@Component
+
 @RequiredArgsConstructor
 public class SessionCheckfilter extends OncePerRequestFilter {
 
-    private final ObjectMapper objectMapper;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
+
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

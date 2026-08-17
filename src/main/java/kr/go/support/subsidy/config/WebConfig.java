@@ -1,10 +1,13 @@
 package kr.go.support.subsidy.config;
 
+import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.filter.DoubleSubmitCookiefilter;
 import kr.go.support.subsidy.filter.RequestTracingfilter;
 import kr.go.support.subsidy.filter.SessionCheckfilter;
+import kr.go.support.subsidy.service.LogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -12,14 +15,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
-@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-
-    private final RequestTracingfilter requestTracingfilter;
-    private final SessionCheckfilter sessionCheckfilter;
-    private final DoubleSubmitCookiefilter doubleSubmitCookiefilter;
 
     //CORS 필터 적용
     @Bean
@@ -40,17 +39,26 @@ public class WebConfig implements WebMvcConfigurer {
 
     //요청 검증
     @Bean
-    public FilterRegistrationBean<RequestTracingfilter> tracingFilterRegistration() {
-        FilterRegistrationBean<RequestTracingfilter> bean = new FilterRegistrationBean<>(requestTracingfilter);
+    public FilterRegistrationBean<RequestTracingfilter> tracingFilterRegistration(
+            LogService logService,
+            ObjectMapper objectMapper,
+            ApplicationEventPublisher eventPublisher
+    ) {
+        FilterRegistrationBean<RequestTracingfilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new RequestTracingfilter(logService, objectMapper, eventPublisher));
         bean.addUrlPatterns("/api/*");
         bean.setOrder(1);
         return bean;
     }
 
+
     //세션 검증
     @Bean
-    public FilterRegistrationBean<SessionCheckfilter> sessionFilterRegistration() {
-        FilterRegistrationBean<SessionCheckfilter> bean = new FilterRegistrationBean<>(sessionCheckfilter);
+    public FilterRegistrationBean<SessionCheckfilter> sessionFilterRegistration(
+            ObjectMapper objectMapper
+    ) {
+        FilterRegistrationBean<SessionCheckfilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new SessionCheckfilter(objectMapper));
         bean.addUrlPatterns("/api/*");
         bean.setOrder(2);
         return bean;
@@ -58,8 +66,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     //CSRF 검증
     @Bean
-    public FilterRegistrationBean<DoubleSubmitCookiefilter> csrfFilterRegistration() {
-        FilterRegistrationBean<DoubleSubmitCookiefilter> bean = new FilterRegistrationBean<>(doubleSubmitCookiefilter);
+    public FilterRegistrationBean<DoubleSubmitCookiefilter> csrfFilterRegistration(
+            SecurityUtils securityUtils,
+            ObjectMapper objectMapper
+    ) {
+        FilterRegistrationBean<DoubleSubmitCookiefilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new DoubleSubmitCookiefilter(securityUtils, objectMapper));
         bean.addUrlPatterns("/api/*");
         bean.setOrder(3);
         return bean;

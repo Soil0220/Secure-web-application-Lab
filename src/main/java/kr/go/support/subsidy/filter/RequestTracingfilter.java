@@ -10,25 +10,32 @@ import kr.go.support.subsidy.dto.log.LogRequestDto;
 import kr.go.support.subsidy.service.LogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 
-@Component
+
 @RequiredArgsConstructor
 public class RequestTracingfilter extends OncePerRequestFilter {
 
     private static final String HEADER_REQUEST_ID = "X-Request-Id";
     private static final String HEADER_REQUEST_TIME = "X-Request-Time";
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private final LogService logService;
-    private final ObjectMapper objectMapper; // ResponseApi 객체를 JSON으로 직렬화하기 위해 주입
-    private final ApplicationEventPublisher eventPublisher; // 동기로 돌아가는 스프링부트를 고려해 로그저장은 비동기로 처리
+    private final ObjectMapper objectMapper;
+    private final ApplicationEventPublisher eventPublisher;
+
+    //GET 메서드이지만 필터를 거쳐야하는 요청
+    private static final List<String> FILTER_GET_PATTERNS = List.of(
+            "/api/user"
+    );
+
 
     //Safe 메서드 검증 제외
     @Override
@@ -36,7 +43,17 @@ public class RequestTracingfilter extends OncePerRequestFilter {
 
         //TODO GET 메서드에 대해서는 HTTP GET FLOODING 공격 등을 탐지하기 위해 시간당 집계처리 필요
         String method = request.getMethod();
-        return "GET".equals(method) || "HEAD".equals(method) || "OPTIONS".equals(method) || "TRACE".equals(method);
+        String uri = request.getRequestURI();
+
+        //특정 GET메서드 제외 통과
+        if ("GET".equals(method)) {
+            boolean isMustFilter = FILTER_GET_PATTERNS.stream()
+                    .anyMatch(pattern -> pathMatcher.match(pattern, uri));
+
+            return !isMustFilter;
+        }
+
+        return "HEAD".equals(method) || "OPTIONS".equals(method) || "TRACE".equals(method);
     }
 
     //상태 변경 메서드에 대해서만 검증

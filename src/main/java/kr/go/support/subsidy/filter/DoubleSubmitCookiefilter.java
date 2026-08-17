@@ -9,28 +9,57 @@ import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 import tools.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
+import java.util.List;
 
-@Component
+
 @RequiredArgsConstructor
 public class DoubleSubmitCookiefilter extends OncePerRequestFilter {
 
     private static final String XSRF_TOKEN = "XSRF-TOKEN";
-    private final ObjectMapper objectMapper;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
     private final SecurityUtils securityUtils;
+    private final ObjectMapper objectMapper;
+
+    //GET 메서드이지만 필터를 거쳐야하는 요청
+    private static final List<String> FILTER_GET_PATTERNS = List.of(
+            "/api/user"
+    );
+
+    //필터를 통과 시켜야하는 요청
+    private static final List<String> BYPASS_PATTERNS = List.of(
+            "/api/user/login/public",
+            "/api/user/join/public"
+    );
 
     //Safe 메서드 검증 제외
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String method = request.getMethod();
-        return "GET".equals(method) || "HEAD".equals(method) || "OPTIONS".equals(method) || "TRACE".equals(method)
-                || request.getRequestURI().equals("/api/user/login/public") || request.getRequestURI().equals("/api/user/join/public");
+        String uri = request.getRequestURI();
+
+        //특정 URL 통과
+        if (BYPASS_PATTERNS.stream().anyMatch(pattern -> pathMatcher.match(pattern, uri))) {
+            return true;
+        }
+
+        //특정 GET메서드 제외 통과
+        if ("GET".equals(method)) {
+            boolean isMustFilter = FILTER_GET_PATTERNS.stream()
+                    .anyMatch(pattern -> pathMatcher.match(pattern, uri));
+
+            return !isMustFilter;
+        }
+
+        //읽기전용 메서드 통과
+        return "HEAD".equals(method) || "OPTIONS".equals(method) || "TRACE".equals(method);
     }
 
     @Override

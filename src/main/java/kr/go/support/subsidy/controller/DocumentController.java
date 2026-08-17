@@ -75,12 +75,13 @@ public class DocumentController {
                 .body(downloadDto.resource());
     }
 
-    //신청서 서류 다운로드(Admin)
-    @GetMapping("/{applicationDocumentId}/admin")
+    //신청서 서류 다운로드
+    @GetMapping("/application/{applicationDocumentId}")
     public ResponseEntity<Resource> downloadApplicationDocument(
-            @PathVariable Long applicationDocumentId) {
+            @PathVariable Long applicationDocumentId,
+            @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        DocumentDownloadDto downloadDto = documentService.downloadApplicationDocument(applicationDocumentId);
+        DocumentDownloadDto downloadDto = documentService.downloadApplicationDocument(applicationDocumentId, sessionUser.getId(), sessionUser.getRole());
 
         // 한글,특수문자 파일명 인코딩
         String encodedFileName = UriUtils.encode(downloadDto.originFileName(), StandardCharsets.UTF_8);

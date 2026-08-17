@@ -36,6 +36,7 @@ public class ApplicationDocument extends BaseEntity {
     private Application application;
 
     //Document 엔티티의 스냅샷 용 필드
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DocumentType docType;
 

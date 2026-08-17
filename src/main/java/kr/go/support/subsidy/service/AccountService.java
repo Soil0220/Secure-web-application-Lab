@@ -21,8 +21,6 @@ import kr.go.support.subsidy.dto.user.UserLoginDto;
 import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.keygen.BytesKeyGenerator;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -77,6 +75,14 @@ public class AccountService {
 
         user.updateAccount(dto.bankName(), dto.accountNum());
         return userId;
+    }
+
+    //본인 계정조회
+    public UserResponseDto getUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        return UserResponseDto.from(user);
     }
 
     //계정조회(Admin)

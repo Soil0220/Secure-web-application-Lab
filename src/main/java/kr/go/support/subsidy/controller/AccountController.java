@@ -97,6 +97,15 @@ public class AccountController {
         return ResponseApi.success(userId);
     }
 
+    //본인 계정조회
+    @GetMapping
+    public ResponseApi<UserResponseDto> getUsers(
+            @SessionAttribute(name = "loginUser") SessionUser sessionUser){
+
+        UserResponseDto response = accountService.getUser(sessionUser.getId());
+        return ResponseApi.success(response);
+    }
+
     //계정조회(Admin)
     @GetMapping("/admin")
     public ResponseApi<List<UserResponseDto>> getUsers(){

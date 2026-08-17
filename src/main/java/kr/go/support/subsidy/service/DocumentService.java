@@ -7,6 +7,7 @@ import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocument;
 import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocumentRepository;
 import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentRepository;
+import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
 import kr.go.support.subsidy.dto.document.DocumentCreateDto;
@@ -88,11 +89,20 @@ public class DocumentService {
             return new DocumentDownloadDto(resource, document.getOriginFileName());
     }
 
-    //신청서 서류 다운로드(Admin)
-    public DocumentDownloadDto downloadApplicationDocument(Long applicationDocumentId) {
+    //신청서 서류 다운로드
+    public DocumentDownloadDto downloadApplicationDocument(Long applicationDocumentId, Long userId, Role role) {
 
-        ApplicationDocument applicationDocument = applicationDocumentRepository.findById(applicationDocumentId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
+        ApplicationDocument applicationDocument;
+
+        //어드민 권한
+        if(role == Role.ADMIN){
+            applicationDocument = applicationDocumentRepository.findById(applicationDocumentId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
+            //유저 권한
+        } else {
+            applicationDocument = applicationDocumentRepository.findByIdAndUserId(applicationDocumentId, userId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND));
+        }
 
         // 물리 파일 자원(Resource) 읽기
         Resource resource = fileManager.getResource(applicationDocument.getStoreFileName());

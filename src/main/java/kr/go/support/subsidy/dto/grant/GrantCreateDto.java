@@ -34,7 +34,10 @@ public record GrantCreateDto(
         Instant startDate,
 
         @NotNull
-        Instant endDate
+        Instant endDate,
+
+        @NotNull
+        GrantStatus status
 ) {
         public Grant toEntity() {
                 return Grant.builder()
@@ -45,7 +48,7 @@ public record GrantCreateDto(
                         .cycle(cycle)
                         .startDate(startDate)
                         .endDate(endDate)
-                        .status(GrantStatus.PREPARING)
+                        .status(status)
                         .build();
         }
 }

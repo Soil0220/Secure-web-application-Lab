@@ -35,13 +35,7 @@ public class GrantController {
     //지원금 제도 등록(Admin)
     @PostMapping("/admin")
     public ResponseApi<Long> createGrant(
-            @Valid @RequestBody GrantCreateDto dto,
-            @SessionAttribute(name = "loginUser") SessionUser sessionUser){
-
-        //ADMIN권한 확인
-        if(sessionUser.getRole() != Role.ADMIN){
-            throw new BusinessException(ErrorCode.ADMIN_REQUIRED);
-        }
+            @Valid @RequestBody GrantCreateDto dto){
 
         Long response = grantService.createGrant(dto);
 

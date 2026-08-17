@@ -10,6 +10,7 @@ import kr.go.support.subsidy.domain.document.Document;
 import kr.go.support.subsidy.domain.document.DocumentRepository;
 import kr.go.support.subsidy.domain.grant.Grant;
 import kr.go.support.subsidy.domain.grant.GrantRepository;
+import kr.go.support.subsidy.domain.grant.GrantStatus;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.domain.user.UserRepository;
 import kr.go.support.subsidy.dto.application.ApplicationCreateDto;
@@ -19,7 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +58,7 @@ public class ApplicationService {
     //지원금 신청
     @Transactional
     public Long createApplication(Long userId, ApplicationCreateDto dto) {
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -62,8 +67,19 @@ public class ApplicationService {
 
         List<Document> docs = documentRepository.findAllByIdInAndUserId(dto.documentIds(), userId);
 
-        //유저가 실제 등록한 서류와 개수가 맞는지 점검
-        if (docs.size() != dto.documentIds().size()) {
+        //Grant가 모집중일 때만 신청 가능
+        if(grant.getStatus() != GrantStatus.RECRUITING){
+            throw new BusinessException(ErrorCode.GRANT_NOT_RECRUITING);
+        }
+
+        //두 집합의 크기와 구성 요소가 완전히 일치하는지 검증
+        Set<Long> foundIds = docs.stream()
+                .map(Document::getId)
+                .collect(Collectors.toSet());
+
+        Set<Long> requestedIds = new HashSet<>(dto.documentIds());
+
+        if (!foundIds.equals(requestedIds)) {
             throw new BusinessException(ErrorCode.DOCUMENT_NOT_FOUND);
         }
 

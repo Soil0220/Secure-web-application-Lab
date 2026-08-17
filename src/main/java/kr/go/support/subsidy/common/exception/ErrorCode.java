@@ -24,6 +24,7 @@ public enum ErrorCode {
     // Application
     APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "A001", "지원금 신청이 존재하지 않습니다."),
 
+
     // Document
     DOCUMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "서류정보가 존재하지 않습니다."),
     DOCUMENT_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "D002", "요청하신 파일을 찾을 수 없습니다."),
@@ -35,6 +36,7 @@ public enum ErrorCode {
 
     // Grant
     GRANT_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "지원금 제도가 존재하지 않습니다."),
+    GRANT_NOT_RECRUITING(HttpStatus.BAD_REQUEST, "G002", "모집 대상 지원금 제도가 아닙니다."),
 
     // Inquiry
     INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "I001", "문의가 존재하지 않습니다."),

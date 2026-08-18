@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
 
+/*
+    로그인 관리
+    1. useAuth를 통한 로그인 함수 실행
+    2. loginType을 통한 로그인 방식 변환
+    3. errorMessage를 통한 에러 메시지 출력(로그인 실패)
+*/
+
 const LoginPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -9,7 +16,7 @@ const LoginPage = () => {
     // 로그인 방식 탭 (아이디 로그인 / 간편인증)
     const [loginType, setLoginType] = useState('id');
 
-    // 폼 입력 상태 (스프링부트 로그인 API 전달용)
+    // 폼 입력 상태
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -186,211 +193,38 @@ const LoginPage = () => {
     );
 };
 
-/* 스타일 정의 (지원금24 브랜드 디자인 가이드) */
+/* 스타일 정의 (가로 정렬 표기) */
 const styles = {
-    container: {
-        fontFamily: "'Noto Sans KR', sans-serif",
-        backgroundColor: '#f8f9fa',
-        minHeight: '100vh',
-        color: '#111111',
-    },
-    header: {
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
-    },
-    headerInner: {
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '16px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    logoArea: {
-        display: 'flex',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    logoBadge: {
-        backgroundColor: '#0056b3',
-        color: '#ffffff',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        fontSize: '13px',
-    },
-    logoText: {
-        fontSize: '22px',
-        fontWeight: 'bold',
-        color: '#111111',
-    },
-    homeBtn: {
-        background: 'none',
-        border: 'none',
-        color: '#0056b3',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        cursor: 'pointer',
-    },
-    mainContent: {
-        padding: '40px 20px 60px',
-        display: 'flex',
-        justifyContent: 'center',
-    },
-    authCard: {
-        backgroundColor: '#ffffff',
-        width: '100%',
-        maxWidth: '460px',
-        padding: '36px 32px',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-        border: '1px solid #e2e8f0',
-        boxSizing: 'border-box',
-    },
-    titleHeader: {
-        borderBottom: '2px solid #111111',
-        paddingBottom: '10px',
-        marginBottom: '12px',
-        textAlign: 'center',
-    },
-    title: {
-        fontSize: '22px',
-        fontWeight: 'bold',
-        color: '#111111',
-        margin: 0,
-    },
-    subtitle: {
-        fontSize: '14px',
-        color: '#666666',
-        textAlign: 'center',
-        margin: '0 0 24px 0',
-        lineHeight: '1.5',
-    },
-    tabContainer: {
-        display: 'flex',
-        marginBottom: '24px',
-        borderBottom: '1px solid #e2e8f0',
-    },
-    tabButton: {
-        flex: 1,
-        padding: '12px 0',
-        border: 'none',
-        backgroundColor: 'transparent',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        color: '#666666',
-        cursor: 'pointer',
-        borderBottom: '2px solid transparent',
-        marginBottom: '-1px',
-        transition: 'all 0.15s ease',
-    },
-    activeTab: {
-        color: '#0056b3',
-        borderBottom: '2px solid #0056b3',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-    },
-    inputGroup: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-    },
-    label: {
-        fontSize: '13px',
-        fontWeight: 'bold',
-        color: '#111111',
-    },
-    input: {
-        padding: '10px 12px',
-        borderRadius: '6px',
-        border: '1px solid #e2e8f0',
-        backgroundColor: '#ffffff',
-        fontSize: '14px',
-        outline: 'none',
-        boxSizing: 'border-box',
-        width: '100%',
-        color: '#111111',
-    },
-    errorText: {
-        fontSize: '13px',
-        color: '#d93025',
-        fontWeight: '500',
-        marginTop: '-4px',
-    },
-    utilityRow: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: '13px',
-        color: '#666666',
-        marginTop: '4px',
-    },
-    checkboxLabel: {
-        display: 'flex',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    findLinks: {
-        display: 'flex',
-        gap: '8px',
-    },
-    findLink: {
-        cursor: 'pointer',
-        color: '#666666',
-    },
-    linkDivider: {
-        color: '#cbd5e1',
-    },
-    submitBtn: {
-        backgroundColor: '#0056b3',
-        color: '#ffffff',
-        border: 'none',
-        padding: '12px',
-        borderRadius: '6px',
-        fontSize: '15px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        marginTop: '8px',
-        width: '100%',
-        transition: 'background-color 0.15s ease',
-    },
-    easyAuthBox: {
-        textAlign: 'center',
-        padding: '24px 16px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '8px',
-        border: '1px solid #e2e8f0',
-    },
-    easyAuthText: {
-        margin: '0 0 16px 0',
-        fontSize: '14px',
-        color: '#333333',
-        lineHeight: '1.5',
-    },
-    bottomPrompt: {
-        marginTop: '28px',
-        paddingTop: '20px',
-        borderTop: '1px solid #e2e8f0',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '8px',
-        fontSize: '14px',
-        color: '#666666',
-    },
-    registerLinkBtn: {
-        background: 'none',
-        border: 'none',
-        color: '#0056b3',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        fontSize: '14px',
-        textDecoration: 'underline',
-        padding: 0,
-    },
+    container: { fontFamily: "'Noto Sans KR', sans-serif", backgroundColor: '#f8f9fa', minHeight: '100vh', color: '#111111' },
+    header: { backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0' },
+    headerInner: { maxWidth: '1200px', margin: '0 auto', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+    logoArea: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
+    logoBadge: { backgroundColor: '#0056b3', color: '#ffffff', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '13px' },
+    logoText: { fontSize: '22px', fontWeight: 'bold', color: '#111111' },
+    homeBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' },
+    mainContent: { padding: '40px 20px 60px', display: 'flex', justifyContent: 'center' },
+    authCard: { backgroundColor: '#ffffff', width: '100%', maxWidth: '460px', padding: '36px 32px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', border: '1px solid #e2e8f0', boxSizing: 'border-box' },
+    titleHeader: { borderBottom: '2px solid #111111', paddingBottom: '10px', marginBottom: '12px', textAlign: 'center' },
+    title: { fontSize: '22px', fontWeight: 'bold', color: '#111111', margin: 0 },
+    subtitle: { fontSize: '14px', color: '#666666', textAlign: 'center', margin: '0 0 24px 0', lineHeight: '1.5' },
+    tabContainer: { display: 'flex', marginBottom: '24px', borderBottom: '1px solid #e2e8f0' },
+    tabButton: { flex: 1, padding: '12px 0', border: 'none', backgroundColor: 'transparent', fontSize: '14px', fontWeight: 'bold', color: '#666666', cursor: 'pointer', borderBottom: '2px solid transparent', marginBottom: '-1px', transition: 'all 0.15s ease' },
+    activeTab: { color: '#0056b3', borderBottom: '2px solid #0056b3' },
+    form: { display: 'flex', flexDirection: 'column', gap: '16px' },
+    inputGroup: { display: 'flex', flexDirection: 'column', gap: '6px' },
+    label: { fontSize: '13px', fontWeight: 'bold', color: '#111111' },
+    input: { padding: '10px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', fontSize: '14px', outline: 'none', boxSizing: 'border-box', width: '100%', color: '#111111' },
+    errorText: { fontSize: '13px', color: '#d93025', fontWeight: '500', marginTop: '-4px' },
+    utilityRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', color: '#666666', marginTop: '4px' },
+    checkboxLabel: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
+    findLinks: { display: 'flex', gap: '8px' },
+    findLink: { cursor: 'pointer', color: '#666666' },
+    linkDivider: { color: '#cbd5e1' },
+    submitBtn: { backgroundColor: '#0056b3', color: '#ffffff', border: 'none', padding: '12px', borderRadius: '6px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px', width: '100%', transition: 'background-color 0.15s ease' },
+    easyAuthBox: { textAlign: 'center', padding: '24px 16px', backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e2e8f0' },
+    easyAuthText: { margin: '0 0 16px 0', fontSize: '14px', color: '#333333', lineHeight: '1.5' },
+    bottomPrompt: { marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666666' },
+    registerLinkBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline', padding: 0 },
 };
 
 export default LoginPage;

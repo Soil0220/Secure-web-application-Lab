@@ -64,7 +64,7 @@ export default function InquiryManagement() {
 
     return (
         <div style={styles.container}>
-            {/* 1. 상단 Header */}
+            {/* 상단 Header */}
             <div style={styles.headerRow}>
                 <div style={styles.titleGroup}>
                     <h2 style={styles.sectionTitle}>1:1 문의 내역</h2>
@@ -81,7 +81,7 @@ export default function InquiryManagement() {
                 </button>
             </div>
 
-            {/* 2. 문의 목록 */}
+            {/* 문의 목록 */}
             <div style={styles.cardList}>
                 {inquiryArray.length > 0 ? (
                     inquiryArray.map((inq) => {
@@ -133,7 +133,7 @@ export default function InquiryManagement() {
                 )}
             </div>
 
-            {/* 3. 새 문의 작성 모달 (오버레이 클릭 시 닫힘, 내부 클릭은 전파 방지) */}
+            {/* 새 문의 작성 모달 (오버레이 클릭 시 닫힘, 내부 클릭은 전파 방지) */}
             {showModal && (
                 <div style={styles.overlay} onClick={() => setShowModal(false)}>
                     <div style={styles.noticeModalContent} onClick={(e) => e.stopPropagation()}>

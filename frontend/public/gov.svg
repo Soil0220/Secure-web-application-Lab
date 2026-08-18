@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 32" width="54" height="32">
+  <!-- 배경 박스 (logoBadge 스타일 반영) -->
+  <rect x="0" y="0" width="54" height="32" rx="4" fill="#0056b3" />
+  
+  <!-- 'GOV' 텍스트 (logoBadge 폰트 스타일 반영) -->
+  <text 
+    x="50%" 
+    y="52%" 
+    dominant-baseline="central" 
+    text-anchor="middle" 
+    fill="#ffffff" 
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+    font-weight="bold" 
+    font-size="14px"
+    letter-spacing="0.5px"
+  >GOV</text>
+</svg>

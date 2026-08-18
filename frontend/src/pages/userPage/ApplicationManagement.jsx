@@ -2,11 +2,20 @@ import { useEffect, useState } from "react";
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
 import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
 
+/*
+    지원금 제도 신청 관리
+    1. 지원금 신청 상태에 대한 MAP과 날짜 포맷 함수 정의
+    2. useApplication을 통한 지원금 신청 조회 함수 등록
+    3. useDocument를 통한 신청서에 포함된 파일 다운로드 함수 등록
+    4. downloadingId를 통한 파일별 중복 다운로드 방지
+*/
+
 const STATUS_MAP = {
-    APPROVED: { label: "승인완료", bg: "#e6f4ea", color: "#137333" },
-    PENDING: { label: "접수완료", bg: "#e8f0fe", color: "#1a73e8" },
-    UNDER_REVIEW: { label: "심사중", bg: "#fef7e0", color: "#b06000" },
-    REJECTED: { label: "반려", bg: "#fce8e6", color: "#c5221f" },
+    SUBMITTED: { label: "접수됨", bg: "#eff6ff", color: "#2563eb" },
+    UNDER_REVIEW: { label: "심사중", bg: "#fef3c7", color: "#d97706" },
+    APPROVED: { label: "승인", bg: "#f0fdf4", color: "#16a34a" },
+    REJECTED: { label: "반려", bg: "#fef2f2", color: "#dc2626" },
+    PAID: { label: "지급완료", bg: "#ecfdf5", color: "#059669" },
 };
 
 const formatDateTime = (isoString) => {
@@ -24,25 +33,21 @@ const formatDateTime = (isoString) => {
 };
 
 export default function ApplicationManagement() {
-    const { applications, getApplications, loading: appLoading } = useApplication();
+    const { applications, getApplications } = useApplication();
     const { downloadApplicationDocument } = useDocument();
 
-    // 개별 문서 다운로드 상태 관리 (중복 클릭 방지)
+    // 개별 문서 다운로드 상태 관리
     const [downloadingId, setDownloadingId] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (typeof getApplications === "function") {
-                await getApplications();
-            }
+            await getApplications();
         };
         fetchData();
-    }, []); // 👈 의존성 배열을 빈 배열([])로 고정하여 최초 1회만 호출되도록 수정
+    }, []);
 
     // applications가 배열이거나 { data: [...] } 형태일 경우 모두 안전하게 처리
-    const applicationArray = Array.isArray(applications)
-        ? applications
-        : (applications?.data && Array.isArray(applications.data) ? applications.data : []);
+    const applicationArray = applications;
 
     const handleDownload = async (documentId, originFilename) => {
         if (downloadingId) return;
@@ -59,7 +64,7 @@ export default function ApplicationManagement() {
 
     return (
         <div style={styles.container}>
-            {/* 상단 헤더 영역 (밑줄 추가 및 스타일 통일) */}
+            {/* 상단 헤더 영역 */}
             <div style={styles.headerRow}>
                 <div style={styles.titleGroup}>
                     <h2 style={styles.contentTitle}>지원금 신청 내역</h2>
@@ -70,11 +75,7 @@ export default function ApplicationManagement() {
             </div>
 
             <div style={styles.cardList}>
-                {appLoading ? (
-                    <div style={styles.emptyCard}>
-                        <p style={styles.emptyText}>신청 내역을 불러오는 중입니다...</p>
-                    </div>
-                ) : applicationArray.length > 0 ? (
+                {applicationArray.length > 0 ? (
                     applicationArray.map((app) => {
                         const statusInfo = STATUS_MAP[app.status] || {
                             label: app.status || "알 수 없음",
@@ -158,167 +159,32 @@ export default function ApplicationManagement() {
     );
 }
 
+
 const styles = {
-    container: {
-        fontFamily: "'Noto Sans KR', sans-serif",
-        backgroundColor: "#ffffff",
-        width: "100%",
-        boxSizing: "border-box",
-    },
-    headerRow: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "20px",
-        borderBottom: "2px solid #111111",
-        paddingBottom: "10px",
-    },
-    titleGroup: {
-        display: "flex",
-        alignItems: "baseline",
-        gap: "12px",
-    },
-    contentTitle: {
-        fontSize: "20px",
-        fontWeight: "bold",
-        color: "#111111",
-        margin: 0,
-        letterSpacing: "-0.02em",
-    },
-    totalBadge: {
-        fontSize: "14px",
-        color: "#666666",
-    },
-    cardList: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-    },
-    dataCard: {
-        backgroundColor: "#ffffff",
-        border: "1px solid #e2e8f0",
-        borderRadius: "8px",
-        padding: "20px 24px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)",
-    },
-    cardHeader: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    appNumber: {
-        fontSize: "12px",
-        fontWeight: "bold",
-        color: "#888888",
-        letterSpacing: "0.03em",
-    },
-    statusBadge: {
-        padding: "4px 10px",
-        borderRadius: "4px",
-        fontSize: "12px",
-        fontWeight: "bold",
-    },
-    cardTitle: {
-        fontSize: "17px",
-        fontWeight: "bold",
-        color: "#111111",
-        margin: 0,
-    },
-    metaRow: {
-        display: "flex",
-        alignItems: "center",
-        gap: "16px",
-        backgroundColor: "#f8f9fa",
-        border: "1px solid #e2e8f0",
-        padding: "10px 16px",
-        borderRadius: "6px",
-        flexWrap: "wrap",
-    },
-    metaItem: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-    },
-    metaLabel: {
-        fontSize: "13px",
-        color: "#666666",
-        fontWeight: "500",
-    },
-    metaValue: {
-        fontSize: "13px",
-        color: "#111111",
-        fontWeight: "bold",
-    },
-    metaDivider: {
-        width: "1px",
-        height: "12px",
-        backgroundColor: "#cbd5e1",
-    },
-    documentSection: {
-        marginTop: "4px",
-        paddingTop: "12px",
-        borderTop: "1px dashed #e2e8f0",
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-    },
-    documentHeader: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-    },
-    documentLabel: {
-        fontSize: "13px",
-        fontWeight: "bold",
-        color: "#333333",
-    },
-    documentCount: {
-        fontSize: "12px",
-        color: "#0056b3",
-        fontWeight: "bold",
-    },
-    fileList: {
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "8px",
-    },
-    fileButton: {
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "8px",
-        backgroundColor: "#ffffff",
-        border: "1px solid #cbd5e1",
-        borderRadius: "6px",
-        padding: "6px 12px",
-        fontSize: "13px",
-        color: "#111111",
-        fontWeight: "500",
-        transition: "all 0.15s ease",
-    },
-    fileName: {
-        maxWidth: "200px",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-    },
-    downloadIcon: {
-        fontSize: "13px",
-        color: "#0056b3",
-        fontWeight: "bold",
-    },
-    emptyCard: {
-        padding: "40px",
-        textAlign: "center",
-        backgroundColor: "#ffffff",
-        borderRadius: "8px",
-        border: "1px solid #e2e8f0",
-    },
-    emptyText: {
-        fontSize: "14px",
-        color: "#666666",
-        margin: 0,
-    },
+    container: { fontFamily: "'Noto Sans KR', sans-serif", backgroundColor: "#ffffff", width: "100%", boxSizing: "border-box" },
+    headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "2px solid #111111", paddingBottom: "10px" },
+    titleGroup: { display: "flex", alignItems: "baseline", gap: "12px" },
+    contentTitle: { fontSize: "20px", fontWeight: "bold", color: "#111111", margin: 0, letterSpacing: "-0.02em" },
+    totalBadge: { fontSize: "14px", color: "#666666" },
+    cardList: { display: "flex", flexDirection: "column", gap: "16px" },
+    dataCard: { backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "20px 24px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.03)" },
+    cardHeader: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+    appNumber: { fontSize: "12px", fontWeight: "bold", color: "#888888", letterSpacing: "0.03em" },
+    statusBadge: { padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" },
+    cardTitle: { fontSize: "17px", fontWeight: "bold", color: "#111111", margin: 0 },
+    metaRow: { display: "flex", alignItems: "center", gap: "16px", backgroundColor: "#f8f9fa", border: "1px solid #e2e8f0", padding: "10px 16px", borderRadius: "6px", flexWrap: "wrap" },
+    metaItem: { display: "flex", alignItems: "center", gap: "8px" },
+    metaLabel: { fontSize: "13px", color: "#666666", fontWeight: "500" },
+    metaValue: { fontSize: "13px", color: "#111111", fontWeight: "bold" },
+    metaDivider: { width: "1px", height: "12px", backgroundColor: "#cbd5e1" },
+    documentSection: { marginTop: "4px", paddingTop: "12px", borderTop: "1px dashed #e2e8f0", display: "flex", flexDirection: "column", gap: "8px" },
+    documentHeader: { display: "flex", alignItems: "center", gap: "8px" },
+    documentLabel: { fontSize: "13px", fontWeight: "bold", color: "#333333" },
+    documentCount: { fontSize: "12px", color: "#0056b3", fontWeight: "bold" },
+    fileList: { display: "flex", flexWrap: "wrap", gap: "8px" },
+    fileButton: { display: "inline-flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", color: "#111111", fontWeight: "500", transition: "all 0.15s ease" },
+    fileName: { maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+    downloadIcon: { fontSize: "13px", color: "#0056b3", fontWeight: "bold" },
+    emptyCard: { padding: "40px", textAlign: "center", backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e2e8f0" },
+    emptyText: { fontSize: "14px", color: "#666666", margin: 0 },
 };

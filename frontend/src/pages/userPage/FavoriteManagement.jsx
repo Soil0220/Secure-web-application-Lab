@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"; // 1. useState 추가
+import { useEffect, useState } from "react";
 import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
-import ApplicationForm from "../../components/ApplicationForm"; // 2. ApplicationForm import (경로는 실제 위치에 맞게 수정 필요)
+import ApplicationForm from "../../components/ApplicationForm";
 
+// 백엔드 GrantStatus Enum 반영 (RECRUITING, CLOSED, PREPARING)
 const STATUS_MAP = {
+    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
     PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
-    ACTIVE: { label: "신청중", bg: "#e6f4ea", color: "#137333" },
     CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" },
 };
 
@@ -18,7 +19,7 @@ const formatDate = (isoString) => {
 
 export default function FavoriteManagement() {
     const { favorites, getFavorites } = useFavorite();
-    const [isModalOpen, setIsModalOpen] = useState(false); // 3. 모달 열림/닫힘 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +36,7 @@ export default function FavoriteManagement() {
 
     return (
         <div style={styles.container}>
-            {/* 1. 상단 Header */}
+            {/* 상단 Header */}
             <div style={styles.headerRow}>
                 <div style={styles.titleGroup}>
                     <h2 style={styles.sectionTitle}>관심목록</h2>
@@ -45,7 +46,7 @@ export default function FavoriteManagement() {
                 </div>
             </div>
 
-            {/* 2. 관심목록 리스트 */}
+            {/* 관심목록 리스트 */}
             <div style={styles.cardList}>
                 {favoriteArray.length > 0 ? (
                     favoriteArray.map((favorite) => {
@@ -80,7 +81,6 @@ export default function FavoriteManagement() {
                                     </div>
                                 </div>
                                 <div style={styles.cardFooter}>
-                                    {/* 4. 바로 신청하기 버튼 클릭 이벤트 추가 */}
                                     <button style={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
                                         바로 신청하기
                                     </button>
@@ -93,7 +93,7 @@ export default function FavoriteManagement() {
                 )}
             </div>
 
-            {/* 5. 지원금 신청 모달 연동 */}
+            {/* 지원금 신청 모달 연동 */}
             <ApplicationForm
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

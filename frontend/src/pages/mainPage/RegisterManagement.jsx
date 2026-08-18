@@ -2,11 +2,17 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
 
+/*
+    회원가입 관리
+    1. useAuth을 통한 회원가입 함수 등록
+    3. formData 기준 비밀번호 체크
+    2. agreed를 통한 약관 동의 상태 체크
+*/
+
 const RegisterPage = () => {
     const navigate = useNavigate();
     const { signUp } = useAuth();
 
-    // 스프링부트 회원가입 API 연동용 DTO 상태
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -115,7 +121,7 @@ const RegisterPage = () => {
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="비밀번호 (영문, 숫자 포함 8자 이상)"
+                                placeholder="비밀번호 (8자 이상)"
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
@@ -224,180 +230,31 @@ const RegisterPage = () => {
     );
 };
 
-/* 스타일 정의 (지원금24 브랜드 디자인 가이드) */
 const styles = {
-    container: {
-        fontFamily: "'Noto Sans KR', sans-serif",
-        backgroundColor: '#f8f9fa',
-        minHeight: '100vh',
-        color: '#111111',
-    },
-    header: {
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
-    },
-    headerInner: {
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '16px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    logoArea: {
-        display: 'flex',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    logoBadge: {
-        backgroundColor: '#0056b3',
-        color: '#ffffff',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        fontSize: '13px',
-    },
-    logoText: {
-        fontSize: '22px',
-        fontWeight: 'bold',
-        color: '#111111',
-    },
-    homeBtn: {
-        background: 'none',
-        border: 'none',
-        color: '#0056b3',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        cursor: 'pointer',
-    },
-    mainContent: {
-        padding: '40px 20px 60px',
-        display: 'flex',
-        justifyContent: 'center',
-    },
-    authCard: {
-        backgroundColor: '#ffffff',
-        width: '100%',
-        maxWidth: '520px',
-        padding: '36px 32px',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-        border: '1px solid #e2e8f0',
-        boxSizing: 'border-box',
-    },
-    titleHeader: {
-        borderBottom: '2px solid #111111',
-        paddingBottom: '10px',
-        marginBottom: '12px',
-        textAlign: 'center',
-    },
-    title: {
-        fontSize: '22px',
-        fontWeight: 'bold',
-        color: '#111111',
-        margin: 0,
-    },
-    subtitle: {
-        fontSize: '14px',
-        color: '#666666',
-        textAlign: 'center',
-        margin: '0 0 24px 0',
-        lineHeight: '1.5',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-    },
-    inputGroup: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-    },
-    label: {
-        fontSize: '13px',
-        fontWeight: 'bold',
-        color: '#111111',
-    },
-    required: {
-        color: '#d93025',
-    },
-    input: {
-        padding: '10px 12px',
-        borderRadius: '6px',
-        border: '1px solid #e2e8f0',
-        backgroundColor: '#ffffff',
-        fontSize: '14px',
-        outline: 'none',
-        boxSizing: 'border-box',
-        width: '100%',
-        color: '#111111',
-    },
-    inputWithBtn: {
-        display: 'flex',
-        gap: '8px',
-    },
-    subBtn: {
-        backgroundColor: '#475569',
-        color: '#ffffff',
-        border: 'none',
-        padding: '0 16px',
-        borderRadius: '6px',
-        fontSize: '13px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        whiteSpace: 'nowrap',
-        transition: 'background-color 0.15s ease',
-    },
-    termsBox: {
-        backgroundColor: '#f8f9fa',
-        padding: '14px',
-        borderRadius: '6px',
-        border: '1px solid #e2e8f0',
-        marginTop: '4px',
-    },
-    checkboxLabel: {
-        display: 'flex',
-        alignItems: 'center',
-        fontSize: '13px',
-        color: '#333333',
-        cursor: 'pointer',
-        fontWeight: '500',
-    },
-    submitBtn: {
-        backgroundColor: '#0056b3',
-        color: '#ffffff',
-        border: 'none',
-        padding: '12px',
-        borderRadius: '6px',
-        fontSize: '15px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        marginTop: '8px',
-        width: '100%',
-        transition: 'background-color 0.15s ease',
-    },
-    bottomPrompt: {
-        marginTop: '28px',
-        paddingTop: '20px',
-        borderTop: '1px solid #e2e8f0',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '8px',
-        fontSize: '14px',
-        color: '#666666',
-    },
-    loginLinkBtn: {
-        background: 'none',
-        border: 'none',
-        color: '#0056b3',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        fontSize: '14px',
-        textDecoration: 'underline',
-        padding: 0,
-    },
+    container: { fontFamily: "'Noto Sans KR', sans-serif", backgroundColor: '#f8f9fa', minHeight: '100vh', color: '#111111' },
+    header: { backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0' },
+    headerInner: { maxWidth: '1200px', margin: '0 auto', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+    logoArea: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
+    logoBadge: { backgroundColor: '#0056b3', color: '#ffffff', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '13px' },
+    logoText: { fontSize: '22px', fontWeight: 'bold', color: '#111111' },
+    homeBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' },
+    mainContent: { padding: '40px 20px 60px', display: 'flex', justifyContent: 'center' },
+    authCard: { backgroundColor: '#ffffff', width: '100%', maxWidth: '520px', padding: '36px 32px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', border: '1px solid #e2e8f0', boxSizing: 'border-box' },
+    titleHeader: { borderBottom: '2px solid #111111', paddingBottom: '10px', marginBottom: '12px', textAlign: 'center' },
+    title: { fontSize: '22px', fontWeight: 'bold', color: '#111111', margin: 0 },
+    subtitle: { fontSize: '14px', color: '#666666', textAlign: 'center', margin: '0 0 24px 0', lineHeight: '1.5' },
+    form: { display: 'flex', flexDirection: 'column', gap: '16px' },
+    inputGroup: { display: 'flex', flexDirection: 'column', gap: '6px' },
+    label: { fontSize: '13px', fontWeight: 'bold', color: '#111111' },
+    required: { color: '#d93025' },
+    input: { padding: '10px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', fontSize: '14px', outline: 'none', boxSizing: 'border-box', width: '100%', color: '#111111' },
+    inputWithBtn: { display: 'flex', gap: '8px' },
+    subBtn: { backgroundColor: '#475569', color: '#ffffff', border: 'none', padding: '0 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background-color 0.15s ease' },
+    termsBox: { backgroundColor: '#f8f9fa', padding: '14px', borderRadius: '6px', border: '1px solid #e2e8f0', marginTop: '4px' },
+    checkboxLabel: { display: 'flex', alignItems: 'center', fontSize: '13px', color: '#333333', cursor: 'pointer', fontWeight: '500' },
+    submitBtn: { backgroundColor: '#0056b3', color: '#ffffff', border: 'none', padding: '12px', borderRadius: '6px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px', width: '100%', transition: 'background-color 0.15s ease' },
+    bottomPrompt: { marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666666' },
+    loginLinkBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline', padding: 0 },
 };
 
 export default RegisterPage;

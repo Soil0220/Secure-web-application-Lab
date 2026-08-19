@@ -1,6 +1,7 @@
 package kr.go.support.subsidy.service;
 
 import kr.go.support.subsidy.common.FileManager;
+import kr.go.support.subsidy.common.auth.FileUploadValidator;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.applicationDocument.ApplicationDocument;

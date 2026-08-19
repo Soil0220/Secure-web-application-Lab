@@ -11,11 +11,11 @@ import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
 */
 
 const STATUS_MAP = {
-    SUBMITTED: { label: "접수됨", bg: "#eff6ff", color: "#2563eb" },
-    UNDER_REVIEW: { label: "심사중", bg: "#fef3c7", color: "#d97706" },
+    SUBMITTED: { label: "접수됨", bg: "#fff7ed", color: "#c2410c" },
+    UNDER_REVIEW: { label: "심사중", bg: "#eef6ff", color: "#0056b3" },
     APPROVED: { label: "승인", bg: "#f0fdf4", color: "#16a34a" },
     REJECTED: { label: "반려", bg: "#fef2f2", color: "#dc2626" },
-    PAID: { label: "지급완료", bg: "#ecfdf5", color: "#059669" },
+    PAID: { label: "지급완료", bg: "#dcfce7", color: "#15803d" },
 };
 
 const formatDateTime = (isoString) => {

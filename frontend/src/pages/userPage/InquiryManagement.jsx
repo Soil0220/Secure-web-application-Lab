@@ -1,65 +1,84 @@
 import { useEffect, useState } from "react";
 import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
 
-// 상태값 매핑
+
+/*
+    문의 관리
+    1. 문의 상태, 날짜 포맷팅 정의
+    2. useInquiry를 통한 전체 문의 조회 및 문의 생성 함수 등록
+    3. openInquiryId, isOpen을 통한 관리자 답변 창 선택적 ON/OFF
+    4. showModal을 이용한 문의 작성 창 ON/OFF
+    5. loading을 통한 중복 요청 방지
+*/
+
 const STATUS_MAP = {
     ANSWERED: { label: "답변완료", bg: "#e6f4ea", color: "#137333" },
     PENDING: { label: "답변대기", bg: "#fef7e0", color: "#b06000" },
 };
 
 // 날짜 포맷팅
-const formatDateTime = (isoString) => {
-    if (!isoString) return "-";
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
-    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}.${month}.${day} ${hour}:${minute}`;
 };
 
 export default function InquiryManagement() {
     const { inquiries, getInquiries, createInquiry } = useInquiry();
     const [openInquiryId, setOpenInquiryId] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [formData, setFormData] = useState({
+            title: "",
+            content: "",});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (typeof getInquiries === "function") {
-                await getInquiries();
-            }
+            await getInquiries();
         };
         fetchData();
-    }, []); // 의존성 배열을 빈 배열([])로 고정하여 최초 1회만 호출되도록 수정
+    }, []);
 
     // inquiries가 배열이거나 { data: [...] } 형태일 경우 모두 안전하게 처리
-    const inquiryArray = Array.isArray(inquiries)
-        ? inquiries
-        : (inquiries?.data && Array.isArray(inquiries.data) ? inquiries.data : []);
+    const inquiryArray = inquiries;
 
     const handleCreateInquiry = async (e) => {
         e.preventDefault();
 
-        if (!title.trim() || !content.trim()) {
+        if (!formData.title.trim() || !formData.content.trim()) {
             alert("제목과 내용을 모두 입력해주세요.");
             return;
         }
 
         try {
             setLoading(true);
-            await createInquiry(title, content);
+            await createInquiry(formData.title, formData.content);
             alert("문의가 정상적으로 등록되었습니다.");
-            setTitle("");
-            setContent("");
+            setFormData({
+                title : "",
+                content: ""
+            });
             setShowModal(false);
-            if (typeof getInquiries === "function") {
-                getInquiries();
-            }
+            getInquiries();
         } catch (error) {
             console.error("문의 등록 실패:", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
     return (
@@ -151,8 +170,9 @@ export default function InquiryManagement() {
                                 </label>
                                 <input
                                     type="text"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    value={formData.title}
+                                    name="title"
+                                    onChange={(e) => handleChange(e)}
                                     placeholder="문의 제목을 입력하세요"
                                     style={styles.input}
                                     required
@@ -164,8 +184,9 @@ export default function InquiryManagement() {
                                     내용 <span style={styles.requiredIcon}>*</span>
                                 </label>
                                 <textarea
-                                    value={content}
-                                    onChange={(e) => setContent(e.target.value)}
+                                    value={formData.content}
+                                    name="content"
+                                    onChange={(e) => handleChange(e)}
                                     placeholder="문의 내용을 상세히 입력하세요"
                                     style={styles.textareaNotice}
                                     required

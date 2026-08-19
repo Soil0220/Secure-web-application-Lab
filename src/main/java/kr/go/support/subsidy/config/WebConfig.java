@@ -5,7 +5,6 @@ import kr.go.support.subsidy.filter.DoubleSubmitCookiefilter;
 import kr.go.support.subsidy.filter.RequestTracingfilter;
 import kr.go.support.subsidy.filter.SessionCheckfilter;
 import kr.go.support.subsidy.service.LogService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -76,4 +75,5 @@ public class WebConfig implements WebMvcConfigurer {
         bean.setOrder(3);
         return bean;
     }
+
 }

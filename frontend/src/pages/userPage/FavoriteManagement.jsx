@@ -2,19 +2,35 @@ import { useEffect, useState } from "react";
 import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
 import ApplicationForm from "../../components/ApplicationForm";
 
-// 백엔드 GrantStatus Enum 반영 (RECRUITING, CLOSED, PREPARING)
-const STATUS_MAP = {
-    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
-    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
-    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" },
+/*
+    즐겨찾기 관리
+    1. 지원금 제도 상태, 지급주기 MAP과 날짜 포멧 함수 정의
+    2. useFavorite를 통한 즐겨찾기한 지원금제도 조회 함수 등록
+    3. isModalOpen을 통한 ApplicationForm 공용 컴포넌트 모달 창 제어
+*/
+
+const CYCLE_MAP = {
+    LUMP_SUM: "일시금",
+    DAILY: "매일",
+    WEEKLY: "매주",
+    MONTHLY: "매월",
+    YEARLY: "매년"
 };
 
-const CYCLE_MAP = { WEEKLY: "주간", MONTHLY: "월간", YEARLY: "연간", ONCE: "1회성" };
+const STATUS_MAP = {
+    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
+    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
+    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
+};
 
 const formatDate = (isoString) => {
     if (!isoString) return "-";
     const date = new Date(isoString);
-    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0")
+
+    return `${year}.${month}.${day}`;
 };
 
 export default function FavoriteManagement() {
@@ -23,16 +39,12 @@ export default function FavoriteManagement() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (typeof getFavorites === "function") {
-                await getFavorites();
-            }
+            await getFavorites();
         };
         fetchData();
     }, []);
 
-    const favoriteArray = Array.isArray(favorites)
-        ? favorites
-        : (favorites?.data && Array.isArray(favorites.data) ? favorites.data : []);
+    const favoriteArray = favorites
 
     return (
         <div style={styles.container}>

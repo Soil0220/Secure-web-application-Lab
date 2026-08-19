@@ -56,6 +56,8 @@ const STATUS_MAP = {
     CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
 };
 
+
+
 // 날짜 포맷팅 (YYYY.MM.DD)
 const formatDate = (isoString) => {
     if (!isoString) return "-";

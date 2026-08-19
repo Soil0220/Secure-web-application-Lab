@@ -3,6 +3,16 @@ import { useGrant } from "../contexts/grantContext/UseGrant.jsx";
 import { useDocument } from "../contexts/documentContext/UseDocument.jsx";
 import { useApplication } from "../contexts/applicationContext/UseApplication.jsx";
 
+/*
+    지원금제도 신청 폼
+    1. 지원금제도 카테고리, 서류타입 상태 정의
+    2. useGrant를 통해 지원금제도 조회 함수 등록
+    3. useDocument를 통해 업로드한 서류 조회 함수 등록
+    4. useApplication을 통해 지원금 신청 함수 등록
+    5. selectedGrantId, selectedDocumentIds을 통한 지원금제도와 서류 선택
+    6. ignore을 이용한 뒤 늦은 비동기 응답이 상태를 초기화하지 못하게 설정
+*/
+
 const DOCUMENT_TYPE_MAP = {
     RESIDENT_REGISTRATION_COPY: "주민등록초본",
     FAMILY_RELATION_CERTIFICATE: "가족관계증명서",
@@ -20,18 +30,14 @@ const GRANT_CATEGORY_MAP = {
 };
 
 export default function ApplicationForm({ isOpen, onClose }) {
-    const { grants, getGrants } = useGrant();
-    const { getDocuments } = useDocument();
+    const {getGrants, recruitingGrants } = useGrant();
+    const { documents, getDocuments } = useDocument();
     const { createApplication } = useApplication();
 
     const [selectedGrantId, setSelectedGrantId] = useState('');
     const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
-
-    // Context 데이터 잔상 방지를 위한 로컬 상태
-    const [docs, setDocs] = useState([]);
     const [isDocError, setIsDocError] = useState(false);
 
-    const recruitingGrants = (grants || []).filter(grant => grant.status === 'RECRUITING');
 
     useEffect(() => {
         if (!isOpen) return;
@@ -39,36 +45,27 @@ export default function ApplicationForm({ isOpen, onClose }) {
         let ignore = false;
 
         const fetchData = async () => {
-            let docList = [];
             let docError = false;
 
-            // 1. 지원금 목록 조회
+            // 지원금 목록 조회
             try {
                 await getGrants();
+                setSelectedGrantId(recruitingGrants[0]?.grantId);
             } catch (err) {
                 console.error("지원금 목록 조회 실패:", err);
             }
 
-            // 2. 서류 목록 조회
+            // 서류 목록 조회
             try {
-                const res = await getDocuments();
-                // 응답 데이터에서 실제 배열(res.data)을 추출
-                if (res && res.success && Array.isArray(res.data)) {
-                    docList = res.data;
-                } else if (Array.isArray(res)) {
-                    // Context에서 이미 res.data만 return하도록 처리된 경우 대비
-                    docList = res;
-                }
+                await getDocuments();
             } catch (err) {
                 console.error("서류 목록 조회 실패:", err);
                 docError = true;
             }
 
-            // 비동기 처리 완료 후 상태 반영 (ESLint 경고 방지 및 잔상 제거)
+            // 비동기 처리 완료 후 상태 반영
             if (!ignore) {
-                setSelectedGrantId('');
                 setSelectedDocumentIds([]);
-                setDocs(docList);
                 setIsDocError(docError);
             }
         };
@@ -82,6 +79,7 @@ export default function ApplicationForm({ isOpen, onClose }) {
 
     if (!isOpen) return null;
 
+    // 기존 서류 선택배열에 포함 되어있으면 해제하고 없으면 추가
     const handleDocumentToggle = (docId) => {
         if (selectedDocumentIds.includes(docId)) {
             setSelectedDocumentIds(selectedDocumentIds.filter((id) => id !== docId));
@@ -91,19 +89,23 @@ export default function ApplicationForm({ isOpen, onClose }) {
     };
 
     const handleSubmit = async () => {
-        const currentGrantId = selectedGrantId || (recruitingGrants[0]?.grantId);
 
-        if (!currentGrantId) {
+        if (!selectedGrantId) {
             alert("신청 가능한 지원금 제도를 선택해주세요.");
             return;
         }
 
+        if (!selectedDocumentIds || !(selectedDocumentIds.length > 0)) {
+            alert("신청에 필요한 서류를 선택해주세요.");
+            return;
+        }
+
         try {
-            await createApplication(Number(currentGrantId), selectedDocumentIds);
+            await createApplication(selectedGrantId, selectedDocumentIds);
             alert("지원금 신청이 완료되었습니다.");
 
             setSelectedDocumentIds([]);
-            setSelectedGrantId('');
+            setSelectedGrantId(recruitingGrants[0]?.grantId);
             onClose();
         } catch (error) {
             console.error("지원금 신청 실패:", error);
@@ -121,7 +123,7 @@ export default function ApplicationForm({ isOpen, onClose }) {
                     </div>
                 </div>
 
-                {/* 1. 지원금 제도 선택 */}
+                {/* 지원금 제도 선택 */}
                 <div style={styles.formGroup}>
                     <label style={styles.label}>
                         신청할 지원금 제도 <span style={styles.requiredIcon}>*</span>
@@ -129,7 +131,7 @@ export default function ApplicationForm({ isOpen, onClose }) {
                     <select
                         style={styles.select}
                         value={selectedGrantId || (recruitingGrants[0]?.grantId) || ''}
-                        onChange={(e) => setSelectedGrantId(Number(e.target.value))}
+                        onChange={(e) => setSelectedGrantId(e.target.value)}
                     >
                         {recruitingGrants.length > 0 ? (
                             recruitingGrants.map((grant) => (
@@ -143,7 +145,7 @@ export default function ApplicationForm({ isOpen, onClose }) {
                     </select>
                 </div>
 
-                {/* 2. 첨부 서류 선택 */}
+                {/* 첨부 서류 선택 */}
                 <div style={styles.formGroup}>
                     <label style={styles.label}>
                         첨부할 서류 선택 <span style={styles.subLabel}>(등록해둔 서류 목록)</span>
@@ -151,10 +153,10 @@ export default function ApplicationForm({ isOpen, onClose }) {
                     <div style={styles.documentListContainer}>
                         {isDocError ? (
                             <div style={styles.emptyDocumentText}>
-                                서류 목록을 불러오지 못했습니다. 로그인 상태를 확인해 주세요.
+                                서류 목록을 불러오지 못했습니다. 로그인 상태와 서류함을 확인해주세요.
                             </div>
-                        ) : docs.length > 0 ? (
-                            docs.map((doc) => {
+                        ) : documents.length > 0 ? (
+                            documents.map((doc) => {
                                 const docId = doc.documentId;
                                 const isChecked = selectedDocumentIds.includes(docId);
                                 const docTypeName = DOCUMENT_TYPE_MAP[doc.docType] || doc.docType;

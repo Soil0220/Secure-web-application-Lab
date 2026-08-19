@@ -140,17 +140,13 @@
 ## 의도적 취약점 진단 범위 (Intentional Vulnerabilities)
 *본 애플리케이션에는 OWASP Top 10 취약점중 일부가 의도적으로 포함되어 있습니다.*
 
-- 시나리오 1
+- 시나리오 
   - [Reconnaissance] IDOR 기반 계정 열거(Enumeration)를 통한 최상위 관리자 계정 식별
   - [Info Leak] Path Traversal을 통한 application.yml 탈취로 정적 자원 매핑 경로 및 파일 저장 구조 파악
   - [Privilege Escalation] Inquiry Service Stored XSS를 활용한 관리자 Session Hijacking 및 권한 승격
   - [Data Exfiltration] 관리자 페이지를 통한 지원자 민감 서류(등본/소득증명) 대량 유출
   - [Second-Order SQLi] 악성 쿼리가 관리자 로그 모니터링 시 수행되어 DB Exfiltration
   - [Persistence] 2단계에서 확보한 경로 정보를 바탕으로 Unauthenticated File Upload ➔ Direct Execution ➔ RCE 및 WebShell을 통한 지속성 확보
-
-
-- 시나리오 2
-  - 지원금 신청관련 서비스동작시 동시성 제어 문제로 인한 중복 지원금 신청가능
 
 ---
 

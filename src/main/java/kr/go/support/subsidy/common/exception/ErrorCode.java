@@ -18,12 +18,8 @@ public enum ErrorCode {
     INVALID_CSRF_TOKEN(HttpStatus.UNAUTHORIZED, "R007", "CSRF 토큰이 일치하지 않습니다."),
     INVALID_SESSION(HttpStatus.UNAUTHORIZED, "R008", "유효하지 않은 세션정보입니다."),
 
-    // Attack
-    PATH_TRAVERSAL(HttpStatus.BAD_REQUEST, "W001", "잘못된 요청입니다."),
-
     // Application
     APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "A001", "지원금 신청이 존재하지 않습니다."),
-
 
     // Document
     DOCUMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "D001", "서류정보가 존재하지 않습니다."),
@@ -47,7 +43,16 @@ public enum ErrorCode {
     // Account
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "U001", "아이디 또는 비밀번호가 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "U002", "서비스 이용 중 오류가 발생했습니다."),
-    DUPLICATE_EMAIL_USERNAME(HttpStatus.CONFLICT, "U003", "이미 계정을 보유하고 있습니다.");
+    DUPLICATE_EMAIL_USERNAME(HttpStatus.CONFLICT, "U003", "이미 계정을 보유하고 있습니다."),
+
+    // FileUploadValidator
+    FILE_NOT_FOUND(HttpStatus.BAD_REQUEST, "FU001", "파일이 존재하지 않습니다."),
+    FILE_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "FU002", "파일명이 존재하지 않습니다."),
+    INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FU003", "허용되지 않는 파일명입니다."),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "FU004", "허용되지 않는 파일 확장자입니다."),
+    INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "FU005", "허용되지 않는 MIME TYPE입니다."),
+    INVALID_ACTUAL_FILE_TYPE(HttpStatus.BAD_REQUEST, "FU006", "파일의 실제 형식이 허용되지 않았습니다."),
+    FILE_TYPE_CHECK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FU007", "파일 형식을 확인할 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;

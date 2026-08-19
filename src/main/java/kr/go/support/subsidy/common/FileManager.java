@@ -1,7 +1,9 @@
 package kr.go.support.subsidy.common;
 
+import kr.go.support.subsidy.common.auth.FileUploadValidator;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -17,12 +19,15 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class FileManager {
 
     @Value("${app.fileManager.uploadDir}")
     private String uploadDir;
 
-    // 절대 경로 가져오기(경로 추적 공격 방어)
+    private final FileUploadValidator fileUploadValidator;
+
+    // 절대 경로 가져오기
     public Path getFullPath(String storeFileName) {
 
         //업로드 폴더 경로
@@ -31,19 +36,14 @@ public class FileManager {
         //상위경로 이동, 혹은 절대경로 할당시 경로 문제 발생
         Path targetPath = uploadBasePath.resolve(storeFileName).normalize();
 
-        //최종 경로가 기준 디렉토리 내부에 포함되는지 검증
-        if (!targetPath.startsWith(uploadBasePath)) {
-            throw new BusinessException(ErrorCode.PATH_TRAVERSAL);
-        }
-
         return targetPath;
     }
 
     //파일저장
     public String storeFile(MultipartFile multipartFile) {
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            return null;
-        }
+
+        //파일 검증
+        fileUploadValidator.validate(multipartFile);
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);

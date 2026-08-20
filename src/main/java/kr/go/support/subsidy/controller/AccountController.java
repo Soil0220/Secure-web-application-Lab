@@ -5,24 +5,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
+import kr.go.support.subsidy.common.SessionData;
 import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
-import kr.go.support.subsidy.common.exception.BusinessException;
-import kr.go.support.subsidy.common.exception.ErrorCode;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.dto.user.UserBankAccountDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
 import kr.go.support.subsidy.dto.user.UserJoinDto;
 import kr.go.support.subsidy.dto.user.UserResponseDto;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import kr.go.support.subsidy.service.AccountService;
 
-import java.security.Security;
 import java.util.List;
 
 @RestController
@@ -44,7 +40,7 @@ public class AccountController {
 
     //로그인(Public)
     @PostMapping("/login/public")
-    public ResponseApi<SessionUser> login(
+    public ResponseApi<SessionData> login(
             @Valid @RequestBody UserLoginDto userLoginDto,
             HttpServletRequest request,
             HttpServletResponse response){
@@ -60,7 +56,10 @@ public class AccountController {
         //세션 재생성
         HttpSession session = request.getSession(true);
         SessionUser sessionUser = new SessionUser(loginUser);
+        SessionData sessionData = new SessionData(sessionUser, System.currentTimeMillis());
+
         session.setAttribute("loginUser", sessionUser);
+        session.setAttribute("LAST_EXTENDED_TIME", System.currentTimeMillis());
 
         String csrfToken = securityUtils.generateSecureToken();
 
@@ -74,7 +73,7 @@ public class AccountController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, csrfCookie.toString());
 
-        return ResponseApi.success(sessionUser);
+        return ResponseApi.success(sessionData);
     }
 
     //로그아웃
@@ -123,18 +122,4 @@ public class AccountController {
         return ResponseApi.success(response);
     }
 
-    //세션확인(Public)
-    @GetMapping("/session/public")
-    public ResponseApi<SessionUser> getUserSession(HttpServletRequest request){
-        HttpSession session = request.getSession(false);
-
-        //세션이 없거나 세션정보가 없음
-        if(session == null || session.getAttribute("loginUser") == null){
-            throw  new BusinessException(ErrorCode.INVALID_SESSION);
-        }
-
-        SessionUser loginUser = (SessionUser) session.getAttribute("loginUser");
-
-        return ResponseApi.success(loginUser);
-    }
 }

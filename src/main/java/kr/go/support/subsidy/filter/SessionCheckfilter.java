@@ -23,15 +23,33 @@ public class SessionCheckfilter extends OncePerRequestFilter {
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
-
     private final ObjectMapper objectMapper;
+    private static final long MAX_SESSION_TIME = 10 * 60 * 1000L;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        HttpSession session = request.getSession(false);
         String lookupPath = urlPathHelper.getLookupPathForRequest(request); // 세미콜론 및 경로 정규화 처리 완료된 URI
 
+        //세션 타임아웃 체크
+        if (session != null) {
+            Long lastExtendedTime = (Long) session.getAttribute("LAST_EXTENDED_TIME");
+
+            if (lastExtendedTime != null) {
+                long now = System.currentTimeMillis();
+                
+                // 기준 시각으로부터 30분이 지났다면 세션 만료처리
+                if (now - lastExtendedTime > MAX_SESSION_TIME) {
+                    session.invalidate();
+                    ErrorCode errorCode = ErrorCode.SESSION_TIMEOUT;
+                    ResponseApi.sendError(response, objectMapper, errorCode);
+                    return;
+                }
+            }
+        }
+        
         //비로그인 통과
         if (pathMatcher.match("/api/**/public", lookupPath)) {
             filterChain.doFilter(request, response);
@@ -39,8 +57,6 @@ public class SessionCheckfilter extends OncePerRequestFilter {
         }
 
         //비로그인 거부
-        HttpSession session = request.getSession(false);
-
         if (session == null){
             ErrorCode errorCode = ErrorCode.SESSION_NOT_FOUND;
             ResponseApi.sendError(response, objectMapper, errorCode);

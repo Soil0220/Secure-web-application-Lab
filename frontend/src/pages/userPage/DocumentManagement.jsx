@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
+import {DOC_TYPE_MAP} from "../../constants/status.jsx";
 
 /*
     유저 대시보드
@@ -8,17 +9,6 @@ import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
     3. selectedDocType을 통한 업로드 할 파일의 타입 지정
     4. isDragging, handleDragOver, handleDragLeave, handleDrop을 통한 드래그 기반 파일 업로드 기능
 */
-
-
-const DOC_TYPE_MAP = {
-    RESIDENT_REGISTRATION_COPY: "주민등록초본",
-    FAMILY_RELATION_CERTIFICATE: "가족관계증명서",
-    INCOME_VERIFICATION_DOCUMENT: "소득 증빙 서류",
-    TAX_PAYMENT_CERTIFICATE: "납세증명서",
-    BANK_ACCOUNT_STATEMENT: "통장 사본"
-};
-
-
 
 export default function DocumentManagement() {
     const { documents, getDocuments, uploadDocument } = useDocument();

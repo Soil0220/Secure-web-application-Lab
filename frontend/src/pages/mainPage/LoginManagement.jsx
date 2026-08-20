@@ -9,11 +9,9 @@ import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
     3. errorMessage를 통한 에러 메시지 출력(로그인 실패)
 */
 
-const LoginPage = () => {
+export default function LoginPage() {
     const { login } = useAuth();
     const navigate = useNavigate();
-
-    // 로그인 방식 탭 (아이디 로그인 / 간편인증)
     const [loginType, setLoginType] = useState('id');
 
     // 폼 입력 상태
@@ -226,5 +224,3 @@ const styles = {
     bottomPrompt: { marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666666' },
     registerLinkBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline', padding: 0 },
 };
-
-export default LoginPage;

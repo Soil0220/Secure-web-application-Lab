@@ -10,7 +10,7 @@ import { useLog } from "../../contexts/logContext/UseLog.jsx";
 */
 
 
-export function LogManagement() {
+export default function LogManagement() {
     const [search, setSearch] = useState("");
     const { logs, getLogs } = useLog();
 
@@ -112,5 +112,3 @@ export function LogManagement() {
         </div>
     );
 }
-
-export default LogManagement;

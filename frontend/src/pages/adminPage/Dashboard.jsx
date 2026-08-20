@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
 import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
+import {APPLICATION_STATUS_MAP} from "../../constants/status.jsx";
 
 
 /*
@@ -16,27 +17,23 @@ import { useApplication } from "../../contexts/applicationContext/UseApplication
     8. ApplicationStatus Enum에 대한 매퍼와 시간 포맷 정의
 */
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}.${month}.${day} ${hour}:${minute}`;
+};
+
 export default function Dashboard() {
-    // Context 데이터 불러오기
+
     const { inquiries, getAllInquiries } = useInquiry();
     const { grants, getGrants } = useGrant();
     const { applications, getAllApplications } = useApplication();
-
     const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await getAllInquiries();
-            await getGrants();
-            await getAllApplications();
-        };
-
-        fetchData();
-
-        // 1분마다 현재 시간 업데이트
-        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-        return () => clearInterval(timer);
-    }, []);
 
     // 데이터 안전하게 배열로 변환
     const inquiryList = inquiries;
@@ -54,7 +51,6 @@ export default function Dashboard() {
         return appDate.toDateString() === currentTime.toDateString();
     }).length;
 
-    // 목록 데이터 가공
     // 신청 내역: 최신순 정렬 후 상위 5개
     const recentApplications = [...appList].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
 
@@ -67,28 +63,19 @@ export default function Dashboard() {
         return diffMs >= 0 && diffMs <= 30 * 60 * 1000;
     };
 
-    // 백엔드 ApplicationStatus Enum 고려한 상태값 한글 변환 맵퍼
-    const getStatusInfo = (status) => {
-        switch(status) {
-            case "SUBMITTED": return { text: "접수됨", className: "submitted" };
-            case "UNDER_REVIEW": return { text: "심사중", className: "review" };
-            case "APPROVED": return { text: "승인", className: "approved" };
-            case "REJECTED": return { text: "반려", className: "rejected" };
-            case "PAID": return { text: "지급완료", className: "paid" };
-            default: return { text: status || "알 수 없음", className: "submitted" };
-        }
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            await getAllInquiries();
+            await getGrants();
+            await getAllApplications();
+        };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const hour = String(date.getHours()).padStart(2, '0');
-        const minute = String(date.getMinutes()).padStart(2, '0');
+        fetchData();
 
-        return `${year}.${month}.${day} ${hour}:${minute}`;
-    };
+        // 1분마다 현재 시간 업데이트
+        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+        return () => clearInterval(timer);
+    }, []);
 
     return (
         <div className="admin-dashboard">
@@ -150,7 +137,7 @@ export default function Dashboard() {
                     <div className="card-list">
                         {recentApplications.length > 0 ? (
                             recentApplications.map((app) => {
-                                const statusInfo = getStatusInfo(app.status);
+
                                 const isNew = isWithin30Mins(app.createdAt);
 
                                 return (
@@ -160,8 +147,13 @@ export default function Dashboard() {
                                                 <span className="category-text">지원사업 신청</span>
                                                 {isNew && <span className="new-badge">NEW</span>}
                                             </div>
-                                            <span className={`status-badge ${statusInfo.className}`}>
-                                                {statusInfo.text}
+                                            <span className="status-badge"
+                                                style={{
+                                                    backgroundColor: (APPLICATION_STATUS_MAP[app.status] || {}).bg,
+                                                    color: (APPLICATION_STATUS_MAP[app.status] || {}).color,
+                                                }}
+                                            >
+                                                {(APPLICATION_STATUS_MAP[app.status] || {}).label || app.status}
                                             </span>
                                         </div>
                                         <h4 className="item-title">{app.title}</h4>
@@ -246,12 +238,6 @@ const dashboardStyles = `
     
     /* ApplicationStatus Badge Colors */
     .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-    .status-badge.submitted { background-color: #eff6ff; color: #2563eb; } /* 접수됨 */
-    .status-badge.review { background-color: #fef3c7; color: #d97706; }    /* 심사중 */
-    .status-badge.approved { background-color: #f0fdf4; color: #16a34a; }  /* 승인 */
-    .status-badge.rejected { background-color: #fef2f2; color: #dc2626; }  /* 반려 */
-    .status-badge.paid { background-color: #ecfdf5; color: #059669; }      /* 지급완료 */
-    .status-badge.pending { background-color: #fff7ed; color: #c2410c; }   /* 답변대기 */
 
     .new-badge { font-size: 10px; font-weight: 800; background-color: #ef4444; color: #ffffff; padding: 2px 6px; border-radius: 4px; margin-left: 8px; animation: pulse 2s infinite; }
     .item-title { font-size: 15px; font-weight: 700; color: #0f172a; margin: 2px 0; }

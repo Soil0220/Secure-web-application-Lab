@@ -75,8 +75,6 @@ export default function NoticeManagement() {
         setSelectedQna(null);
     };
 
-
-
     useEffect(() => {
         const run = async () => {
             await getAllInquiries();

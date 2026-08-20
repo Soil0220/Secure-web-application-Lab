@@ -13,7 +13,7 @@ import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
     2. activeTab을 이용한 마이메뉴 탭 전환
 */
 
-const UserPage = () => {
+export default function UserPage() {
     const [activeTab, setActiveTab] = useState('dashboard');
     const { session, logout } = useAuth();
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ const UserPage = () => {
                     </div>
                     <div style={styles.userProfile}>
                         <Link to="/account" style={styles.accountLink}>
-                            <span style={styles.userName}>{session.name}님</span>
+                            <span style={styles.userName}>{session.sessionUser.name}님</span>
                         </Link>
                         <button
                             style={styles.logoutBtn}
@@ -84,7 +84,7 @@ const UserPage = () => {
                                 }}
                                 onClick={() => setActiveTab('recommend')}
                             >
-                                맞춤 지원금 & 관심목록
+                                관심목록
                             </button>
                         </li>
                         <li>
@@ -175,5 +175,3 @@ const styles = {
     input: { width: '100%', maxWidth: '400px', padding: '10px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', fontSize: '14px', color: '#111111', boxSizing: 'border-box', outline: 'none' },
     hr: { border: 'none', borderTop: '1px solid #e2e8f0', margin: '24px 0' },
 };
-
-export default UserPage;

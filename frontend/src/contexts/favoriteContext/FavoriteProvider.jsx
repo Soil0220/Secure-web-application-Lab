@@ -6,7 +6,6 @@ import {useState} from "react";
 
 export function FavoriteProvider({ children }) {
 
-    const {setLoading} = useLoading(true);
     const [favorites, setFavorites] = useState([]);
 
     const getFavorites = async () => {
@@ -18,8 +17,6 @@ export function FavoriteProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -32,8 +29,6 @@ export function FavoriteProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -46,8 +41,6 @@ export function FavoriteProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 

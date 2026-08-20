@@ -1,7 +1,6 @@
 package kr.go.support.subsidy.controller;
 
 import kr.go.support.subsidy.common.ResponseApi;
-import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.dto.log.LogResponseDto;
 import kr.go.support.subsidy.service.LogService;
 import lombok.RequiredArgsConstructor;

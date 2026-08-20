@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
+import {GRANT_CATEGORY_MAP, GRANT_CYCLE_MAP, GRANT_STATUS_MAP} from "../../constants/status.jsx";
 
 
 /*
@@ -10,30 +11,7 @@ import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
     5. 모달 내에서 등록하기 버튼 클릭시 newProg데이터로 지원금 제도 생성 함수 실행(요청 보낼시에는 날짜를 ISO8601로 변환)
 */
 
-// Enum 상수 매핑 정의
-const CATEGORY_MAP = {
-    YOUTH_EMPLOYMENT: "청년",
-    BUSINESS_STARTUP: "창업",
-    LIVING_WELFARE: "생활 / 복지",
-    HOUSING_FINANCE: "주거",
-    HEALTH_CARE: "건강 / 의료"
-};
 
-const CYCLE_MAP = {
-    LUMP_SUM: "일시금",
-    DAILY: "매일",
-    WEEKLY: "매주",
-    MONTHLY: "매월",
-    YEARLY: "매년"
-};
-
-const STATUS_MAP = {
-    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
-    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
-    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
-};
-
-// 날짜 포맷팅 (YYYY.MM.DD)
 const formatDate = (isoString) => {
     if (!isoString) return "-";
     const date = new Date(isoString);
@@ -62,14 +40,6 @@ export default function GrantManagement() {
         endDate: '',
         status: 'PREPARING'
     });
-
-    // 초기 진입시 지원금 제도 불러오기
-    useEffect(() => {
-        const run = async () => {
-            await getGrants();
-        };
-        run();
-    }, []);
 
 // 지원금 제도 생성
     const handleCreate = async () => {
@@ -101,6 +71,13 @@ export default function GrantManagement() {
         }
     };
 
+    useEffect(() => {
+        const run = async () => {
+            await getGrants();
+        };
+        run();
+    }, []);
+
     return (
         <div style={styles.container}>
             {/* Header 영역 */}
@@ -120,7 +97,7 @@ export default function GrantManagement() {
             <div style={styles.cardList}>
                 {grants && grants.length > 0 ? (
                     grants.map((p) => {
-                        const statusInfo = STATUS_MAP[p.status] || {
+                        const statusInfo = GRANT_STATUS_MAP[p.status] || {
                             label: p.status || "미정",
                             bg: "#f1f5f9",
                             color: "#475569",
@@ -138,7 +115,7 @@ export default function GrantManagement() {
                                             <>
                                                 <span style={styles.headerDivider}>|</span>
                                                 <span style={styles.categoryTag}>
-                                                    {CATEGORY_MAP[p.category] || p.category}
+                                                    {GRANT_CATEGORY_MAP[p.category] || p.category}
                                                 </span>
                                             </>
                                         )}
@@ -170,7 +147,7 @@ export default function GrantManagement() {
                                     <div style={styles.metaItem}>
                                         <span style={styles.metaLabel}>지급주기</span>
                                         <span style={styles.metaValue}>
-                                            {CYCLE_MAP[p.cycle] || p.cycle || "-"}
+                                            {GRANT_CYCLE_MAP[p.cycle] || p.cycle || "-"}
                                         </span>
                                     </div>
                                     <div style={styles.metaDivider} />
@@ -220,7 +197,7 @@ export default function GrantManagement() {
                                     value={newProg.category}
                                     onChange={e => setNewProg({ ...newProg, category: e.target.value })}
                                 >
-                                    {Object.entries(CATEGORY_MAP).map(([key, label]) => (
+                                    {Object.entries(GRANT_CATEGORY_MAP).map(([key, label]) => (
                                         <option key={key} value={key}>{label}</option>
                                     ))}
                                 </select>
@@ -232,7 +209,7 @@ export default function GrantManagement() {
                                     value={newProg.cycle}
                                     onChange={e => setNewProg({ ...newProg, cycle: e.target.value })}
                                 >
-                                    {Object.entries(CYCLE_MAP).map(([key, label]) => (
+                                    {Object.entries(GRANT_CYCLE_MAP).map(([key, label]) => (
                                         <option key={key} value={key}>{label}</option>
                                     ))}
                                 </select>
@@ -266,7 +243,7 @@ export default function GrantManagement() {
                                     value={newProg.status}
                                     onChange={e => setNewProg({ ...newProg, status: e.target.value })}
                                 >
-                                    {Object.entries(STATUS_MAP).map(([key, val]) => (
+                                    {Object.entries(GRANT_STATUS_MAP).map(([key, val]) => (
                                         <option key={key} value={key}>{val.label}</option>
                                     ))}
                                 </select>

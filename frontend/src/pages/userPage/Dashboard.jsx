@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 // 프로젝트 경로에 맞게 컨텍스트 import 경로를 수정해 주세요.
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
 import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
+import {APPLICATION_STATUS_MAP} from "../../constants/status.jsx";
 
 /*
     유저 대시보드
@@ -13,24 +14,27 @@ import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
     5. 최신순 기준 최근 신청내역 5개, 답변 대기 민원 3개 출력
 */
 
+
+const formatDate = (isoString) => {
+    if (!isoString) return "-";
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+};
+
 export default function Dashboard() {
     const { applications, getApplications } = useApplication();
     const { inquiries, getInquiries } = useInquiry();
 
     // 30분 이내 신청 여부를 판별하기 위한 현재 시간 상태
     const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            await getApplications();
-            await getInquiries();
-        };
-        fetchDashboardData();
-
-        // 1분마다 현재 시간 갱신
-        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-        return () => clearInterval(timer);
-    }, []);
 
     const appList = applications;
     const inqList = inquiries;
@@ -56,23 +60,17 @@ export default function Dashboard() {
         return diffMs >= 0 && diffMs <= 30 * 60 * 1000;
     };
 
-    // 상태값에 따른 UI(텍스트, 클래스명) 매핑 헬퍼 함수
-    const getStatusInfo = (status) => {
-        switch (status) {
-            case "SUBMITTED": return { text: "접수됨", className: "submitted" };
-            case "UNDER_REVIEW": return { text: "심사중", className: "submitted" };
-            case "APPROVED": return { text: "승인", className: "approved" };
-            case "PAID": return { text: "지급완료", className: "approved" };
-            case "REJECTED": return { text: "반려", className: "rejected" };
-            default: return { text: status || "알 수 없음", className: "submitted" };
-        }
-    };
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            await getApplications();
+            await getInquiries();
+        };
+        fetchDashboardData();
 
-    // 날짜 포맷 변환 (YYYY.MM.DD HH:mm)
-    const formatDate = (dateString) => {
-        const d = new Date(dateString);
-        return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-    };
+        // 1분마다 현재 시간 갱신
+        const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+        return () => clearInterval(timer);
+    }, []);
 
     return (
         <div className="admin-dashboard">
@@ -134,7 +132,6 @@ export default function Dashboard() {
                     <div className="card-list">
                         {recentApplications.length > 0 ? (
                             recentApplications.map((app) => {
-                                const statusInfo = getStatusInfo(app.status);
                                 const isNew = isWithin30Mins(app.createdAt);
 
                                 return (
@@ -144,8 +141,13 @@ export default function Dashboard() {
                                                 <span className="category-text">지원금 신청</span>
                                                 {isNew && <span className="new-badge">NEW</span>}
                                             </div>
-                                            <span className={`status-badge ${statusInfo.className}`}>
-                                                {statusInfo.text}
+                                            <span className="status-badge"
+                                                  style={{
+                                                      backgroundColor: (APPLICATION_STATUS_MAP[app.status] || {}).bg,
+                                                      color: (APPLICATION_STATUS_MAP[app.status] || {}).color,
+                                                  }}
+                                            >
+                                                {(APPLICATION_STATUS_MAP[app.status] || {}).label || app.status}
                                             </span>
                                         </div>
                                         <h4 className="item-title">{app.title}</h4>
@@ -240,10 +242,6 @@ const dashboardStyles = `
     .inquiry-no { font-size: 11px; font-weight: 600; color: #94a3b8; letter-spacing: 0.05em; }
     
     .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-    .status-badge.submitted { background-color: #eff6ff; color: #2563eb; }
-    .status-badge.approved { background-color: #f0fdf4; color: #16a34a; }
-    .status-badge.rejected { background-color: #fef2f2; color: #dc2626; }
-    .status-badge.pending { background-color: #fff7ed; color: #c2410c; }
     
     .new-badge { font-size: 10px; font-weight: 800; background-color: #ef4444; color: #ffffff; padding: 2px 6px; border-radius: 4px; margin-left: 8px; animation: pulse 2s infinite; }
     .item-title { font-size: 15px; font-weight: 700; color: #0f172a; margin: 2px 0; }

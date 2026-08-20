@@ -19,13 +19,12 @@ export function GrantProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
     const createGrant = async (formData) => {
         try {
+            setLoading(true);
             const response = await postApi('/grant/admin', formData, true);
             await getGrants();
             return response.data;

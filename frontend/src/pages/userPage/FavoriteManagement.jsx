@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
 import ApplicationForm from "../../components/ApplicationForm";
+import {GRANT_CYCLE_MAP, GRANT_STATUS_MAP} from "../../constants/status.jsx";
 
 /*
     즐겨찾기 관리
@@ -9,19 +10,6 @@ import ApplicationForm from "../../components/ApplicationForm";
     3. isModalOpen을 통한 ApplicationForm 공용 컴포넌트 모달 창 제어
 */
 
-const CYCLE_MAP = {
-    LUMP_SUM: "일시금",
-    DAILY: "매일",
-    WEEKLY: "매주",
-    MONTHLY: "매월",
-    YEARLY: "매년"
-};
-
-const STATUS_MAP = {
-    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
-    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
-    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
-};
 
 const formatDate = (isoString) => {
     if (!isoString) return "-";
@@ -37,6 +25,8 @@ export default function FavoriteManagement() {
     const { favorites, getFavorites } = useFavorite();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const favoriteArray = favorites
+
     useEffect(() => {
         const fetchData = async () => {
             await getFavorites();
@@ -44,7 +34,6 @@ export default function FavoriteManagement() {
         fetchData();
     }, []);
 
-    const favoriteArray = favorites
 
     return (
         <div style={styles.container}>
@@ -62,8 +51,8 @@ export default function FavoriteManagement() {
             <div style={styles.cardList}>
                 {favoriteArray.length > 0 ? (
                     favoriteArray.map((favorite) => {
-                        const statusInfo = STATUS_MAP[favorite.status] || { label: favorite.status, bg: "#f8f9fa", color: "#666666" };
-                        const cycleLabel = CYCLE_MAP[favorite.cycle] || favorite.cycle || "-";
+                        const statusInfo = GRANT_STATUS_MAP[favorite.status] || { label: favorite.status, bg: "#f8f9fa", color: "#666666" };
+                        const cycleLabel = GRANT_CYCLE_MAP[favorite.cycle] || favorite.cycle || "-";
 
                         return (
                             <div key={favorite.grantId} style={styles.dataCard}>

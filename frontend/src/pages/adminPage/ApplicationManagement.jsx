@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
 import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
+import {APPLICATION_STATUS_MAP, DEFAULT_STATUS} from "../../constants/status.jsx";
 
 
 /*
@@ -15,14 +16,6 @@ import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
 
 */
 
-// 상태 배지 매핑
-const STATUS_MAP = {
-    SUBMITTED: { label: "접수됨", bg: "#fff7ed", color: "#c2410c" },
-    UNDER_REVIEW: { label: "심사중", bg: "#eef6ff", color: "#0056b3" },
-    APPROVED: { label: "승인", bg: "#f0fdf4", color: "#16a34a" },
-    REJECTED: { label: "반려", bg: "#fef2f2", color: "#dc2626" },
-    PAID: { label: "지급완료", bg: "#dcfce7", color: "#15803d" },
-};
 
 // 날짜 포맷팅 (YYYY.MM.DD)
 const formatDate = (isoString) => {
@@ -88,11 +81,7 @@ export default function ApplicationManagement() {
                             applications.map((app) => {
                                 const isSelected = selected?.applicationId === app.applicationId;
                                 {/*사전에 정의한 STATUS_MAP을 활용하여 상태 UI변경*/}
-                                const statusInfo = STATUS_MAP[app.status] || {
-                                    label: app.status || "미정",
-                                    bg: "#f1f5f9",
-                                    color: "#475569",
-                                };
+                                const statusInfo = APPLICATION_STATUS_MAP[app.status] || DEFAULT_STATUS;
 
                                 return (
                                     <tr
@@ -213,11 +202,11 @@ export default function ApplicationManagement() {
                                     <span
                                         style={{
                                             ...styles.statusBadge,
-                                            backgroundColor: (STATUS_MAP[selected.status] || {}).bg || "#f1f5f9",
-                                            color: (STATUS_MAP[selected.status] || {}).color || "#475569",
+                                            backgroundColor: (APPLICATION_STATUS_MAP[selected.status] || {}).bg,
+                                            color: (APPLICATION_STATUS_MAP[selected.status] || {}).color,
                                         }}
                                     >
-                                        {(STATUS_MAP[selected.status] || {}).label || selected.status}
+                                        {(APPLICATION_STATUS_MAP[selected.status] || {}).label || selected.status}
                                     </span>
                                 </div>
                             </div>

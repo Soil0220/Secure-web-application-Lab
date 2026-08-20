@@ -6,7 +6,6 @@ import {useLoading} from "../loadingContext/UseLoading.jsx";
 export function LogProvider({ children }) {
 
     const [logs, setLogs] = useState([]);
-    const {setLoading} = useLoading();
 
     const getLogs = async () => {
         try {
@@ -17,8 +16,6 @@ export function LogProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 

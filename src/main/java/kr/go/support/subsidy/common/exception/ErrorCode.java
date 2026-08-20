@@ -17,6 +17,7 @@ public enum ErrorCode {
     CSRF_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "R006", "CSRF 토큰이 존재하지 않습니다."),
     INVALID_CSRF_TOKEN(HttpStatus.UNAUTHORIZED, "R007", "CSRF 토큰이 일치하지 않습니다."),
     INVALID_SESSION(HttpStatus.UNAUTHORIZED, "R008", "유효하지 않은 세션정보입니다."),
+    SESSION_TIMEOUT(HttpStatus.UNAUTHORIZED, "R009", "세션이 만료되었습니다."),
 
     // Application
     APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "A001", "지원금 신청이 존재하지 않습니다."),

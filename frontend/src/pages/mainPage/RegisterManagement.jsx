@@ -9,7 +9,7 @@ import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
     2. agreed를 통한 약관 동의 상태 체크
 */
 
-const RegisterPage = () => {
+export default function RegisterPage() {
     const navigate = useNavigate();
     const { signUp } = useAuth();
 
@@ -256,5 +256,3 @@ const styles = {
     bottomPrompt: { marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666666' },
     loginLinkBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline', padding: 0 },
 };
-
-export default RegisterPage;

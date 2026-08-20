@@ -18,13 +18,12 @@ export function NoticeProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
     const createNotice = async (formData) => {
         try {
+            setLoading(true);
             const response = await postApi('/notice/admin', formData, true);
             getNotices();
             return response.data;

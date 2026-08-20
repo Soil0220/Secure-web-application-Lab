@@ -10,7 +10,7 @@ import { useAccount } from "../../contexts/accountContext/useAccount";
 
 */
 
-function AccountPage() {
+export default function AccountPage() {
     const { account, getAccount, updateBankAccount } = useAccount();
 
     const [isEditing, setIsEditing] = useState(false);
@@ -30,21 +30,6 @@ function AccountPage() {
         bankName: account?.bankName || "",
         accountNum: account?.accountNum || ""
     };
-
-    // 백엔드 데이터 매치
-    useEffect(() => {
-        const fetchAccountData = async () => {
-            try {
-                if (getAccount) {
-                    await getAccount();
-                }
-            } catch (error) {
-                console.error("계정 정보 조회 실패:", error);
-            }
-        };
-
-        fetchAccountData();
-    }, []);
 
     // 수정 모드 핸들러
     const handleEdit = () => {
@@ -97,6 +82,20 @@ function AccountPage() {
     const handleBack = () => {
         window.history.back();
     };
+
+    useEffect(() => {
+        const fetchAccountData = async () => {
+            try {
+                if (getAccount) {
+                    await getAccount();
+                }
+            } catch (error) {
+                console.error("계정 정보 조회 실패:", error);
+            }
+        };
+
+        fetchAccountData();
+    }, []);
 
     return (
         <div className="account-page">
@@ -228,7 +227,6 @@ function AccountPage() {
     );
 }
 
-export default AccountPage;
 
 const accountStyles = `
     .account-page { font-family: 'Noto Sans KR', sans-serif; width: 100%; box-sizing: border-box; display: flex; justify-content: center; padding: 20px; }

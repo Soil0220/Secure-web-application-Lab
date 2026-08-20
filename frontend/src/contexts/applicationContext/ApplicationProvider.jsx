@@ -18,8 +18,6 @@ export function ApplicationProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -33,8 +31,6 @@ export function ApplicationProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -48,14 +44,13 @@ export function ApplicationProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
     //신청 등록
     const createApplication = async (grantId, documentIds) => {
         try {
+            setLoading(true);
             const response = await postApi('/application', {"grantId" : grantId, "documentIds" : documentIds}, true);
             await getApplications();
             return response.data;

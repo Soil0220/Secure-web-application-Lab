@@ -15,6 +15,7 @@ import {DocumentProvider} from "./contexts/documentContext/DocumentProvider.jsx"
 import {InquiryProvider} from "./contexts/inquiryContext/InquiryProvider.jsx";
 import {FavoriteProvider} from "./contexts/favoriteContext/FavoriteProvider.jsx";
 import {AccountProvider} from "./contexts/accountContext/AccountProvider.jsx";
+import {ProtectedRoute} from "./components/ProtectedRoute.jsx";
 
 
 function App() {
@@ -32,17 +33,25 @@ function App() {
                                             <AuthProvider>
                                                 <BrowserRouter>
                                                     <Routes>
-                                                        {/* 계정 페이지 */}
-                                                        <Route path="/account" element={<AccountPage />} />
-
-                                                        {/* 일반 사용자 페이지 */}
+                                                        {/* Public */}
                                                         <Route path="/" element={<MainPage />} />
                                                         <Route path="/login" element={<Login />} />
                                                         <Route path="/register" element={<Register />} />
-                                                        <Route path="/user" element={<UserPage />} />
 
-                                                        {/* 관리자 전용 라우트 (권한 검증 감싸기) */}
-                                                        <Route path="/admin" element={<AdminPage />} />
+                                                        {/* User */}
+                                                        <Route element={<ProtectedRoute allowedRoles={['USER']}/>}>
+                                                            <Route path="/user" element={<UserPage />} />
+                                                        </Route>
+
+                                                        {/* Admin */}
+                                                        <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                                                            <Route path="/admin" element={<AdminPage />} />
+                                                        </Route>
+
+                                                        {/* Admin, User */}
+                                                        <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'USER']} />}>
+                                                            <Route path="/account" element={<AccountPage />} />
+                                                        </Route>
                                                     </Routes>
                                                 </BrowserRouter>
                                             </AuthProvider>

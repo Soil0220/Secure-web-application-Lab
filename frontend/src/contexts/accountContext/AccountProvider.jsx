@@ -1,12 +1,10 @@
 import {useState} from "react";
 import {AccountContext} from "./AccountContext.jsx";
 import {getApi, patchApi} from "../../components/RequestApi.jsx";
-import {useLoading} from "../loadingContext/UseLoading.jsx";
 
 export function AccountProvider({ children }) {
 
     const [account, setAccount] = useState(null);
-    const {setLoading} = useLoading();
 
     //계정 조회
     const getAccount = async () => {
@@ -18,8 +16,6 @@ export function AccountProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -33,8 +29,6 @@ export function AccountProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 

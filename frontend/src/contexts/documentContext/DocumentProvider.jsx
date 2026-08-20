@@ -12,6 +12,7 @@ export function DocumentProvider({ children }) {
     //신청서에 담긴 파일 다운로드
     const downloadApplicationDocument = async (documentId, documentName) => {
         try {
+            setLoading(true);
             const response = await getApi(
                 `/document/application/${documentId}`, { }, true, { responseType: 'blob' });
 
@@ -30,6 +31,7 @@ export function DocumentProvider({ children }) {
             window.URL.revokeObjectURL(downloadUrl);
         } catch (error) {
             console.error('파일 다운로드 실패:', error);
+        } finally {
             setLoading(false);
         }
     }
@@ -44,14 +46,13 @@ export function DocumentProvider({ children }) {
             //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
-        } finally {
-            setLoading(false);
         }
     }
 
     //유저별 개인 서류함 파일 다운로드
     const downloadDocument = async (documentId, documentName) => {
         try {
+            setLoading(true);
             const response = await getApi(
                 `/document/${documentId}`, { }, true, { responseType: 'blob' });
 
@@ -70,6 +71,7 @@ export function DocumentProvider({ children }) {
             window.URL.revokeObjectURL(downloadUrl);
         } catch (error) {
             console.error('파일 다운로드 실패:', error);
+        } finally {
             setLoading(false);
         }
     }
@@ -82,10 +84,12 @@ export function DocumentProvider({ children }) {
         formData.append('docType', docType);
 
         try {
+            setLoading(true);
             const response = await postApi('/document', formData, {});
             return response.data;
         } catch (error) {
             console.error('파일 업로드 실패:', error);
+        } finally {
             setLoading(false);
         }
     };

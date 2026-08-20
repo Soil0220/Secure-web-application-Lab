@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
+import {INQUIRY_STATUS_MAP} from "../../constants/status.jsx";
 
 
 /*
@@ -11,10 +12,6 @@ import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
     5. loading을 통한 중복 요청 방지
 */
 
-const STATUS_MAP = {
-    ANSWERED: { label: "답변완료", bg: "#e6f4ea", color: "#137333" },
-    PENDING: { label: "답변대기", bg: "#fef7e0", color: "#b06000" },
-};
 
 // 날짜 포맷팅
 const formatDateTime = (dateString) => {
@@ -37,14 +34,6 @@ export default function InquiryManagement() {
             content: "",});
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await getInquiries();
-        };
-        fetchData();
-    }, []);
-
-    // inquiries가 배열이거나 { data: [...] } 형태일 경우 모두 안전하게 처리
     const inquiryArray = inquiries;
 
     const handleCreateInquiry = async (e) => {
@@ -81,6 +70,13 @@ export default function InquiryManagement() {
         }));
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            await getInquiries();
+        };
+        fetchData();
+    }, []);
+
     return (
         <div style={styles.container}>
             {/* 상단 Header */}
@@ -104,7 +100,7 @@ export default function InquiryManagement() {
             <div style={styles.cardList}>
                 {inquiryArray.length > 0 ? (
                     inquiryArray.map((inq) => {
-                        const statusInfo = STATUS_MAP[inq.status] || { label: inq.status, bg: "#f8f9fa", color: "#666666" };
+                        const statusInfo = INQUIRY_STATUS_MAP[inq.status] || { label: inq.status, bg: "#f8f9fa", color: "#666666" };
                         const isOpen = openInquiryId === inq.inquiryId;
 
                         return (

@@ -6,6 +6,7 @@ import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
 import NoticeList from "../../components/NoticeList.jsx";
 import ApplicationForm from "../../components/ApplicationForm.jsx";
 import { Link } from 'react-router-dom';
+import {GRANT_CATEGORY_MAP, GRANT_CYCLE_MAP, GRANT_STATUS_MAP} from "../../constants/status.jsx";
 
 /*
     메인 페이지
@@ -33,32 +34,7 @@ import { Link } from 'react-router-dom';
 
 */
 
-// 백엔드 Grant Enum 상수 매핑 정의
-const CATEGORY_MAP = {
-    YOUTH_EMPLOYMENT: "청년",
-    BUSINESS_STARTUP: "창업",
-    LIVING_WELFARE: "생활 / 복지",
-    HOUSING_FINANCE: "주거",
-    HEALTH_CARE: "건강 / 의료"
-};
 
-const CYCLE_MAP = {
-    LUMP_SUM: "일시금",
-    DAILY: "매일",
-    WEEKLY: "매주",
-    MONTHLY: "매월",
-    YEARLY: "매년"
-};
-
-const STATUS_MAP = {
-    PREPARING: { label: "준비중", bg: "#fef7e0", color: "#b06000" },
-    RECRUITING: { label: "모집중", bg: "#e6f4ea", color: "#137333" },
-    CLOSED: { label: "마감", bg: "#fce8e6", color: "#c5221f" }
-};
-
-
-
-// 날짜 포맷팅 (YYYY.MM.DD)
 const formatDate = (isoString) => {
     if (!isoString) return "-";
     const date = new Date(isoString);
@@ -71,7 +47,6 @@ const formatDate = (isoString) => {
     return `${year}.${month}.${day}`;
 };
 
-// 5개 카테고리 정보 데이터 (백엔드 GrantCategory 매칭 키 연동)
 const CATEGORY_CARDS = [
     {
         categoryKey: "YOUTH_EMPLOYMENT",
@@ -105,9 +80,8 @@ const CATEGORY_CARDS = [
     }
 ];
 
-const MainPage = () => {
-    const { session, setSession, checkSession, logout } = useAuth();
-    const { loading, setLoading } = useLoading();
+export default function MainPage() {
+    const { session, logout } = useAuth();
 
     // 현재 선택된 메인 메뉴 탭 상태
     const [activeTab, setActiveTab] = useState('지원금종류');
@@ -117,25 +91,6 @@ const MainPage = () => {
         setActiveTab(tabName);
     };
 
-    useEffect(() => {
-        const run = async () => {
-            setLoading(true);
-            const response = await checkSession();
-            if (response.success) {
-                setSession(response.data);
-            } else {
-                setSession(null);
-            }
-            setLoading(false);
-        };
-
-        run();
-    }, []);
-
-    if (loading) {
-        return null;
-    }
-
     return (
         <div style={styles.container}>
             {/*최상단 유틸리티 헤더 (로그인/회원가입/마이페이지)*/}
@@ -144,7 +99,7 @@ const MainPage = () => {
                     <div style={styles.authMenu}>
                         {session ? (
                             <>
-                                {session.role === 'ADMIN' ? (
+                                {session.sessionUser.role === 'ADMIN' ? (
                                     <Link to="/admin">
                                         <button style={styles.topLinkBtn}>관리자페이지</button>
                                     </Link>
@@ -228,32 +183,7 @@ const TabSupportTypes = () => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
 
-    const isUser = session && (session.role === 'USER');
-
-    // 지원금 목록 및 즐겨찾기 목록 초기 조회(세션이 바뀔때만 실행)
-    useEffect(() => {
-        const fetchData = async () => {
-            await getGrants();
-
-            // 유저 세션이 있는 경우 즐겨찾기 목록 가져와서 맵핑 생성
-            if (isUser) {
-                try {
-                    await getFavorites();
-                    const favList = favorites;
-
-                    const newFavMap = {};
-                    favList.forEach((fav) => {
-                        newFavMap[fav.grantId] = true;
-                    });
-                    setFavoriteMap(newFavMap);
-                } catch (error) {
-                    console.error("즐겨찾기 목록 조회 실패:", error);
-                }
-            }
-        };
-
-        fetchData();
-    }, [session]);
+    const isUser = session && (session.sessionUser.role === 'USER');
 
     // 즐겨찾기 토글 이벤트 핸들러
     const handleFavoriteToggle = async (grantId) => {
@@ -299,6 +229,31 @@ const TabSupportTypes = () => {
         scrollRef.current.scrollLeft = scrollLeft - walk; //이동 거리에 따라 스크롤 기준 위치를 변경(스크롤 이동)
     };
 
+    // 지원금 목록 및 즐겨찾기 목록 초기 조회(세션이 바뀔때만 실행)
+    useEffect(() => {
+        const fetchData = async () => {
+            await getGrants();
+
+            // 유저 세션이 있는 경우 즐겨찾기 목록 가져와서 맵핑 생성
+            if (isUser) {
+                try {
+                    await getFavorites();
+                    const favList = favorites;
+
+                    const newFavMap = {};
+                    favList.forEach((fav) => {
+                        newFavMap[fav.grantId] = true;
+                    });
+                    setFavoriteMap(newFavMap);
+                } catch (error) {
+                    console.error("즐겨찾기 목록 조회 실패:", error);
+                }
+            }
+        };
+
+        fetchData();
+    }, [session]);
+
     return (
         <div>
             {/* 카테고리별 설명 - 드래그 스크롤 영역 */}
@@ -339,7 +294,7 @@ const TabSupportTypes = () => {
             <div style={styles.grantList}>
                 {grants && grants.length > 0 ? (
                     grants.map((grant) => {
-                        const statusInfo = STATUS_MAP[grant.status] || {
+                        const statusInfo = GRANT_STATUS_MAP[grant.status] || {
                             label: grant.status || "미정",
                             bg: "#f1f5f9",
                             color: "#475569",
@@ -358,7 +313,7 @@ const TabSupportTypes = () => {
                                             <>
                                                 <span style={styles.headerDivider}>|</span>
                                                 <span style={styles.categoryTag}>
-                                                    {CATEGORY_MAP[grant.category] || grant.category}
+                                                    {GRANT_CATEGORY_MAP[grant.category] || grant.category}
                                                 </span>
                                             </>
                                         )}
@@ -404,7 +359,7 @@ const TabSupportTypes = () => {
                                     <div style={styles.metaItem}>
                                         <span style={styles.metaLabel}>지급주기</span>
                                         <span style={styles.metaValue}>
-                                            {CYCLE_MAP[grant.cycle] || grant.cycle || "-"}
+                                            {GRANT_CYCLE_MAP[grant.cycle] || grant.cycle || "-"}
                                         </span>
                                     </div>
                                     <div style={styles.metaDivider} />
@@ -548,5 +503,3 @@ const styles = {
     emptyCard: { padding: '40px', textAlign: 'center', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0' },
     emptyText: { fontSize: '14px', color: '#666666', margin: 0 },
 };
-
-export default MainPage;

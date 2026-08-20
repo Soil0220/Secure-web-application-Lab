@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {AuthContext} from "./AuthContext.jsx";
 import {useLoading} from "../loadingContext/useLoading.jsx";
 import { postApi, getApi } from '../../components/RequestApi.jsx';
@@ -6,39 +6,87 @@ import { postApi, getApi } from '../../components/RequestApi.jsx';
 export function AuthProvider({ children }) {
 
     const [session, setSession] = useState(null);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
     const {setLoading} = useLoading();
 
+    //세션체크
     const checkSession = async () => {
         try {
             setLoading(true);
-            const response = await getApi('/user/session/public', {}, false);
-            return response.data;
+            const response = await getApi('/session/public', {}, false);
+            setSession(response.data.data);
         } catch (error) {
-            //응답 데이터 존재시 접근
+            setSession(null);
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+            setIsAuthLoading(false);
+        }
+    }
+
+    //세션연장
+    const extendSession = async () => {
+        try {
+            const response = await postApi('/session/extend', {}, true);
+            setSession(response.data.data);
+        } catch (error) {
+            setSession(null);
+            const customError = error.response?.data;
+            return customError;
+        }
+    }
+
+    const login = async (formData) => {
+        try {
+            setLoading(true);
+            const response = await postApi('/user/login/public',formData ,false);
+            setSession(response.data.data);
+        } catch (error) {
             const customError = error.response?.data;
             return customError;
         } finally {
             setLoading(false);
         }
-    }
-
-    const login = async (formData) => {
-        const response = await postApi('/user/login/public',formData ,false);
-        setSession(response.data.data);
     };
 
     const logout = async () => {
-        await postApi('/user/logout',{} ,true);
-        setSession(null);
+        try {
+            setLoading(true);
+            await postApi('/user/logout',{} ,true);
+            setSession(null);
+        } catch (error) {
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
     };
 
     const signUp = async(formData) => {
-        await postApi('/user/join/public', formData, false)
+        try {
+            setLoading(true);
+            await postApi('/user/join/public', formData, false)
+        } catch (error) {
+            const customError = error.response?.data;
+            return customError;
+        } finally {
+            setLoading(false);
+        }
     };
+
+    useEffect(() => {
+        const verifySession = async () => {
+            await checkSession();
+        };
+
+        verifySession();
+
+    }, []);
 
     return (
         <AuthContext.Provider
-            value={{ session, setSession, checkSession, login, logout, signUp }}
+            value={{ session, setSession, checkSession, login, logout, signUp, isAuthLoading, extendSession }}
         >
             {children}
         </AuthContext.Provider>

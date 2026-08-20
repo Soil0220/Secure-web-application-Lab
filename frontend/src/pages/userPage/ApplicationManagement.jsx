@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
 import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
+import {APPLICATION_STATUS_MAP} from "../../constants/status.jsx";
 
 /*
     지원금 제도 신청 관리
@@ -10,13 +11,7 @@ import { useDocument } from "../../contexts/documentContext/UseDocument.jsx";
     4. downloadingId를 통한 파일별 중복 다운로드 방지
 */
 
-const STATUS_MAP = {
-    SUBMITTED: { label: "접수됨", bg: "#fff7ed", color: "#c2410c" },
-    UNDER_REVIEW: { label: "심사중", bg: "#eef6ff", color: "#0056b3" },
-    APPROVED: { label: "승인", bg: "#f0fdf4", color: "#16a34a" },
-    REJECTED: { label: "반려", bg: "#fef2f2", color: "#dc2626" },
-    PAID: { label: "지급완료", bg: "#dcfce7", color: "#15803d" },
-};
+
 
 const formatDateTime = (isoString) => {
     if (!isoString) return "-";
@@ -39,13 +34,6 @@ export default function ApplicationManagement() {
     // 개별 문서 다운로드 상태 관리
     const [downloadingId, setDownloadingId] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await getApplications();
-        };
-        fetchData();
-    }, []);
-
     // applications가 배열이거나 { data: [...] } 형태일 경우 모두 안전하게 처리
     const applicationArray = applications;
 
@@ -62,6 +50,13 @@ export default function ApplicationManagement() {
         }
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            await getApplications();
+        };
+        fetchData();
+    }, []);
+
     return (
         <div style={styles.container}>
             {/* 상단 헤더 영역 */}
@@ -77,7 +72,7 @@ export default function ApplicationManagement() {
             <div style={styles.cardList}>
                 {applicationArray.length > 0 ? (
                     applicationArray.map((app) => {
-                        const statusInfo = STATUS_MAP[app.status] || {
+                        const statusInfo = APPLICATION_STATUS_MAP[app.status] || {
                             label: app.status || "알 수 없음",
                             bg: "#f1f5f9",
                             color: "#475569",

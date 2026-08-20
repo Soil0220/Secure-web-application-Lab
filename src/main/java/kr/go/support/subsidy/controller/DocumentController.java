@@ -6,7 +6,6 @@ import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.dto.document.DocumentCreateDto;
 import kr.go.support.subsidy.dto.document.DocumentDownloadDto;
 import kr.go.support.subsidy.dto.document.DocumentResponseDto;
-import kr.go.support.subsidy.dto.user.UserResponseDto;
 import kr.go.support.subsidy.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;

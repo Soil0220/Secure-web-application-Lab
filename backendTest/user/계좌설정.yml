@@ -1,7 +1,7 @@
 info:
   name: 계좌설정
   type: http
-  seq: 8
+  seq: 7
 
 http:
   method: PATCH

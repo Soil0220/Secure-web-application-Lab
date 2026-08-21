@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
-import { useLoading } from "../../contexts/loadingContext/UseLoading.jsx";
 import { useGrant } from "../../contexts/grantContext/UseGrant.jsx";
 import { useFavorite } from "../../contexts/favoriteContext/UseFavorite.jsx";
 import NoticeList from "../../components/NoticeList.jsx";
 import ApplicationForm from "../../components/ApplicationForm.jsx";
-import { Link } from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {GRANT_CATEGORY_MAP, GRANT_CYCLE_MAP, GRANT_STATUS_MAP} from "../../constants/status.jsx";
+import {SessionTimer} from "../../components/SessionTimer.jsx";
 
 /*
     메인 페이지
@@ -82,6 +82,8 @@ const CATEGORY_CARDS = [
 
 export default function MainPage() {
     const { session, logout } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     // 현재 선택된 메인 메뉴 탭 상태
     const [activeTab, setActiveTab] = useState('지원금종류');
@@ -91,6 +93,15 @@ export default function MainPage() {
         setActiveTab(tabName);
     };
 
+    useEffect(() => {
+        // 세션 만료로 튕겨져 들어온 경우
+        if (location.state?.sessionExpired) {
+            alert("세션이 만료 되었습니다. 다시 로그인 해주세요.");
+            // history state 초기화하여 새로고침 시 중복 alert 방지
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location, navigate]);
+
     return (
         <div style={styles.container}>
             {/*최상단 유틸리티 헤더 (로그인/회원가입/마이페이지)*/}
@@ -99,6 +110,7 @@ export default function MainPage() {
                     <div style={styles.authMenu}>
                         {session ? (
                             <>
+                                <SessionTimer key={session?.lastExtendedTime} />
                                 {session.sessionUser.role === 'ADMIN' ? (
                                     <Link to="/admin">
                                         <button style={styles.topLinkBtn}>관리자페이지</button>

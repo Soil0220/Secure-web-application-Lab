@@ -24,7 +24,7 @@ public class SessionCheckfilter extends OncePerRequestFilter {
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private final ObjectMapper objectMapper;
-    private static final long MAX_SESSION_TIME = 10 * 60 * 1000L;
+    private static final long MAX_SESSION_TIME = 15 * 60 * 1000L;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

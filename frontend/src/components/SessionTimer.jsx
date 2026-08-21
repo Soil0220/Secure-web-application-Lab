@@ -1,68 +1,82 @@
 import { useState, useEffect } from 'react';
-import {useAuth} from "../contexts/authContext/UseAuth.jsx";
+import { useAuth } from "../contexts/authContext/UseAuth.jsx";
+import {useNavigate} from "react-router-dom";
+
+const MAX_INTERVAL_MS = 15 * 60 * 1000; // 10분
 
 export const SessionTimer = () => {
-    const {session, extendSession} = useAuth();
+    const { session, extendSession, logout } = useAuth();
+    const navigate = useNavigate();
 
-    //남은 시간 계산 정의
-    const calculateRemainingTime = (lastExtendedTime, maxIntervalMs) => {
+    // 남은 시간 계산 로직
+    const calculateRemainingTime = (lastExtendedTime) => {
+        if (!lastExtendedTime || typeof lastExtendedTime !== 'number') return null;
+
         const nowMs = Date.now();
-        const expireTimeMs = lastExtendedTime + maxIntervalMs;
+        const expireTimeMs = lastExtendedTime + MAX_INTERVAL_MS;
         const diffMs = expireTimeMs - nowMs;
-        const remainingSeconds = Math.max(0, Math.floor(diffMs / 1000));
-        return remainingSeconds;
+
+        return Math.max(0, Math.floor(diffMs / 1000));
     };
 
-    //사용시 <SessionTimer key={session?.lastExtendedTime} /> 형태로 사용해서 컴포넌트 자체를 재생성시켜 매번 최신값으로 초기값 할당
+    // <SessionTimer key={session?.lastExtendedTime} /> 형태 전달시 key 값이 바뀔 때마다 컴포넌트가 재생성되므로, 여기서 항상 최신 남은 시간이 초기화
     const [remainingSeconds, setRemainingSeconds] = useState(() =>
         calculateRemainingTime(session?.lastExtendedTime)
     );
 
-    //백엔드와 동일하게 맞춰야함
-    const maxIntervalMs = 10 * 60 * 1000;
-
     // mm:ss 형식으로 변환
     const formatTime = (seconds) => {
+        if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
+            return '--:--';
+        }
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
+    };
 
-
-
-    // 1초마다 남은 시간 줄여주는 실시간 타이머(세션 획득, 연장시 동작)
+    // 실시간 타이머 동작
     useEffect(() => {
-        if (!session?.lastExtendedTime) return;
+        const lastTime = session?.lastExtendedTime;
+        if (!lastTime || typeof lastTime !== 'number') return;
 
-        //1초마다 타이머실행
         const timer = setInterval(() => {
+            const currentRemaining = calculateRemainingTime(lastTime);
 
-            const currentRemaining = calculateRemainingTime(session.lastExtendedTime, maxIntervalMs);
-            setRemainingSeconds(currentRemaining);
+            if (currentRemaining !== null) {
+                setRemainingSeconds(currentRemaining);
 
-            if (currentRemaining <= 0) {
-                clearInterval(timer);
-                alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                if (currentRemaining <= 0) {
+                    clearInterval(timer);
+                    logout();
+                    //메인 페이지로 이동하면서 세션만료 상태 전달
+                    navigate('/', { state: { sessionExpired: true }, replace: true });
+                }
             }
-
         }, 1000);
 
         return () => clearInterval(timer);
     }, [session?.lastExtendedTime]);
 
-
     return (
-        <div style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', width: '220px' }}>
-            <div>
-                <span>남은 세션 시간: </span>
-                <strong>{formatTime(remainingSeconds)}</strong>
-            </div>
+        <div style={timerStyles.container}>
+            <span style={timerStyles.label}>
+                ⏱ 자동 로그아웃
+                <strong style={timerStyles.time}>{formatTime(remainingSeconds)}</strong>
+            </span>
             <button
                 onClick={extendSession}
-                style={{ marginTop: '8px', padding: '4px 8px', cursor: 'pointer' }}
+                style={timerStyles.extendBtn}
+                title="시간 연장하기"
             >
-                연장하기
+                연장
             </button>
         </div>
     );
+};
+
+const timerStyles = {
+    container: { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f8f9fa', border: '1px solid #e9ecef', padding: '4px 12px', borderRadius: '20px', height: '26px', boxSizing: 'border-box' },
+    label: { fontSize: '12px', color: '#495057', display: 'flex', alignItems: 'center', gap: '6px' },
+    time: { color: '#0056b3', fontWeight: 'bold', minWidth: '34px', textAlign: 'center', letterSpacing: '0.5px' },
+    extendBtn: { backgroundColor: '#ffffff', border: '1px solid #ced4da', color: '#495057', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: '600', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }
 };

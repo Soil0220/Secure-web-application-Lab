@@ -6,6 +6,7 @@ import NoticeManagement from './NoticeManagement.jsx';
 import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
 import LogManagement from "./LogManagement.jsx";
 import Dashboard from "./Dashboard.jsx";
+import {SessionTimer} from "../../components/SessionTimer.jsx";
 
 
 /*
@@ -17,7 +18,7 @@ import Dashboard from "./Dashboard.jsx";
 
 
 export default function AdminPage() {
-    const { logout } = useAuth();
+    const { session, logout } = useAuth();
     const navigate = useNavigate();
     // 'dashboard' | 'program' | 'audit' | 'board' | 'log'
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -35,6 +36,7 @@ export default function AdminPage() {
                         </Link>
                     </div>
                     <div className="admin-top-nav">
+                        {session && <SessionTimer key={session.lastExtendedTime} />}
                         <Link to="/account" className="admin-user-link">
                             <span className="admin-user-info">
                                 관리자님

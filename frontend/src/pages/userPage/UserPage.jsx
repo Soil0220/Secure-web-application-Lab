@@ -6,6 +6,7 @@ import DocumentManagement from './DocumentManagement.jsx';
 import InquiryManagement from './InquiryManagement.jsx';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext/UseAuth.jsx";
+import {SessionTimer} from "../../components/SessionTimer.jsx";
 
 /*
     유저 페이지
@@ -30,6 +31,7 @@ export default function UserPage() {
                         </Link>
                     </div>
                     <div style={styles.userProfile}>
+                        {session && <SessionTimer key={session.lastExtendedTime} />}
                         <Link to="/account" style={styles.accountLink}>
                             <span style={styles.userName}>{session.sessionUser.name}님</span>
                         </Link>

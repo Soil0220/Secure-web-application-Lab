@@ -96,12 +96,21 @@ public class AccountController {
         return ResponseApi.success(userId);
     }
 
-    //본인 계정조회
+    /*본인 계정조회(안전한 버전)
     @GetMapping
     public ResponseApi<UserResponseDto> getUsers(
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
         UserResponseDto response = accountService.getUser(sessionUser.getId());
+        return ResponseApi.success(response);
+    }*/
+
+    //본인 계정조회(취약한 버전, 부적절한 세션검증, 클라이언트 신뢰)
+    @GetMapping("/{userId}")
+    public ResponseApi<UserResponseDto> getUsers(
+            @PathVariable Long userId){
+
+        UserResponseDto response = accountService.getUser(userId);
         return ResponseApi.success(response);
     }
 
@@ -114,11 +123,11 @@ public class AccountController {
     }
 
     //계정삭제(Admin)
-    @DeleteMapping("/{user_id}/admin")
+    @DeleteMapping("/{userid}/admin")
     public ResponseApi<Long> deleteUser(
-            @PathVariable Long user_id){
+            @PathVariable Long userid){
 
-        Long response = accountService.deleteUser(user_id);
+        Long response = accountService.deleteUser(userid);
         return ResponseApi.success(response);
     }
 

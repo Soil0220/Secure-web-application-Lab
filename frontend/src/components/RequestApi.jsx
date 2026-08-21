@@ -16,11 +16,11 @@ const client = axios.create({
 
 // Request Interceptor: custom flag(withCsrf) 확인 후 헤더 주입
 client.interceptors.request.use((config) => {
-    // 1. 공통 헤더 주입
+    // 공통 헤더 주입
     config.headers['X-Request-Id'] = uuidv4();
     config.headers['X-Request-Time'] = new Date().toISOString();
 
-    // 2. withCsrf 옵션이 true일 때만 XSRF-TOKEN 헤더 추가 (기본값: true)
+    // withCsrf 옵션이 true일 때만 XSRF-TOKEN 헤더 추가 (기본값: true)
     if (config.withCsrf !== false) {
         const xsrfToken = getCookie('XSRF-TOKEN');
         if (xsrfToken) {

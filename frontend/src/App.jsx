@@ -22,47 +22,47 @@ function App() {
 
     return (
         <LoadingProvider>
-            <AccountProvider>
-                <FavoriteProvider>
-                    <DocumentProvider>
-                        <InquiryProvider>
-                            <ApplicationProvider>
-                                <GrantProvider>
-                                    <LogProvider>
-                                        <NoticeProvider>
-                                            <AuthProvider>
-                                                <BrowserRouter>
-                                                    <Routes>
-                                                        {/* Public */}
-                                                        <Route path="/" element={<MainPage />} />
-                                                        <Route path="/login" element={<Login />} />
-                                                        <Route path="/register" element={<Register />} />
+            <AuthProvider>
+                <AccountProvider>
+                    <FavoriteProvider>
+                        <DocumentProvider>
+                            <InquiryProvider>
+                                <ApplicationProvider>
+                                    <GrantProvider>
+                                        <LogProvider>
+                                            <NoticeProvider>
+                                                    <BrowserRouter>
+                                                        <Routes>
+                                                            {/* Public */}
+                                                            <Route path="/" element={<MainPage />} />
+                                                            <Route path="/login" element={<Login />} />
+                                                            <Route path="/register" element={<Register />} />
 
-                                                        {/* User */}
-                                                        <Route element={<ProtectedRoute allowedRoles={['USER']}/>}>
-                                                            <Route path="/user" element={<UserPage />} />
-                                                        </Route>
+                                                            {/* User */}
+                                                            <Route element={<ProtectedRoute allowedRoles={['USER']}/>}>
+                                                                <Route path="/user" element={<UserPage />} />
+                                                            </Route>
 
-                                                        {/* Admin */}
-                                                        <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-                                                            <Route path="/admin" element={<AdminPage />} />
-                                                        </Route>
+                                                            {/* Admin */}
+                                                            <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+                                                                <Route path="/admin" element={<AdminPage />} />
+                                                            </Route>
 
-                                                        {/* Admin, User */}
-                                                        <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'USER']} />}>
-                                                            <Route path="/account" element={<AccountPage />} />
-                                                        </Route>
-                                                    </Routes>
-                                                </BrowserRouter>
-                                            </AuthProvider>
-                                        </NoticeProvider>
-                                    </LogProvider>
-                                </GrantProvider>
-                            </ApplicationProvider>
-                        </InquiryProvider>
-                    </DocumentProvider>
-                </FavoriteProvider>
-            </AccountProvider>
+                                                            {/* Admin, User */}
+                                                            <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'USER']} />}>
+                                                                <Route path="/account" element={<AccountPage />} />
+                                                            </Route>
+                                                        </Routes>
+                                                    </BrowserRouter>
+                                            </NoticeProvider>
+                                        </LogProvider>
+                                    </GrantProvider>
+                                </ApplicationProvider>
+                            </InquiryProvider>
+                        </DocumentProvider>
+                    </FavoriteProvider>
+                </AccountProvider>
+            </AuthProvider>
         </LoadingProvider>
     );
 }

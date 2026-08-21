@@ -48,8 +48,8 @@ public class LogService {
     }
 
     //TODO 단위별 로그요청 기능 추가필요 그 전까지는 테이블 비우기
-    //1분 단위로 로그 테이블 비우기
-    @Scheduled(fixedRate = 60000)
+    //10분 단위로 로그 테이블 비우기
+    @Scheduled(fixedRate = 600000)
     @Transactional
     public void clearLogs() {
         logRepository.deleteAllInBatch();

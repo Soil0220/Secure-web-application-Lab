@@ -11,8 +11,12 @@ import {DOC_TYPE_MAP} from "../../constants/status.jsx";
 */
 
 export default function DocumentManagement() {
-    const { documents, getDocuments, uploadDocument } = useDocument();
+    const { documents, getDocuments, uploadDocument, downloadDocument } = useDocument();
     const [selectedDocType, setSelectedDocType] = useState('RESIDENT_REGISTRATION_COPY');
+
+    const handleDocumentClick = async (documentId, documentName) => {
+        await downloadDocument(documentId, documentName);
+    }
 
     const handleUpload = async (files) => {
         if (!files || files.length === 0) return;
@@ -96,7 +100,15 @@ export default function DocumentManagement() {
                             <span style={styles.cardCategory}>
                                 {DOC_TYPE_MAP[doc.docType] || doc.docType}
                             </span>
-                            <h4 style={styles.cardTitle}>{doc.originFileName}</h4>
+                            <h4
+                                style={{ ...styles.cardTitle, cursor: 'pointer' }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDocumentClick(doc.documentId, doc.originFileName);
+                                }}
+                            >
+                                {doc.originFileName}
+                            </h4>
                             <p style={styles.cardDetail}>등록된 제출 서류</p>
                         </div>
                     ))

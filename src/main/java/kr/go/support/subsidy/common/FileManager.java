@@ -39,7 +39,8 @@ public class FileManager {
         return targetPath;
     }
 
-    //파일저장
+    /*
+    //파일저장(안전한 버전, 업로드 파일 검증시 필요한 서류만 화이트리스트로 설정, UUID로 파일명 변경 저장)
     public String storeFile(MultipartFile multipartFile) {
 
         //파일 검증
@@ -64,6 +65,33 @@ public class FileManager {
             throw new IllegalArgumentException("파일 저장 중 오류가 발생했습니다.", e);
         }
     }
+    */
+
+    //파일저장(취약한 버전, 업로드 파일 검증시 불필요한 파일 허용, 파일명 예측가능하게 변경없이 저장)
+    public String storeFile(MultipartFile multipartFile) {
+
+        //파일 검증
+        fileUploadValidator.validate(multipartFile);
+
+        String originalFilename = multipartFile.getOriginalFilename();
+
+        try {
+            // 저장할 디렉토리 생성
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // 파일 저장 (물리적 이관)
+            File dest = new File(getFullPath(originalFilename).toString());
+            multipartFile.transferTo(dest);
+            return originalFilename;
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("파일 저장 중 오류가 발생했습니다.", e);
+        }
+    }
+
 
     //파일삭제
     public boolean deleteFile(String storeFileName) {
@@ -96,6 +124,8 @@ public class FileManager {
             throw new BusinessException(ErrorCode.INVALID_FILE_URL, e);
         }
     }
+
+
 
     // 파일명 중복 방지를 위한 UUID 생성 (예: uuid_originalName.ext)
     private String createStoreFileName(String originalFilename) {

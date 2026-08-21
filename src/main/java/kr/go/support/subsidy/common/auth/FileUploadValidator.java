@@ -14,11 +14,21 @@ import java.util.Set;
 @Component
 public class FileUploadValidator {
 
+    /*
+    //안전한 버전(필요한 서류만 화이트리스트 방식으로 허용, Path Traversal 검증)
     private static final Set<String> ALLOWED_EXTENSIONS =
             Set.of("jpg", "jpeg", "png");
 
     private static final Set<String> ALLOWED_MIME_TYPES =
             Set.of("image/jpeg", "image/png");
+     */
+
+    //취약한 버전(불필요한 파일까지 허용, Path Traversal 검증 누락)
+    private static final Set<String> ALLOWED_EXTENSIONS =
+            Set.of("jpg", "jpeg", "png", "md", "txt");
+
+    private static final Set<String> ALLOWED_MIME_TYPES =
+            Set.of("image/jpeg", "image/png", "text/markdown", "text/plain");
 
     private final Tika tika = new Tika();
 
@@ -36,7 +46,9 @@ public class FileUploadValidator {
             throw new BusinessException(ErrorCode.FILE_NAME_NOT_FOUND);
         }
 
-        // Path Traversal 검증
+        /*
+
+        // Path Traversal 검증 안전한버전 (경로패턴 제거)
         String filename = Paths.get(originalFilename)
                 .getFileName()
                 .toString();
@@ -45,8 +57,13 @@ public class FileUploadValidator {
             throw new BusinessException(ErrorCode.INVALID_FILE_NAME);
         }
 
-        // 확장자 검증
         String extension = getExtension(filename);
+
+        */
+
+        // Path Traversal 검증 취약한 버전 (경로패턴 제거없음, 원본 파일명 그대로 사용)
+        String extension = getExtension(originalFilename);
+
 
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
             throw new BusinessException(ErrorCode.INVALID_FILE_EXTENSION);

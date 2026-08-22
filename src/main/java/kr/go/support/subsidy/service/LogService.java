@@ -1,8 +1,11 @@
 package kr.go.support.subsidy.service;
 
+import jakarta.persistence.EntityManager;
+import kr.go.support.subsidy.domain.log.Log;
 import kr.go.support.subsidy.domain.log.LogRepository;
 import kr.go.support.subsidy.dto.log.LogRequestDto;
 import kr.go.support.subsidy.dto.log.LogResponseDto;
+import kr.go.support.subsidy.dto.log.LogSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,13 +21,34 @@ import java.util.List;
 public class LogService {
 
     private final LogRepository logRepository;
+    private final EntityManager entityManager;
 
     //로그 조회(Admin)
-    public List<LogResponseDto> getLogs(){
-        List<LogResponseDto> result = logRepository.findAll().stream()
+    public List<LogResponseDto> getLogs(LogSearchDto dto){
+
+        //전체 조회
+        if(dto == null){
+            List<LogResponseDto> result = logRepository.findAll().stream()
+                    .map(LogResponseDto::from)
+                    .toList();
+            return result;
+        }
+
+        /*
+        //검색 조회(안전한 버전, JPA와 레포지토리를 이용)
+        List<LogResponseDto> result = logRepository.findByApiUrlContainingIgnoreCase(dto.apiUrl()).stream()
                 .map(LogResponseDto::from)
                 .toList();
         return result;
+        */
+
+        //검색 조회(취약한 버전, 동적 SQL문 생성 실행)
+        String sql = "SELECT * FROM request_logs WHERE api_url LIKE LOWER('%" + dto.apiUrl() + "%')";
+        List<Log> result = entityManager.createNativeQuery(sql, Log.class).getResultList();
+
+        return result.stream()
+                .map(LogResponseDto::from)
+                .toList();
     }
 
     //요청로그 저장(Event)

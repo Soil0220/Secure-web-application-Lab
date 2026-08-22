@@ -38,6 +38,8 @@ public class AccountService {
     private final SecurityUtils securityUtils;
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
+
+
     //로그인
     public User login(UserLoginDto userLoginDto)
     {
@@ -117,4 +119,14 @@ public class AccountService {
         applicationDocumentRepository.findByUserId(userId).forEach(ApplicationDocument::delete);
         return userId;
     }
+
+    //계정 권한 변경(Admin)
+    @Transactional
+    public void updateRole(Long userId, Role role){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        user.updateRole(role);
+    }
+
 }

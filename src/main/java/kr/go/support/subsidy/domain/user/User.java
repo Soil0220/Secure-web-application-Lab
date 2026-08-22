@@ -64,9 +64,13 @@ public class User extends BaseEntity {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String uuid = UUID.randomUUID().toString();
         String mask = String.format("deleted_%s_%s", timestamp, uuid);
-        System.out.println(mask);
         this.username = mask;
         this.email = mask;
+    }
+
+    //계정 권한 변경 메서드(Admin)
+    public void updateRole(Role role){
+        this.role = role;
     }
 
     /* 계정 복구 메서드

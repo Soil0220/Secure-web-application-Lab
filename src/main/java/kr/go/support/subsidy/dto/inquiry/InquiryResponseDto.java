@@ -12,6 +12,7 @@ public record InquiryResponseDto (
     String username,
     String title,
     String content,
+    String link,
     InquiryStatus status,
     String answer,
     Instant answeredAt
@@ -23,6 +24,7 @@ public record InquiryResponseDto (
                 inquiry.getUser().getUsername(),
                 inquiry.getTitle(),
                 inquiry.getContent(),
+                inquiry.getLink(),
                 inquiry.getStatus(),
                 inquiry.getAnswer(),
                 inquiry.getAnsweredAt()

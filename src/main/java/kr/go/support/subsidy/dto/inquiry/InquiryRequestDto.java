@@ -13,13 +13,19 @@ public record InquiryRequestDto (
     String title,
 
     @NotBlank
-    String content
+    String content,
+
+    @NotBlank
+    @Size(max = 2048)
+    String link
+
 ) {
     public Inquiry toEntity(User user) {
         return Inquiry.builder()
                 .user(user)
                 .title(title)
                 .content(content)
+                .link(link)
                 .status(InquiryStatus.PENDING)
                 .build();
     }

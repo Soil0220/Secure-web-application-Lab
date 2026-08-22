@@ -31,7 +31,8 @@ export default function InquiryManagement() {
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
             title: "",
-            content: "",});
+            content: "",
+            link: ""});
     const [loading, setLoading] = useState(false);
 
     const inquiryArray = inquiries;
@@ -46,11 +47,12 @@ export default function InquiryManagement() {
 
         try {
             setLoading(true);
-            await createInquiry(formData.title, formData.content);
+            await createInquiry(formData.title, formData.content, formData.link);
             alert("문의가 정상적으로 등록되었습니다.");
             setFormData({
                 title : "",
-                content: ""
+                content: "",
+                link: ""
             });
             setShowModal(false);
             getInquiries();
@@ -189,6 +191,22 @@ export default function InquiryManagement() {
                                 />
                             </div>
 
+                            <div style={styles.formGroup}>
+                                <div style={styles.labelGroup}>
+                                    <label style={styles.inputLabel}>
+                                        참고링크
+                                    </label>
+                                </div>
+                                <input
+                                    type="url"
+                                    value={formData.link}
+                                    name="link"
+                                    onChange={(e) => handleChange(e)}
+                                    placeholder="https://example.com"
+                                    style={styles.input}
+                                />
+                            </div>
+
                             <div style={styles.btnGroup}>
                                 <button
                                     type="submit"
@@ -242,6 +260,8 @@ const styles = {
     headerBadge: { backgroundColor: "#0056b3", color: "#ffffff", fontSize: "11px", fontWeight: "bold", padding: "2px 6px", borderRadius: "4px" },
     modalTitle: { fontSize: "16px", fontWeight: "bold", color: "#111111", margin: 0 },
     formGroup: { marginBottom: "18px", display: "flex", flexDirection: "column", gap: "6px" },
+    labelGroup: {display: "flex", alignItems: "center", gap: "8px"},
+    subLabel: {fontSize: "11px", color: "#888888", fontWeight: "normal"},
     inputLabel: { fontSize: "12px", fontWeight: "bold", color: "#0056b3" },
     requiredIcon: { color: "#dc2626" },
     input: { width: "100%", padding: "10px 14px", borderRadius: "6px", border: "1px solid #cbd5e1", backgroundColor: "#ffffff", fontSize: "14px", color: "#111111", boxSizing: "border-box", outline: "none" },

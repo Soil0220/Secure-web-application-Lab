@@ -16,7 +16,6 @@ import { useNotice } from "../../contexts/noticeContext/UseNotice.jsx";
     9. 답변등록 버튼 클릭시 replyText의 데이터를 통한 1:1 문의 답변 함수 실행
 */
 
-
 export default function NoticeManagement() {
     const [isOpen, setIsOpen] = useState(false);
     const [tab, setTab] = useState("notice");
@@ -82,7 +81,6 @@ export default function NoticeManagement() {
         run();
     }, []);
 
-
     const inquiryArray = inquiries;
 
     return (
@@ -139,7 +137,7 @@ export default function NoticeManagement() {
                         <NoticeList />
                     </div>
 
-                    {/* 공지사항 작성 모달 (오버레이 클릭 시 닫힘) */}
+                    {/* 공지사항 작성 모달 */}
                     {isOpen && (
                         <div style={styles.overlay} onClick={() => setIsOpen(false)}>
                             <div
@@ -243,9 +241,11 @@ export default function NoticeManagement() {
                                             <td style={styles.td}>
                                                 <span style={styles.usernameText}>{q.username}</span>
                                             </td>
+
                                             <td style={styles.td}>
                                                 <span style={styles.qnaTitle}>{q.title}</span>
                                             </td>
+
                                             <td style={{ ...styles.td, textAlign: "center" }}>
                                                     <span
                                                         style={{
@@ -271,7 +271,7 @@ export default function NoticeManagement() {
                         </table>
                     </div>
 
-                    {/* 민원 답변 모달 (오버레이 클릭 시 닫힘) */}
+                    {/* 민원 답변 모달 */}
                     {selectedQna && (
                         <div
                             style={styles.modalOverlay}
@@ -295,10 +295,39 @@ export default function NoticeManagement() {
                                         <div style={styles.qnaQuestionTitle}>
                                             {selectedQna.title}
                                         </div>
-                                        {/* 민원 내용(content) 표시 영역 추가 */}
                                         <div style={styles.qnaContentBox}>
                                             {selectedQna.content || "내용이 없습니다."}
                                         </div>
+
+                                        {/* 취약한 버전 (window.location.href에 링크 직접 주입) */}
+                                        <div style={styles.qnaLinkBox}>
+                                            <span style={styles.linkTitle}>🔗 {selectedQna.link ? (
+                                                <span
+                                                    style={{ ...styles.linkAnchor, cursor: "pointer" }}
+                                                    onClick={() => {
+                                                        window.location.href = selectedQna.link;
+                                                    }}
+                                                >
+                                                    참고용 링크
+                                                </span>
+                                            ) : (
+                                                <span style={styles.noLinkText}>등록된 참고링크가 없습니다.</span>
+                                            )}</span>
+                                        </div>
+
+                                        {/*안전한 버전 (텍스트 형태로 링크 출력)
+
+                                        <div style={styles.qnaLinkBox}>
+                                            <span style={styles.linkTitle}>🔗 {selectedQna.link ? (
+                                                <span style={styles.noLinkText}>{selectedQna.link}</span>
+                                            ) : (
+                                                <span style={styles.noLinkText}>등록된 참고링크가 없습니다.</span>
+                                            )}</span>
+                                        </div>
+
+                                        */}
+
+
                                     </div>
 
                                     <div style={styles.inputGroup}>
@@ -393,6 +422,13 @@ const styles = {
     qnaUser: { color: "#333333" },
     qnaQuestionTitle: { fontSize: "14px", fontWeight: "bold", color: "#111111", lineHeight: "1.4" },
     qnaContentBox: { fontSize: "13px", color: "#475569", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "4px", padding: "10px", marginTop: "4px", whiteSpace: "pre-wrap", lineHeight: "1.5" },
+
+    /* 참고링크 박스 스타일 추가 */
+    qnaLinkBox: { display: "flex", flexDirection: "column", gap: "4px", backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "4px", padding: "8px 10px", marginTop: "4px" },
+    linkTitle: { fontSize: "11px", fontWeight: "bold", color: "#0056b3" },
+    linkAnchor: { fontSize: "13px", color: "#2563eb", textDecoration: "underline", wordBreak: "break-all", cursor: "pointer" },
+    noLinkText: { fontSize: "12px", color: "#94a3b8" },
+
     inputGroup: { display: "flex", flexDirection: "column", gap: "6px" },
     inputLabel: { fontSize: "12px", fontWeight: "bold", color: "#0056b3" },
     textarea: { padding: "10px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "14px", fontFamily: "inherit", outline: "none", resize: "vertical", lineHeight: "1.5", backgroundColor: "#ffffff", color: "#111111", boxSizing: "border-box" },

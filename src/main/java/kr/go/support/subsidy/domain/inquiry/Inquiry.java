@@ -35,6 +35,9 @@ public class Inquiry extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(length = 2048)
+    private String link;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InquiryStatus status;

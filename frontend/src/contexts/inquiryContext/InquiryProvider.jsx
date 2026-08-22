@@ -9,13 +9,12 @@ export function InquiryProvider({ children }) {
     const {setLoading} = useLoading();
 
     //문의 등록
-    const createInquiry = async (title, content) => {
+    const createInquiry = async (title, content, link) => {
         try {
             setLoading(true);
-            const response = await postApi('/inquiry', {"title" : title, "content": content}, true);
+            const response = await postApi('/inquiry', {"title" : title, "content": content, "link": link}, true);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
         } finally {
@@ -30,7 +29,6 @@ export function InquiryProvider({ children }) {
             setInquiries(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
         }
@@ -43,7 +41,6 @@ export function InquiryProvider({ children }) {
             setInquiries(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
         }
@@ -56,7 +53,6 @@ export function InquiryProvider({ children }) {
             await getAllInquiries();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
             const customError = error.response?.data;
             return customError;
         }

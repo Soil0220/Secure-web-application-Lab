@@ -8,6 +8,7 @@ import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionData;
 import kr.go.support.subsidy.common.SessionUser;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
+import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.domain.user.User;
 import kr.go.support.subsidy.dto.user.UserBankAccountDto;
 import kr.go.support.subsidy.dto.user.UserLoginDto;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import kr.go.support.subsidy.service.AccountService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +30,16 @@ public class AccountController {
 
     private final AccountService accountService;
     private final SecurityUtils securityUtils;
+
+    //계정 권한 변경(Admin)
+    @PatchMapping("/role/{userId}/admin")
+    public ResponseApi<Void> updateRole(
+            @PathVariable("userId") Long userId,
+            @RequestBody Map<String, Role> payload){
+
+        accountService.updateRole(userId, payload.get("role"));
+        return ResponseApi.success();
+    }
 
     //회원가입(Public)
     @PostMapping("/join/public")

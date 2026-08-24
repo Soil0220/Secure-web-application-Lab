@@ -1,5 +1,6 @@
 class ResponseParser:
 
+    @staticmethod
     def extract_api_urls(body: dict):
 
         if not isinstance(body, dict):

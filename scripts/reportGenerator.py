@@ -1,3 +1,6 @@
+
+from resultCollector import  ResultCollector
+
 class ReportGenerator:
 
     def __init__(
@@ -23,8 +26,8 @@ class ReportGenerator:
         lines.append("")
 
         lines.append(
-            f"- Target: `{self.collector.results[0].target}`"
-            if self.collector.results
+            f"- Target: ``"
+            if self.collector.schemadatas
             else "- Target: N/A"
         )
 
@@ -37,15 +40,9 @@ class ReportGenerator:
         lines.append("")
 
         for index, result in enumerate(
-            self.collector.results,
+            self.collector.schemadatas,
             start=1
         ):
-
-            lines.append(
-                f"### {index}. {result.payload_type}"
-            )
-
-            lines.append("")
 
             lines.append(
                 "#### 확인된 반환값"
@@ -53,11 +50,9 @@ class ReportGenerator:
 
             lines.append("")
 
-            for value in result.values:
-
-                lines.append(
-                    f"- `{value}`"
-                )
+            lines.append(
+                f"- `{result}`"
+            )
 
         with path.open(
             "w",

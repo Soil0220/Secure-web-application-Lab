@@ -1,12 +1,21 @@
+
+from config import  Config
+import requests
+
 class SQLiClient:
 
     # Config 기반 요청 설정
     def __init__(self, config: Config):
         self.config = config
 
-        self.url = (
+        self.end_url = (
             config.base_url
             + config.endpoint
+        )
+
+        self.login_url = (
+                config.base_url
+                + config.login_point
         )
 
         self.session = requests.Session()
@@ -17,6 +26,27 @@ class SQLiClient:
             "Content-Type": "application/json",
         })
 
+    #어드민 로그인
+    def login(self):
+        request_body = {
+            "username": self.config.username,
+            "password": self.config.password
+        }
+
+        response = self.session.post(
+            self.login_url,
+            json=request_body)
+
+        try:
+            body = response.json()
+
+        except ValueError:
+            body = {
+                "raw": response.text
+            }
+
+        return body
+
     # 요청 전송
     def send(self, payload: str) -> dict:
 
@@ -25,7 +55,7 @@ class SQLiClient:
         }
 
         response = self.session.get(
-            self.url,
+            self.end_url,
             json=request_body)
 
         try:
@@ -37,30 +67,3 @@ class SQLiClient:
             }
 
         return {"body": body}
-
-"""
-            {
-            "code": "200",
-            "data": [
-              {
-                "requestId": "e1253-e24-5d2-a716-446655440000",
-                "requestTime": "2026-08-22T10:04:16Z",
-                "apiUrl": "/api/user/login/public"
-              },
-              {
-                "requestId": null,
-                "requestTime": null,
-                "apiUrl": "관리자"
-              },
-              {
-                "requestId": null,
-                "requestTime": null,
-                "apiUrl": "Soil"
-              },
-            ],
-            "message": "SUCCESS",
-            "success": true,
-            "timestamp": "2026-08-22T10:06:46.4925608"
-          }
-
-"""

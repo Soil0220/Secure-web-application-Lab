@@ -1,3 +1,11 @@
+import csv
+import json
+from discoveryResult import  SchemaData
+from dataclasses import asdict
+from datetime import datetime
+from pathlib import Path
+from config import CONFIG
+
 class ResultCollector:
 
     def __init__(self):
@@ -16,11 +24,12 @@ class ResultCollector:
             exist_ok=True
         )
 
-        self.results = []
+        self.schemadatas = []
 
-    def add(self, result: DiscoveryResult):
+    def add(self, result: SchemaData):
 
         self.results.append(result)
+
 
     def save_json(self):
 
@@ -29,21 +38,15 @@ class ResultCollector:
             / "results.json"
         )
 
-        data = [
-            for result in self.results
-                asdict(result)
-        ]
-
         with path.open(
             "w",
             encoding="utf-8"
         ) as f:
-
             json.dump(
-                data,
+                [asdict(s) for s in self.schemadatas],
                 f,
                 ensure_ascii=False,
-                indent=2
+                indent=2 #2칸 들여쓰기
             )
 
         return path
@@ -64,23 +67,21 @@ class ResultCollector:
             writer = csv.DictWriter(
                 f,
                 fieldnames=[
-                    "target",
-                    "payload_type",
-                    "payload",
-                    "values",
+                    "result"
                 ]
             )
 
             writer.writeheader()
 
-            for result in self.results:
+            for schemadata in self.schemadatas:
 
-                row = asdict(result)
-
-                row["values"] = json.dumps(
-                    row["values"],
-                    ensure_ascii=False
-                )
+                #배열 및 객체 주입이 안되기에 values를 json화 시켜서 주입
+                row = {
+                    "result" : json.dumps(
+                        asdict(schemadata),
+                        ensure_ascii=False
+                    )
+                }
 
                 writer.writerow(row)
 

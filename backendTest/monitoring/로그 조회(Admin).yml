@@ -5,20 +5,21 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/api/monitoring/admin
+  url: http://localhost:8080/api/monitoring/admin?apiUrl=
   headers:
     - name: Origin
       value: http://localhost:3000
     - name: X-Request-Id
-      value: e16-e322-122d3-a2-446640000
+      value: e16-e32-122d3-a2-446640000
     - name: X-Request-Time
-      value: 2026-08-22T08:05:16.000Z
+      value: 2026-08-25T05:32:16.000Z
+  params:
+    - name: apiUrl
+      value: ""
+      type: query
   body:
     type: json
-    data: |-
-      {
-      "apiUrl" : "' ) UNION SELECT DISTINCT ROW_NUMBER() OVER(), name, null, null, null FROM users #"
-      }
+    data: ""
   auth: inherit
 
 settings:

@@ -140,13 +140,33 @@
 ## 의도적 취약점 진단 범위 (Intentional Vulnerabilities)
 *본 애플리케이션에는 OWASP Top 10 취약점중 일부가 의도적으로 포함되어 있습니다.*
 
-- 시나리오 
-  - [Reconnaissance] IDOR 기반 계정 열거(Enumeration)를 통한 최상위 관리자 계정 식별
-  - [Info Leak] Path Traversal을 통한 application.yml 탈취로 정적 자원 매핑 경로 및 파일 저장 구조 파악
-  - [Privilege Escalation] Inquiry Service Stored XSS를 활용한 관리자 Session Hijacking 및 권한 승격
-  - [Data Exfiltration] 관리자 페이지를 통한 지원자 민감 서류(등본/소득증명) 대량 유출
-  - [Second-Order SQLi] 악성 쿼리가 관리자 로그 모니터링 시 수행되어 DB Exfiltration
-  - [Persistence] 2단계에서 확보한 경로 정보를 바탕으로 Unauthenticated File Upload ➔ Direct Execution ➔ RCE 및 WebShell을 통한 지속성 확보
+- 시나리오
+```text
+        1. 정찰 (Reconnaissance)
+        공격 흐름: 프론트엔드 소스코드 노출 -> IDOR 기반 사용자 ID 열거 -> 최상위 관리자 계정 식별
+        취약점 설정:
+          - 소스맵(.map) 미제거로 인한 원본 프론트엔드 코드 및 내부 주석 노출 (DEVNOTES 파일 존재 파악)
+          - Account 페이지 접근 시 부적절한 세션 검증으로 URL 내 userId 값 변조를 통한 타 사용자 정보 조회 가능
+        
+        2. 정보 유출 (Information Disclosure)
+        공격 흐름: Path Traversal 파일 업로드 -> 저장 경로 파악 및 파일 다운로드 -> DEVNOTES 탈취 -> 관리자 API 엔드포인트 확보
+        취약점 설정:
+          - 파일 업로드 시 경로 추적 문자열(../), 불필요한 확장자 필터링 누락 및 무작위 파일명 변경(Randomization) 미적용
+        
+        3. 권한 상승 (Privilege Escalation)
+        공격 흐름: 문의사항에 첨부된 링크의 Stored XSS -> 관리자의 악성 링크 클릭 -> 관리자 세션 Context에서 JS 실행 -> 계정 권한 변경 API 호출 -> 일반 계정(공격자)의 관리자 승격
+        취약점 설정:
+          - window.location.href 이용한 동적 스크립트 실행
+        
+        4. 데이터 탈취 (Data Exfiltration)
+        공격 흐름: 관리자 권한 획득 -> 지원자 민감 서류 및 개인정보 접근 -> 정상 관리 기능 악용을 통한 고유식별정보 및 민감정보 다운로드
+        
+        5. 데이터베이스 침해 (SQL Injection)
+        공격 흐름: API URL 로그 검색창에 싱글 쿼터(') 주입 -> DB 에러 메시지를 통한 동적 쿼리 구조 파악 -> 자동화 스크립트 기반 SQLi 공격 -> DB 내 주요 데이터 추출
+        취약점 설정:
+          - Spring Data JPA/Repository 대신 사용자 입력값에 대한 동적 SQL문 생성 및 실행
+          - 상세 에러 메시지 클라이언트 노출
+```
 
 ---
 

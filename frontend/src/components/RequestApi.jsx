@@ -54,7 +54,6 @@ export const patchApi = (url, bodyData, useCsrf = true, extraConfig = {}) => {
 };
 
 export const getApi = (url, paramsData = {}, useCsrf = false, extraConfig = {}) => {
-    // GET 요청은 조회용이므로 기본값을 false로 지정 (필요 시 true 전달 가능)
     return client.get(url, {
         params: paramsData,
         withCsrf: useCsrf,

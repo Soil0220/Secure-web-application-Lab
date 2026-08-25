@@ -1,19 +1,20 @@
 import {useState} from "react";
 import {LogContext} from "./LogContext.jsx";
 import {getApi} from "../../components/RequestApi.jsx";
-import {useLoading} from "../loadingContext/UseLoading.jsx";
 
 export function LogProvider({ children }) {
 
     const [logs, setLogs] = useState([]);
 
-    const getLogs = async () => {
+
+    const getLogs = async (search) => {
         try {
-            const response = await getApi('/monitoring/admin', {}, true);
+
+            const response = await getApi('/monitoring/admin', {apiUrl: search }, true);
             setLogs(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
+
             const customError = error.response?.data;
             return customError;
         }

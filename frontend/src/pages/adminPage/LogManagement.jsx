@@ -11,18 +11,17 @@ import { useLog } from "../../contexts/logContext/UseLog.jsx";
 
 
 export default function LogManagement() {
-    const [search, setSearch] = useState("");
+    const [search, setSearch, ] = useState("");
     const { logs, getLogs } = useLog();
 
-    const filteredLogs = logs ? logs.filter((log) =>
-        (log.requestId && String(log.requestId).toLowerCase().includes(search.toLowerCase())) ||
-        (log.requestTime && String(log.requestTime).includes(search)) ||
-        (log.apiUrl && String(log.apiUrl).toLowerCase().includes(search.toLowerCase()))
-    ) : [];
+    //검색진행
+    const searching = async () => {
+        await getLogs(search);
+    };
 
     useEffect(() => {
         const run = async () => {
-            await getLogs();
+            await getLogs("");
         };
         run();
     }, []);
@@ -34,18 +33,18 @@ export default function LogManagement() {
                 <div className="log-title-group">
                     <h1>로그 관리</h1>
                     <span className="log-count-badge">
-                        총 <strong>{filteredLogs.length}</strong>건
+                        총 <strong>{logs.length}</strong>건
                     </span>
                 </div>
 
                 <div className="log-search">
                     <input
                         type="text"
-                        placeholder="요청 ID, 시간, API URL 검색..."
+                        placeholder="API URL 검색..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <button type="button">검색</button>
+                    <button type="button" onClick={searching}>검색</button>
                 </div>
             </div>
 
@@ -57,8 +56,8 @@ export default function LogManagement() {
                     <div>API URL</div>
                 </div>
 
-                {filteredLogs.length > 0 ? (
-                    filteredLogs.map((log) => (
+                {logs.length > 0 ? (
+                    logs.map((log) => (
                         <div
                             className="log-grid log-row"
                             key={log.requestId}

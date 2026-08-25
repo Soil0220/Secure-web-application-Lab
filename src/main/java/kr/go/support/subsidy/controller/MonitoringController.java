@@ -20,7 +20,7 @@ public class MonitoringController {
     //로그 조회
     @GetMapping("/admin")
     public ResponseApi<List<LogResponseDto>> getLogs(
-            @RequestBody(required = false) LogSearchDto dto){
+            @ModelAttribute LogSearchDto dto){
         List<LogResponseDto> response = logService.getLogs(dto);
 
         return ResponseApi.success(response);

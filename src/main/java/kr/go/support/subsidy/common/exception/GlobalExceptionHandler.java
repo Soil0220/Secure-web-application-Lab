@@ -65,11 +65,20 @@ public class GlobalExceptionHandler {
         return ResponseApi.error("405", "지원하지 않는 HTTP 메서드 요청입니다.");
     }
 
-    //그 외 모든 내부 오류
+    /*
+    //그 외 모든 내부 오류(안전한 버전)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseApi<Void> handleAllUncaughtException(Exception e) {
-        // 서버 내부 오류는 원인 파악을 위해 스택 트레이스를 로그에 상세히 남깁니다.
-        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다."+ e.getMessage());
+        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다.");
     }
+    */
+
+    //그 외 모든 내부 오류(취약한 버전, 스택 트레이스를 응답에 상세히 남깁니다.)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ResponseApi<Void> handleAllUncaughtException(Exception e) {
+        return ResponseApi.error("500", "서버 내부 오류가 발생했습니다." + e.getMessage());
+    }
+
 }

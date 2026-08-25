@@ -31,9 +31,7 @@ import {SessionTimer} from "../../components/SessionTimer.jsx";
 
     공지사항 탭
     1. NoticeList 공용 컴포넌트를 이용한 공지사항 확인
-
 */
-
 
 const formatDate = (isoString) => {
     if (!isoString) return "-";

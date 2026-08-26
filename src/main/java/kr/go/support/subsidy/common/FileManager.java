@@ -33,14 +33,13 @@ public class FileManager {
         //업로드 폴더 경로
         Path uploadBasePath = Paths.get(uploadDir).toAbsolutePath().normalize();
 
-        //상위경로 이동, 혹은 절대경로 할당시 경로 문제 발생
         Path targetPath = uploadBasePath.resolve(storeFileName).normalize();
 
         return targetPath;
     }
 
     /*
-    //파일저장(안전한 버전, 업로드 파일 검증시 필요한 서류만 화이트리스트로 설정, UUID로 파일명 변경 저장)
+    //파일저장(안전한 버전, UUID로 파일명 변경 저장)
     public String storeFile(MultipartFile multipartFile) {
 
         //파일 검증
@@ -65,9 +64,26 @@ public class FileManager {
             throw new IllegalArgumentException("파일 저장 중 오류가 발생했습니다.", e);
         }
     }
+
+    // 파일명 중복 방지를 위한 UUID 생성
+    private String createStoreFileName(String originalFilename) {
+        String ext = extractExt(originalFilename);
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "." + ext;
+    }
+
+    // 확장자 추출
+    private String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        if (pos == -1) {
+            return "";
+        }
+        return originalFilename.substring(pos + 1);
+    }
+
     */
 
-    //파일저장(취약한 버전, 업로드 파일 검증시 불필요한 파일 허용, 파일명 예측가능하게 변경없이 저장)
+    //파일저장(취약한 버전, 파일명 예측가능하게 변경없이 저장)
     public String storeFile(MultipartFile multipartFile) {
 
         //파일 검증
@@ -82,9 +98,18 @@ public class FileManager {
                 Files.createDirectories(uploadPath);
             }
 
-            // 파일 저장 (물리적 이관)
             File dest = new File(getFullPath(originalFilename).toString());
-            multipartFile.transferTo(dest);
+
+            /*
+            1. 파일이 존재하지 않을때만 저장
+            2. 개발자가 DocumentService의 파일 소유 검증 로직이 있다는 것을 통해 파일이 이미 존재한다는 것은 본인이 사전에 올린 파일이
+            있다는 의미이기에 파일 덮어쓰기 없이 기존파일에 연결되도록 잘못된 로직을 작성했음
+            3. 실제로는 파일명을 그대로 DB와 실제 물리파일 저장에 사용하기에 DB에 저장된 파일명과 실제 본인소유 물리파일 간의
+            1:1 고유성 매칭이 사라져 ../DEVNOTES.md로 DB에 저장되고 파일소유 검증도 통과되지만 실제 다운로드 되는 파일은 본인소유가 아님
+            */
+            if (!dest.exists()) {
+                multipartFile.transferTo(dest);}
+
             return originalFilename;
 
         } catch (IOException e) {
@@ -123,23 +148,5 @@ public class FileManager {
         } catch (MalformedURLException e){
             throw new BusinessException(ErrorCode.INVALID_FILE_URL, e);
         }
-    }
-
-
-
-    // 파일명 중복 방지를 위한 UUID 생성 (예: uuid_originalName.ext)
-    private String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
-    }
-
-    // 확장자 추출
-    private String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        if (pos == -1) {
-            return "";
-        }
-        return originalFilename.substring(pos + 1);
     }
 }

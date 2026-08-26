@@ -67,3 +67,4 @@
 ---
 **[필수] 프론트팀 전달 메모:**
 지원금 제도 삭제(`DELETE /api/grant/2/admin`)나 공지사항 삭제(`DELETE /api/notice/1/admin`) 날릴 때는 Path Variable로 ID 값만 넘기면 됩니다. Body는 비워주세요.
+

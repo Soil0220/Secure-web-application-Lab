@@ -33,6 +33,14 @@ import {SessionTimer} from "../../components/SessionTimer.jsx";
     1. NoticeList 공용 컴포넌트를 이용한 공지사항 확인
 */
 
+/*
+[취약한 버전, 소스맵 미제거로 주석을 통해 DEVNOTES.md 파일 노출]
+
+    API 테스트/연동 시 참고:
+    백엔드 API 변경사항이나 테스트용 요청은 프로젝트 루트 DEVNOTES.md에 임시 기록
+    Bruno 동기화 후 최신 요청은 깃허브 Bruno Collection 기준으로 확인할 것
+*/
+
 const formatDate = (isoString) => {
     if (!isoString) return "-";
     const date = new Date(isoString);

@@ -17,13 +17,6 @@ import {FavoriteProvider} from "./contexts/favoriteContext/FavoriteProvider.jsx"
 import {AccountProvider} from "./contexts/accountContext/AccountProvider.jsx";
 import {ProtectedRoute} from "./components/ProtectedRoute.jsx";
 
-/*
-[취약한 버전, 주석을 통해 DEVNOTES.md 파일 노출]
-
-    API 테스트/연동 시 참고:
-    백엔드 API 변경사항이나 테스트용 요청은 프로젝트 루트 DEVNOTES.md에 임시 기록
-    Bruno 동기화 후 최신 요청은 깃허브 Bruno Collection 기준으로 확인할 것
-*/
 function App() {
 
     return (

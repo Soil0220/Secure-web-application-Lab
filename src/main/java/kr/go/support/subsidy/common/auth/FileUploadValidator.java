@@ -30,6 +30,8 @@ public class FileUploadValidator {
     private static final Set<String> ALLOWED_MIME_TYPES =
             Set.of("image/jpeg", "image/png", "text/markdown", "text/plain");
 
+
+
     private final Tika tika = new Tika();
 
     public void validate(MultipartFile file) {
@@ -47,7 +49,6 @@ public class FileUploadValidator {
         }
 
         /*
-
         // Path Traversal 검증 안전한버전 (경로패턴 제거)
         String filename = Paths.get(originalFilename)
                 .getFileName()
@@ -58,7 +59,6 @@ public class FileUploadValidator {
         }
 
         String extension = getExtension(filename);
-
         */
 
         // Path Traversal 검증 취약한 버전 (경로패턴 제거없음, 원본 파일명 그대로 사용)

@@ -151,4 +151,4 @@
 ---
 
 ## 모의해킹 진단 보고서 (Penetration Testing Report)
-- **[정부지원금 통합 신청 시스템 취약점 진단 보고서](./images/VulnerabilityDiagnosisReport.pdf)** 
+- **[정부지원금 통합 신청 시스템 취약점 진단 보고서](./images/VulnerabilityAssessmentReport.pdf)** 

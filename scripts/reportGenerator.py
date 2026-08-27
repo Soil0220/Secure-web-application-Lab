@@ -11,7 +11,7 @@ class ReportGenerator:
 
         output = []
         for table_name, table_data in schema_data.tables.items():
-            output.append(f"\n### Table: `{table_name}`\n")
+            output.append(f"\n\n### Table: `{table_name}`\n\n")
 
             data_dict = {col: col_obj.values for col, col_obj in table_data.columns.items()}
             if not data_dict:

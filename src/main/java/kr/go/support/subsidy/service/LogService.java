@@ -35,7 +35,7 @@ public class LogService {
         }
 
         /*
-        //검색 조회(안전한 버전, JPA와 레포지토리를 이용)
+        //검색 조회(안전한 버전, 레포지토리를 이용)
         List<LogResponseDto> result = logRepository.findByApiUrlContainingIgnoreCase(dto.apiUrl()).stream()
                 .map(LogResponseDto::from)
                 .toList();

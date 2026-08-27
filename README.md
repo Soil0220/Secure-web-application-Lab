@@ -1,15 +1,15 @@
-# Secure Web Application Lab - 정부 지원금 사이트
+# Secure Web Application Lab - 정부 지원금 통합 신청 시스템
 > **웹 모의해킹 취약점 진단 및 보고서 작성을 위해 자체 제작한 타겟 웹 애플리케이션**
 
 
 
-## 프로젝트 개요 (Overview)
+## 프로젝트 개요
 본 프로젝트는 **정부지원금 서비스**를 모티브로 제작되었으며 
 실제 웹 모의해킹 시나리오 수행 및 **취약점 진단 보고서** 작성을 목적으로 개발된 애플리케이션입니다.
 
 
 
-## 기술 스택 (Tech Stack)
+## 기술 스택
 
 ### Backend / Infrastructure
 - **Language:** Java
@@ -22,7 +22,7 @@
 
 ---
 
-## 시스템 구조 및 설계 (Architecture)
+## 시스템 구조 및 설계
 
 ### System Architecture
 ![SystemArchitecture](./images/SystemArchitecture.png)
@@ -137,39 +137,18 @@
     - 사용자 계정 삭제: 부적절한 이용자 등에 대한 관리자 권한의 계정 강제 정지 및 탈퇴 처리
 ---
 
-## 의도적 취약점 진단 범위 (Intentional Vulnerabilities)
+## 시나리오
 *본 애플리케이션에는 OWASP Top 10 취약점중 일부가 의도적으로 포함되어 있습니다.*
 
-- 시나리오
 ```text
-        1. 정찰 (Reconnaissance)
-        공격 흐름: 프론트엔드 소스코드 노출 -> IDOR 기반 사용자 ID 열거 -> 최상위 관리자 계정 식별
-        취약점 설정:
-          - 소스맵(.map) 미제거로 인한 원본 프론트엔드 코드 및 내부 주석 노출 (DEVNOTES 파일 존재 파악)
-          - Account 페이지 접근 시 부적절한 세션 검증으로 URL 내 userId 값 변조를 통한 타 사용자 정보 조회 가능
-        
-        2. 정보 유출 (Information Disclosure)
-        공격 흐름: Path Traversal 파일 업로드 -> 저장 경로 파악 및 파일 다운로드 -> DEVNOTES 탈취 -> 관리자 API 엔드포인트 확보
-        취약점 설정:
-          - 파일 업로드 시 경로 추적 문자열(../), 불필요한 확장자 필터링 누락 및 무작위 파일명 변경(Randomization) 미적용
-        
-        3. 권한 상승 (Privilege Escalation)
-        공격 흐름: 문의사항에 첨부된 링크의 Stored XSS -> 관리자의 악성 링크 클릭 -> 관리자 세션 Context에서 JS 실행 -> 계정 권한 변경 API 호출 -> 일반 계정(공격자)의 관리자 승격
-        취약점 설정:
-          - window.location.href 이용한 동적 스크립트 실행
-        
-        4. 데이터 탈취 (Data Exfiltration)
-        공격 흐름: 관리자 권한 획득 -> 지원자 민감 서류 및 개인정보 접근 -> 정상 관리 기능 악용을 통한 고유식별정보 및 민감정보 다운로드
-        
-        5. 데이터베이스 침해 (SQL Injection)
-        공격 흐름: API URL 로그 검색창에 싱글 쿼터(') 주입 -> DB 에러 메시지를 통한 동적 쿼리 구조 파악 -> 자동화 스크립트 기반 SQLi 공격 -> DB 내 주요 데이터 추출
-        취약점 설정:
-          - Spring Data JPA/Repository 대신 사용자 입력값에 대한 동적 SQL문 생성 및 실행
-          - 상세 에러 메시지 클라이언트 노출
+  1. 정찰(Reconnaissance): 소스맵 미제거로 인한 프론트엔드 코드 노출 및 IDOR 취약점을 통한 관리자 계정 식별
+  2. 정보 유출(Information Disclosure): 파일 업로드 및 Path Traversal 기반 다운로드를 연계하여 서버 내부 중요 파일(DEVNOTES.md) 탈취
+  3. 권한 상승(Privilege Escalation): Stored XSS를 악용하여 관리자 세션을 탈취하고 일반 계정을 최고 관리자로 승격
+  4. 데이터 탈취(Data Exfiltration): 관리자 권한으로 타 지원자의 민감 서류(주민등록초본 등) 무단 열람 및 다운로드
+  5. 데이터베이스 침해(SQL Injection): 획득한 관리자 권한으로 접근 가능한 모니터링 API에서 SQLi를 수행하여 전체 DB 덤프
 ```
 
 ---
 
 ## 모의해킹 진단 보고서 (Penetration Testing Report)
-- **정부지원금 사이트 웹 취약점 진단 보고서** *(작성 완료 후 첨부 예정)*
-- **시나리오 기반 웹 애플리케이션 침투테스트 보고서** *(작성 완료 후 첨부 예정)*
+- **[정부지원금 통합 신청 시스템 취약점 진단 보고서](./images/VulnerabilityDiagnosisReport.pdf)** 

@@ -1,5 +1,6 @@
 package kr.go.support.subsidy.service;
 
+import kr.go.support.subsidy.common.auth.LoginRateLimit;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.common.exception.BusinessException;
 import kr.go.support.subsidy.common.exception.ErrorCode;
@@ -37,19 +38,26 @@ public class AccountService {
     private final DocumentRepository documentRepository;
     private final SecurityUtils securityUtils;
     private final ApplicationDocumentRepository applicationDocumentRepository;
-
-
+    private final LoginRateLimit loginRateLimit;
 
     //로그인
-    public User login(UserLoginDto userLoginDto)
+    public User login(UserLoginDto userLoginDto, String clientIp)
     {
+        //잠김여부 체크
+        loginRateLimit.checkRateLimit(clientIp, userLoginDto.username());
+
         User user = userRepository.findByUsername(userLoginDto.username())
-                .orElseThrow(() -> new BusinessException(ErrorCode.LOGIN_FAILED));
+                .orElseGet(() -> {
+                    loginRateLimit.recordFailure(clientIp, userLoginDto.username());
+                    throw new BusinessException(ErrorCode.LOGIN_FAILED);
+                });
 
         if(!securityUtils.matches(userLoginDto.password(), user.getPassword())) {
+            loginRateLimit.recordFailure(clientIp, userLoginDto.username());
             throw new BusinessException(ErrorCode.LOGIN_FAILED);
         }
 
+        loginRateLimit.resetFailures(clientIp, userLoginDto.username());
         return user;
     }
 

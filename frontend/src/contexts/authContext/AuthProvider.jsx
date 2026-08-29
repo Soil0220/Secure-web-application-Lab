@@ -42,6 +42,7 @@ export function AuthProvider({ children }) {
             setLoading(true);
             const response = await postApi('/user/login/public',formData ,false);
             setSession(response.data.data);
+            return response?.data;
         } catch (error) {
             const customError = error.response?.data;
             return customError;
@@ -66,10 +67,10 @@ export function AuthProvider({ children }) {
     const signUp = async(formData) => {
         try {
             setLoading(true);
-            await postApi('/user/join/public', formData, false)
+            const response =  await postApi('/user/join/public', formData, false)
+            return response?.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }

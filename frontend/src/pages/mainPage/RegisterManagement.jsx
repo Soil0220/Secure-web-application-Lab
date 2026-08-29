@@ -46,10 +46,14 @@ export default function RegisterPage() {
         try {
             const submitData = { ...formData };
             delete submitData.confirmPassword;
-            await signUp(submitData);
+            const response = await signUp(submitData);
+            if (response.success === true){
+                alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+                navigate('/login');
+            } else {
+                alert(response.message);
+            }
 
-            alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
-            navigate('/login');
         } catch (error) {
             alert(error.response?.data?.message || '회원가입 중 오류가 발생했습니다.');
             setFormData((prev) => ({ ...prev, username: '', password: '', confirmPassword: '' }));

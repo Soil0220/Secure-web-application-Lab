@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import kr.go.support.subsidy.common.ResponseApi;
 import kr.go.support.subsidy.common.SessionData;
 import kr.go.support.subsidy.common.SessionUser;
+import kr.go.support.subsidy.common.auth.LoginRateLimit;
 import kr.go.support.subsidy.common.auth.SecurityUtils;
 import kr.go.support.subsidy.domain.user.Role;
 import kr.go.support.subsidy.domain.user.User;
@@ -57,7 +58,8 @@ public class AccountController {
             HttpServletRequest request,
             HttpServletResponse response){
 
-        User loginUser = accountService.login(userLoginDto);
+        //TODO 추후 프록시서버, 로드밸런싱을 고려할때에는 클라이언트 IP추출 관련해서 변경해야함
+        User loginUser = accountService.login(userLoginDto, request.getRemoteAddr());
 
         //기존 세션 제거
         HttpSession oldSession = request.getSession(false);

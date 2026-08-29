@@ -33,14 +33,16 @@ export default function LoginPage() {
         e.preventDefault();
         setErrorMessage('');
 
-        try {
-            await login(formData);
+
+        const response = await login(formData);
+        if (response.success === true){
             navigate('/');
-        } catch (error) {
-            console.error('로그인 에러:', error);
+        } else {
             setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
             setFormData((prev) => ({ ...prev, password: '' }));
         }
+
+
     };
 
     return (

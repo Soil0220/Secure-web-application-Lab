@@ -45,6 +45,7 @@ public enum ErrorCode {
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "U001", "아이디 또는 비밀번호가 일치하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "U002", "서비스 이용 중 오류가 발생했습니다."),
     DUPLICATE_EMAIL_USERNAME(HttpStatus.CONFLICT, "U003", "이미 계정을 보유하고 있습니다."),
+    ACCOUNT_BLOCKED(HttpStatus.TOO_MANY_REQUESTS, "U004", "로그인 실패 횟수를 초과하여 요청이 잠겼습니다. 15분 후에 다시 시도해주세요."),
 
     // FileUploadValidator
     FILE_NOT_FOUND(HttpStatus.BAD_REQUEST, "FU001", "파일이 존재하지 않습니다."),

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     List<Application> findByUserId(Long userId);
-    Optional<Application> findByUserIdAndGrantId(Long userId, Long grantId);
+    Optional<Application> findByIdAndUserId(Long applicationId, Long userId);
     List<Application> findByGrantId(Long grantId);
     @Query("select a from Application a join fetch a.user join fetch a.grant")
     List<Application> findAllWithUserAndGrant();

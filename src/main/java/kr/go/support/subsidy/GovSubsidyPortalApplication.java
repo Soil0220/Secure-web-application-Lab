@@ -16,7 +16,6 @@ import java.util.TimeZone;
 public class GovSubsidyPortalApplication {
     //TODO HTTPS 설정
     //TODO 계정정보 수정시 비밀번호 재인증
-    //TODO 관리자, 유저 페이지 취소버튼 추가
 
     @PostConstruct
     public void init() {

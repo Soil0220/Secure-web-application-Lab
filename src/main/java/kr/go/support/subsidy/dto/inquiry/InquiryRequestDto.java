@@ -15,7 +15,6 @@ public record InquiryRequestDto (
     @NotBlank
     String content,
 
-    @NotBlank
     @Size(max = 2048)
     String link
 

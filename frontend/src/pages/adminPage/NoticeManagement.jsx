@@ -20,7 +20,7 @@ export default function NoticeManagement() {
     const [isOpen, setIsOpen] = useState(false);
     const [tab, setTab] = useState("notice");
     const { inquiries, getAllInquiries, updateInquiry } = useInquiry();
-    const { createNotice } = useNotice();
+    const { createNotice} = useNotice();
 
     // 1:1 민원 상태
     const [selectedQna, setSelectedQna] = useState(null);

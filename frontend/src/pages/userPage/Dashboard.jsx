@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // 프로젝트 경로에 맞게 컨텍스트 import 경로를 수정해 주세요.
 import { useApplication } from "../../contexts/applicationContext/UseApplication.jsx";
 import { useInquiry } from "../../contexts/inquiryContext/UseInquiry.jsx";
-import {APPLICATION_STATUS_MAP} from "../../constants/status.jsx";
+import {APPLICATION_STATUS_MAP, INQUIRY_STATUS_MAP} from "../../constants/status.jsx";
 
 /*
     유저 대시보드
@@ -176,21 +176,29 @@ export default function Dashboard() {
 
                     <div className="card-list">
                         {recentPendingInquiries.length > 0 ? (
-                            recentPendingInquiries.map((inq) => (
-                                <div key={inq.inquiryId} className="qna-card">
-                                    <div className="card-header">
-                                        <span className="inquiry-no">
-                                            NO.{String(inq.inquiryId).padStart(5, "0")}
-                                        </span>
-                                        <span className="status-badge pending">답변대기</span>
+                            recentPendingInquiries.map((inq) => {
+                                const statusInfo = INQUIRY_STATUS_MAP[inq.status] || {label: inq.status, bg: "#f8f9fa", color: "#666666"};
+
+                                return (
+                                    <div key={inq.inquiryId} className="qna-card">
+                                        <div className="card-header">
+                                            <span className="inquiry-no">
+                                                NO.{String(inq.inquiryId).padStart(5, "0")}
+                                            </span>
+                                            <span
+                                                className="status-badge"
+                                                style={{ backgroundColor: statusInfo.bg, color: statusInfo.color }}
+                                            >
+                                                {statusInfo.label}
+                                            </span>
+                                        </div>
+                                        <h4 className="item-title">{inq.title}</h4>
+                                        <div className="meta-row">
+                                            <span>작성자: <strong>{inq.username || "사용자"}</strong></span>
+                                        </div>
                                     </div>
-                                    <h4 className="item-title">{inq.title}</h4>
-                                    <p className="item-content">{inq.content || "내용이 없습니다."}</p>
-                                    <div className="meta-row">
-                                        <span>작성자: <strong>{inq.username || "사용자"}</strong></span>
-                                    </div>
-                                </div>
-                            ))
+                                )
+                            })
                         ) : (
                             <div className="empty-card">
                                 <p className="empty-text">답변이 필요한 민원이 없습니다.</p>
@@ -253,4 +261,6 @@ const dashboardStyles = `
     .empty-text { font-size: 13px; color: #94a3b8; margin: 0; }
     
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    
+    .status-badge {padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block;}
 `;

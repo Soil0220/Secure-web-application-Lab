@@ -1,5 +1,5 @@
 import {DocumentContext} from "./DocumentContext.jsx";
-import {getApi, postApi} from "../../components/RequestApi.jsx";
+import {deleteApi, getApi, postApi} from "../../components/RequestApi.jsx";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
 import {useState} from "react";
 
@@ -43,9 +43,8 @@ export function DocumentProvider({ children }) {
             setDocuments(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            setDocuments([]);
+            return error.response?.data;
         }
     }
 
@@ -94,10 +93,21 @@ export function DocumentProvider({ children }) {
         }
     };
 
+    //서류함에 있는 서류 삭제
+    const deleteDocument = async (documentId) => {
+        try {
+            const response = await deleteApi(`/document/${documentId}`, {}, true);
+            await getDocuments();
+            return response.data;
+        } catch (error) {
+            return error.response?.data;
+        }
+    }
+
 
     return (
         <DocumentContext.Provider
-            value={{downloadApplicationDocument, downloadDocument, uploadDocument, documents, getDocuments, setDocuments}}
+            value={{downloadApplicationDocument, downloadDocument, uploadDocument, deleteDocument, documents, getDocuments, setDocuments}}
         >
             {children}
         </DocumentContext.Provider>

@@ -22,7 +22,7 @@ const formatDate = (isoString) => {
 };
 
 export default function FavoriteManagement() {
-    const { favorites, getFavorites } = useFavorite();
+    const { favorites, getFavorites, deleteFavorite } = useFavorite();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const favoriteArray = favorites
@@ -58,9 +58,20 @@ export default function FavoriteManagement() {
                             <div key={favorite.grantId} style={styles.dataCard}>
                                 <div style={styles.cardHeader}>
                                     <span style={styles.grantNumber}>정책 NO.{String(favorite.grantId).padStart(5, "0")}</span>
-                                    <span style={{ ...styles.statusBadge, backgroundColor: statusInfo.bg, color: statusInfo.color }}>
-                                        {statusInfo.label}
-                                    </span>
+                                    <div>
+                                        <span style={{ ...styles.statusBadge, backgroundColor: statusInfo.bg, color: statusInfo.color }}>
+                                            {statusInfo.label}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={async () => await deleteFavorite(favorite.grantId)}
+                                            style={styles.deleteBtn}
+                                            aria-label="삭제"
+                                            title="삭제"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
                                 <h3 style={styles.cardTitle}>{favorite.title}</h3>
                                 <p style={styles.cardContent}>{favorite.content}</p>
@@ -125,5 +136,6 @@ const styles = {
     cardFooter: { display: "flex", justifyContent: "flex-end" },
     primaryBtn: { backgroundColor: "#0056b3", color: "#ffffff", border: "none", borderRadius: "6px", padding: "10px 20px", fontSize: "14px", fontWeight: "bold", cursor: "pointer" },
     emptyCard: { padding: "32px", textAlign: "center", backgroundColor: "#f8f9fa", borderRadius: "8px", border: "1px solid #e2e8f0" },
-    emptyText: { fontSize: "14px", color: "#666666", margin: 0 }
+    emptyText: { fontSize: "14px", color: "#666666", margin: 0 },
+    deleteBtn: {background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease',},
 };

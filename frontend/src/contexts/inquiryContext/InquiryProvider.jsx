@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {InquiryContext} from "./InquiryContext.jsx";
-import {getApi, patchApi, postApi} from "../../components/RequestApi.jsx";
+import {deleteApi, getApi, patchApi, postApi} from "../../components/RequestApi.jsx";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
 
 export function InquiryProvider({ children }) {
@@ -15,8 +15,7 @@ export function InquiryProvider({ children }) {
             const response = await postApi('/inquiry', {"title" : title, "content": content, "link": link}, true);
             return response.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }
@@ -29,8 +28,7 @@ export function InquiryProvider({ children }) {
             setInquiries(response.data.data);
             return response.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -41,8 +39,7 @@ export function InquiryProvider({ children }) {
             setInquiries(response.data.data);
             return response.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -53,14 +50,25 @@ export function InquiryProvider({ children }) {
             await getAllInquiries();
             return response.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
+        }
+    }
+
+    //문의 삭제
+    const deleteInquiry = async (inquiryId) => {
+        try {
+            const response = await deleteApi(`/inquiry/${inquiryId}`, {}, true);
+            setInquiries(response.data.data);
+            await getInquiries();
+            return response.data;
+        } catch (error) {
+            return error.response?.data;
         }
     }
 
     return (
         <InquiryContext.Provider
-            value={{createInquiry, inquiries, setInquiries, getAllInquiries, getInquiries, updateInquiry}}
+            value={{createInquiry, inquiries, setInquiries, deleteInquiry, getAllInquiries, getInquiries, updateInquiry}}
         >
             {children}
         </InquiryContext.Provider>

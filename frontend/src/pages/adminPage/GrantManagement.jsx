@@ -25,7 +25,7 @@ const formatDate = (isoString) => {
 };
 
 export default function GrantManagement() {
-    const { grants, createGrant, getGrants } = useGrant();
+    const { grants, createGrant, deleteGrant, getGrants } = useGrant();
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -65,7 +65,7 @@ export default function GrantManagement() {
                 status: 'PREPARING'
             });
         } catch (error) {
-                console.error("지원금 제도 등록 실패:", error);
+            console.error("지원금 제도 등록 실패:", error);
         } finally {
             setLoading(false);
         }
@@ -120,15 +120,26 @@ export default function GrantManagement() {
                                             </>
                                         )}
                                     </div>
-                                    <span
-                                        style={{
-                                            ...styles.statusBadge,
-                                            backgroundColor: statusInfo.bg,
-                                            color: statusInfo.color,
-                                        }}
-                                    >
-                                        {statusInfo.label}
-                                    </span>
+                                    <div>
+                                        <span
+                                            style={{
+                                                ...styles.statusBadge,
+                                                backgroundColor: statusInfo.bg,
+                                                color: statusInfo.color,
+                                            }}
+                                        >
+                                            {statusInfo.label}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={async () => await deleteGrant(p.grantId)}
+                                            style={styles.deleteBtn}
+                                            aria-label="삭제"
+                                            title="삭제"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* 타이틀 및 상세 설명 */}
@@ -312,6 +323,7 @@ const styles = {
     metaDivider: { width: "1px", height: "12px", backgroundColor: "#cbd5e1" },
     emptyCard: { padding: "40px", textAlign: "center", backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e2e8f0" },
     emptyText: { fontSize: "14px", color: "#666666", margin: 0 },
+    deleteBtn: {background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease',},
 
     /* 모달 레이아웃 */
     modalOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, 0.4)", backdropFilter: "blur(2px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },

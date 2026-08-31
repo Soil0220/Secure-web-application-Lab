@@ -30,14 +30,14 @@ const GRANT_CATEGORY_MAP = {
 };
 
 export default function ApplicationForm({ isOpen, onClose }) {
-    const {getGrants, recruitingGrants } = useGrant();
+    const { getGrants, recruitingGrants } = useGrant();
     const { documents, getDocuments } = useDocument();
     const { createApplication } = useApplication();
 
     const [selectedGrantId, setSelectedGrantId] = useState('');
     const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
     const [isDocError, setIsDocError] = useState(false);
-
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -48,6 +48,8 @@ export default function ApplicationForm({ isOpen, onClose }) {
             let docError = false;
 
             // 지원금 목록 조회
+            setIsFetching(true);
+
             try {
                 await getGrants();
                 setSelectedGrantId(recruitingGrants[0]?.grantId);
@@ -68,6 +70,8 @@ export default function ApplicationForm({ isOpen, onClose }) {
                 setSelectedDocumentIds([]);
                 setIsDocError(docError);
             }
+
+            setIsFetching(false);
         };
 
         fetchData();
@@ -77,7 +81,8 @@ export default function ApplicationForm({ isOpen, onClose }) {
         };
     }, [isOpen]);
 
-    if (!isOpen) return null;
+    //모달 오픈 및 초기화 대기
+    if (!isOpen || isFetching) return null;
 
     // 기존 서류 선택배열에 포함 되어있으면 해제하고 없으면 추가
     const handleDocumentToggle = (docId) => {

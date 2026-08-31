@@ -1,4 +1,4 @@
-import { postApi, getApi } from '../../components/RequestApi.jsx';
+import {postApi, getApi, deleteApi} from '../../components/RequestApi.jsx';
 import {useLoading} from "../loadingContext/useLoading.jsx";
 import {NoticeContext} from "./NoticeContext.jsx";
 import {useState} from "react";
@@ -15,9 +15,7 @@ export function NoticeProvider({ children }) {
             setNotices(response.data.data)
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -25,20 +23,29 @@ export function NoticeProvider({ children }) {
         try {
             setLoading(true);
             const response = await postApi('/notice/admin', formData, true);
-            getNotices();
+            await getNotices();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }
     }
 
+    const deleteNotice = async (noticeId) => {
+        try {
+
+            const response = await deleteApi(`/notice/${noticeId}/admin`, {}, true);
+            await getNotices()
+            return response.data;
+        } catch (error) {
+            return error.response?.data;
+        }
+    }
+
     return (
     <NoticeContext.Provider
-        value={{ getNotices, createNotice, notices, setNotices }}
+        value={{ getNotices, createNotice, deleteNotice, notices, setNotices }}
     >
         {children}
     </NoticeContext.Provider>

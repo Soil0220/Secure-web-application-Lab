@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import {useLoading} from "../contexts/loadingContext/UseLoading.jsx";
 import {useNotice} from "../contexts/noticeContext/useNotice.jsx";
+import {useAuth} from "../contexts/authContext/UseAuth.jsx";
 
 const NoticeList = () => {
     const {loading} = useLoading(true);
-    const {notices, getNotices} = useNotice();
-    const [selectedNotice, setSelectedNotice] = useState(null); // 선택된 공지사항 (상세보기용)
-
+    const {notices, getNotices, deleteNotice} = useNotice();
+    const {session} = useAuth();
+    const [selectedNotice, setSelectedNotice] = useState(null);
 
     useEffect(() => {
         const run = async () => {
@@ -19,17 +20,6 @@ const NoticeList = () => {
         return null;
     }
 
-    // 날짜 포맷 함수 (YYYY-MM-DD)
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
-    };
-
     return (
         <div style={styles.container}>
             {loading ? (
@@ -41,15 +31,29 @@ const NoticeList = () => {
                     <ul style={styles.list}>
                         {notices.map(n => (
                                 <li
-                                    key={n.id}
+                                    key={n.noticeId}
                                     style={styles.listItem}
                                     onClick={() => setSelectedNotice(n)}
                                 >
-                                    {n.isPinned ? (<span><b style={{ color: '#E54D42' }}>[공지]</b> {n.title}</span>
+                                    {n.isPinned ? (
+                                        <span><b style={{ color: '#E54D42' }}>[공지]</b> {n.title}</span>
                                     ) : (
                                         <span>{n.title}</span>
                                     )}
-                                    <span style={styles.date}>{formatDate(n.updatedAt)}</span>
+                                    {(session?.sessionUser?.role === "ADMIN") &&
+                                        <button
+                                        type="button"
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            await deleteNotice(n.noticeId);
+                                        }}
+                                        style={styles.deleteBtn}
+                                        aria-label="삭제"
+                                        title="삭제"
+                                    >
+                                        ✕
+                                    </button>}
                                 </li>
                             ))}
                     </ul>
@@ -65,7 +69,6 @@ const NoticeList = () => {
                                 {selectedNotice.isPinned && <span style={styles.badge}>[공지]</span>}
                                 <h3 style={{ display: 'inline', fontSize: '1.25rem' }}>{selectedNotice.title}</h3>
                             </div>
-                            <span style={styles.modalDate}>{formatDate(selectedNotice.updatedAt)}</span>
                         </div>
                         <hr style={{ margin: '16px 0', border: '0', borderTop: '1px solid #eee' }} />
 
@@ -80,7 +83,7 @@ const NoticeList = () => {
     );
 };
 
-// CSS-in-JS 스타일
+
 const styles = {
     container: {width: '100%', margin: '0', padding: '6px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)', fontFamily: 'sans-serif'},
     title: { fontSize: '20px', fontWeight: 'bold', marginBottom: '20px', color: '#111' },
@@ -95,6 +98,7 @@ const styles = {
     tdCenter: { padding: '14px 16px', textAlign: 'center', fontSize: '0.95rem', color: '#718096' },
     tdTitle: { padding: '14px 16px', fontSize: '0.95rem', color: '#2d3748' },
     badge: { display: 'inline-block', backgroundColor: '#e53e3e', color: '#fff', fontSize: '0.75rem', padding: '2px 6px', borderRadius: '4px', marginRight: '8px', fontWeight: 'bold' },
+    deleteBtn: {position: 'relative', zIndex: 10,background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease',},
     /* 모달 스타일 */
     modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
     modalContent: { backgroundColor: '#fff', width: '90%', maxWidth: '600px', borderRadius: '8px', padding: '24px', boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' },

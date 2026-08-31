@@ -26,7 +26,7 @@ const formatDateTime = (dateString) => {
 };
 
 export default function InquiryManagement() {
-    const { inquiries, getInquiries, createInquiry } = useInquiry();
+    const { inquiries, getInquiries, createInquiry, deleteInquiry } = useInquiry();
     const [openInquiryId, setOpenInquiryId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -112,9 +112,20 @@ export default function InquiryManagement() {
                                         <span style={styles.inquiryNumber}>NO.{String(inq.inquiryId).padStart(5, "0")}</span>
                                         <span style={styles.authorText}>작성자: <strong>{inq.username || "-"}</strong></span>
                                     </div>
-                                    <span style={{ ...styles.statusBadge, backgroundColor: statusInfo.bg, color: statusInfo.color }}>
-                                        {statusInfo.label}
-                                    </span>
+                                    <div>
+                                        <span style={{ ...styles.statusBadge, backgroundColor: statusInfo.bg, color: statusInfo.color }}>
+                                            {statusInfo.label}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={async () => await deleteInquiry(inq.inquiryId)}
+                                            style={styles.deleteBtn}
+                                            aria-label="삭제"
+                                            title="삭제"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
                                 <h3 style={styles.cardTitle}>{inq.title}</h3>
                                 <p style={styles.cardContent}>{inq.content}</p>
@@ -249,7 +260,7 @@ const styles = {
     answerText: { fontSize: "14px", color: "#333333", margin: 0, lineHeight: "1.6" },
     emptyCard: { padding: "32px", textAlign: "center", backgroundColor: "#f8f9fa", borderRadius: "8px", border: "1px solid #e2e8f0" },
     emptyText: { fontSize: "14px", color: "#666666", margin: 0 },
-
+    deleteBtn: {background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease',},
     primaryBtn: { backgroundColor: "#0056b3", color: "#ffffff", border: "none", padding: "11px 16px", borderRadius: "6px", fontSize: "14px", fontWeight: "bold", cursor: "pointer", transition: "background-color 0.15s ease", boxSizing: "border-box" },
 
     /* 모달 레이아웃 */

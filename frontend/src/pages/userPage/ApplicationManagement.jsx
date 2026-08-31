@@ -28,7 +28,7 @@ const formatDateTime = (isoString) => {
 };
 
 export default function ApplicationManagement() {
-    const { applications, getApplications } = useApplication();
+    const { applications, getApplications, deleteApplication } = useApplication();
     const { downloadApplicationDocument } = useDocument();
 
     // 개별 문서 다운로드 상태 관리
@@ -84,15 +84,26 @@ export default function ApplicationManagement() {
                                     <span style={styles.appNumber}>
                                         신청번호 NO.{String(app.applicationId).padStart(5, "0")}
                                     </span>
-                                    <span
-                                        style={{
-                                            ...styles.statusBadge,
-                                            backgroundColor: statusInfo.bg,
-                                            color: statusInfo.color,
-                                        }}
-                                    >
-                                        {statusInfo.label}
-                                    </span>
+                                    <div>
+                                        <span
+                                            style={{
+                                                ...styles.statusBadge,
+                                                backgroundColor: statusInfo.bg,
+                                                color: statusInfo.color,
+                                            }}
+                                        >
+                                            {statusInfo.label}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={async () => await deleteApplication(app.applicationId)}
+                                            style={styles.deleteBtn}
+                                            aria-label="삭제"
+                                            title="삭제"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <h3 style={styles.cardTitle}>{app.title}</h3>
@@ -182,4 +193,5 @@ const styles = {
     downloadIcon: { fontSize: "13px", color: "#0056b3", fontWeight: "bold" },
     emptyCard: { padding: "40px", textAlign: "center", backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e2e8f0" },
     emptyText: { fontSize: "14px", color: "#666666", margin: 0 },
+    deleteBtn: {background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease',},
 };

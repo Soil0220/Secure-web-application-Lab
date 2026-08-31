@@ -11,7 +11,7 @@ import {DOC_TYPE_MAP} from "../../constants/status.jsx";
 */
 
 export default function DocumentManagement() {
-    const { documents, getDocuments, uploadDocument, downloadDocument } = useDocument();
+    const { documents, getDocuments, deleteDocument, uploadDocument, downloadDocument } = useDocument();
     const [selectedDocType, setSelectedDocType] = useState('RESIDENT_REGISTRATION_COPY');
 
     const handleDocumentClick = async (documentId, documentName) => {
@@ -97,13 +97,25 @@ export default function DocumentManagement() {
                 {documents && documents.length > 0 ? (
                     documents.map((doc) => (
                         <div key={doc.documentId} style={styles.dataCard}>
-                            <span style={styles.cardCategory}>
-                                {DOC_TYPE_MAP[doc.docType] || doc.docType}
-                            </span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={styles.cardCategory}>
+                                    {DOC_TYPE_MAP[doc.docType] || doc.docType}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={async () => await deleteDocument(doc.documentId)}
+                                    style={styles.deleteBtn}
+                                    aria-label="삭제"
+                                    title="삭제"
+                                >
+                                    ✕
+                                </button>
+                            </div>
                             <h4
                                 style={{ ...styles.cardTitle, cursor: 'pointer' }}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     handleDocumentClick(doc.documentId, doc.originFileName);
                                 }}
                             >
@@ -152,11 +164,12 @@ const styles = {
     cardContainer: { display: 'flex', flexDirection: 'column', gap: '12px' },
     dataCard: { backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '4px' },
     cardCategory: { fontSize: '12px', fontWeight: 'bold', color: '#0056b3' },
-    cardTitle: { fontSize: '15px', fontWeight: 'bold', color: '#111111', margin: '2px 0 0 0' },
+    cardTitle: { display: 'inline-block', alignSelf: 'flex-start', width: 'fit-content',fontSize: '15px', fontWeight: 'bold', color: '#111111', margin: '2px 0 0 0' },
     cardDetail: { fontSize: '12px', color: '#888888', margin: '2px 0 0 0' },
     emptyCard: { backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '32px', textAlign: 'center' },
     emptyText: { fontSize: '14px', color: '#666666', margin: 0 },
     dropZone: { marginTop: '24px', border: '2px dashed #cbd5e1', borderRadius: '8px', padding: '32px 20px', textAlign: 'center', backgroundColor: '#f8f9fa', transition: 'all 0.2s ease', cursor: 'pointer' },
     dropZoneActive: { borderColor: '#0056b3', backgroundColor: '#eff6ff' },
     dropText: { margin: 0, fontSize: '14px', color: '#666666', fontWeight: 'bold' },
+    deleteBtn: {background: 'none', border: 'none', color: '#8c95a1', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.15s ease', marginLeft: 'auto'},
 };

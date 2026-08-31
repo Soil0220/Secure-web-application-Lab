@@ -46,12 +46,12 @@ public class ApplicationController {
     }
 
     //지원금 신청 취소
-    @DeleteMapping("/{grantId}")
+    @DeleteMapping("/{applicationId}")
     public ResponseApi<Long> cancelApplication(
-            @PathVariable Long grantId,
+            @PathVariable Long applicationId,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser) {
 
-        Long response = applicationService.cancelApplication(sessionUser.getId(), grantId);
+        Long response = applicationService.cancelApplication(sessionUser.getId(), applicationId);
         return ResponseApi.success(response);
     }
 

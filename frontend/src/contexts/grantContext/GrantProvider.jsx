@@ -1,6 +1,6 @@
 import {GrantContext} from "./GrantContext.jsx";
 import {useState} from "react";
-import {getApi, postApi} from "../../components/RequestApi.jsx";
+import {deleteApi, getApi, postApi} from "../../components/RequestApi.jsx";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
 
 export function GrantProvider({ children }) {
@@ -16,9 +16,7 @@ export function GrantProvider({ children }) {
             setRecruitingGrants( (grants || []).filter(grant => grant.status === 'RECRUITING'));
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -29,18 +27,25 @@ export function GrantProvider({ children }) {
             await getGrants();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }
     }
 
+    const deleteGrant = async (grantId) => {
+        try {
+            const response = await deleteApi(`/grant/${grantId}/admin`, {}, true);
+            await getGrants();
+            return response.data;
+        } catch (error) {
+            return error.response?.data;
+        }
+    }
 
     return (
         <GrantContext.Provider
-            value={{ grants, setGrants, getGrants, createGrant, recruitingGrants}}
+            value={{ grants, setGrants, getGrants, createGrant, deleteGrant, recruitingGrants}}
         >
             {children}
         </GrantContext.Provider>

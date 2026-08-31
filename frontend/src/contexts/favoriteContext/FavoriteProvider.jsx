@@ -14,9 +14,7 @@ export function FavoriteProvider({ children }) {
             setFavorites(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -26,21 +24,17 @@ export function FavoriteProvider({ children }) {
             await getFavorites();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
-    const deleteFavorite = async (grantId) => {
+    const deleteFavorite = async (favoriteId) => {
         try {
-            const response = await deleteApi(`/favorite/${grantId}`, {}, true);
+            const response = await deleteApi(`/favorite/${favoriteId}`, {}, true);
             await getFavorites();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 

@@ -1,7 +1,7 @@
 import {ApplicationContext} from "./ApplicationContext.jsx";
 import {useState} from "react";
 import {useLoading} from "../loadingContext/UseLoading.jsx";
-import {getApi, patchApi, postApi} from "../../components/RequestApi.jsx";
+import {deleteApi, getApi, patchApi, postApi} from "../../components/RequestApi.jsx";
 
 export function ApplicationProvider({ children }) {
 
@@ -15,9 +15,7 @@ export function ApplicationProvider({ children }) {
             setApplications(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -28,9 +26,7 @@ export function ApplicationProvider({ children }) {
             setApplications(response.data.data);
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -41,9 +37,7 @@ export function ApplicationProvider({ children }) {
             await getAllApplications();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -55,18 +49,27 @@ export function ApplicationProvider({ children }) {
             await getApplications();
             return response.data;
         } catch (error) {
-            //응답 데이터 존재시 접근
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
+        }
+    }
+
+    //신청 삭제
+    const deleteApplication = async (applicationId) => {
+        try {
+            const response = await deleteApi(`/application/${applicationId}`, {}, true);
+            await getApplications();
+            return response.data;
+        } catch (error) {
+            return error.response?.data;
         }
     }
 
 
     return (
         <ApplicationContext.Provider
-            value={{createApplication, applications, setApplications, getApplications, getAllApplications, updateApplicationStatus}}
+            value={{createApplication, applications, setApplications, getApplications, deleteApplication, getAllApplications, updateApplicationStatus}}
         >
             {children}
         </ApplicationContext.Provider>

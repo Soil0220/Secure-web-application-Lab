@@ -100,8 +100,9 @@ public class ApplicationService {
 
     //지원금 신청취소
     @Transactional
-    public Long cancelApplication(Long userId, Long grantId ){
-        Application application = applicationRepository.findByUserIdAndGrantId(userId, grantId)
+    public Long cancelApplication(Long userId, Long applicationId ){
+
+        Application application = applicationRepository.findByIdAndUserId(applicationId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
         application.delete();
 

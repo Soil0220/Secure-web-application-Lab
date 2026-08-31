@@ -17,8 +17,7 @@ export function AuthProvider({ children }) {
             setSession(response.data.data);
         } catch (error) {
             setSession(null);
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
             setIsAuthLoading(false);
@@ -32,8 +31,7 @@ export function AuthProvider({ children }) {
             setSession(response.data.data);
         } catch (error) {
             setSession(null);
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         }
     }
 
@@ -44,8 +42,7 @@ export function AuthProvider({ children }) {
             setSession(response.data.data);
             return response?.data;
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }
@@ -57,8 +54,7 @@ export function AuthProvider({ children }) {
             await postApi('/user/logout',{} ,true);
             setSession(null);
         } catch (error) {
-            const customError = error.response?.data;
-            return customError;
+            return error.response?.data;
         } finally {
             setLoading(false);
         }

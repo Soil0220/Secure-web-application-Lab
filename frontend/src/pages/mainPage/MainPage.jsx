@@ -338,6 +338,15 @@ const TabSupportTypes = () => {
                                     </div>
 
                                     <div style={styles.headerRight}>
+                                        <span
+                                            style={{
+                                                ...styles.statusBadge,
+                                                backgroundColor: statusInfo.bg,
+                                                color: statusInfo.color,
+                                            }}
+                                        >
+                                            {statusInfo.label}
+                                        </span>
                                         {isUser && (
                                             <button
                                                 type="button"
@@ -351,15 +360,6 @@ const TabSupportTypes = () => {
                                                 )}
                                             </button>
                                         )}
-                                        <span
-                                            style={{
-                                                ...styles.statusBadge,
-                                                backgroundColor: statusInfo.bg,
-                                                color: statusInfo.color,
-                                            }}
-                                        >
-                                            {statusInfo.label}
-                                        </span>
                                     </div>
                                 </div>
 
@@ -423,6 +423,7 @@ const TabSupportApply = () => {
 
             {/* 지원금 신청 모달 연동 */}
             <ApplicationForm
+                key={isModalOpen ? "open" : "closed"}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
             />

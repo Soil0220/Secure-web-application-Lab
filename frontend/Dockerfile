@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN rm -f package-lock.json
-RUN npm install --omit=optional
+RUN npm install
+RUN npm install -D @rolldown/binding-linux-x64-gnu@1.2.6
 
 COPY . .
 RUN npm run build

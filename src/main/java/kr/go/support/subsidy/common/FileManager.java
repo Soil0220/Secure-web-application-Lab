@@ -38,7 +38,7 @@ public class FileManager {
         return targetPath;
     }
 
-    /* 파일저장(안전한 버전, UUID로 파일명 변경 저장)*/
+    /* 파일저장(안전한 버전, UUID로 파일명 변경 저장)
     public String storeFile(MultipartFile multipartFile) {
 
         //파일 검증
@@ -78,11 +78,11 @@ public class FileManager {
             return "";
         }
         return originalFilename.substring(pos + 1);
-    }
+    }*/
 
 
 
-    /* 파일저장(취약한 버전, 파일명 예측가능하게 변경없이 저장)
+    /* 파일저장(취약한 버전, 파일명 예측가능하게 변경없이 저장)*/
     public String storeFile(MultipartFile multipartFile) {
 
         //파일 검증
@@ -114,7 +114,7 @@ public class FileManager {
         } catch (IOException e) {
             throw new IllegalArgumentException("파일 저장 중 오류가 발생했습니다.", e);
         }
-    } */
+    }
 
 
     //파일삭제

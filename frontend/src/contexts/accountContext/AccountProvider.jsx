@@ -2,16 +2,15 @@ import {useState} from "react";
 import {AccountContext} from "./AccountContext.jsx";
 import {getApi, patchApi} from "../../components/RequestApi.jsx";
 
-/* 취약한 버전
+/* 취약한 버전*/
 import {useAuth} from "../authContext/UseAuth.jsx";
- */
 
 export function AccountProvider({ children }) {
 
     const [account, setAccount] = useState(null);
 
 
-    /*계정 조회(안전한 버전)*/
+    /*계정 조회(안전한 버전)
     const getAccount = async () => {
         try {
             const response = await getApi('/user', {}, true);
@@ -21,9 +20,9 @@ export function AccountProvider({ children }) {
             const customError = error.response?.data;
             return customError;
         }
-    }
+    }*/
 
-    /*계정 조회(취약한 버전)
+    /*계정 조회(취약한 버전)*/
     const {session} = useAuth();
     const getAccount = async () => {
         try {
@@ -34,7 +33,7 @@ export function AccountProvider({ children }) {
             const customError = error.response?.data;
             return customError;
         }
-    }*/
+    }
 
     //계좌정보 변경
     const updateBankAccount = async (bankName, accountNum) => {

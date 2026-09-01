@@ -10,7 +10,7 @@ const getCookie = (name) => {
 };
 
 const client = axios.create({
-    baseURL: 'http://34.170.29.236:80/api',
+    baseURL: 'http://localhost:80/api',
     withCredentials: true,
 });
 

@@ -50,6 +50,4 @@ public class SessionController {
 
         return ResponseApi.success(sessionData);
     }
-
-    //세션 할당(취약점)
 }

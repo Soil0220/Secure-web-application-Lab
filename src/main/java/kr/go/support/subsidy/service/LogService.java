@@ -34,20 +34,20 @@ public class LogService {
             return result;
         }
 
-        /*검색 조회(안전한 버전, 레포지토리를 이용)*/
+        /*검색 조회(안전한 버전, 레포지토리를 이용)
         List<LogResponseDto> result = logRepository.findByApiUrlContainingIgnoreCase(dto.apiUrl()).stream()
                 .map(LogResponseDto::from)
                 .toList();
-        return result;
+        return result;*/
 
 
-        /*검색 조회(취약한 버전, 동적 SQL문 생성 실행)
+        /*검색 조회(취약한 버전, 동적 SQL문 생성 실행)*/
         String sql = "SELECT * FROM request_logs WHERE api_url LIKE LOWER('%" + dto.apiUrl() + "%')";
         List<Log> result = entityManager.createNativeQuery(sql, Log.class).getResultList();
 
         return result.stream()
                 .map(LogResponseDto::from)
-                .toList();*/
+                .toList();
     }
 
     //요청로그 저장(Event)

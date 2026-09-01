@@ -12,7 +12,7 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon -x test
 
 # 실행 전용 경량화 환경
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # 빌드된 jar 파일만 추출해서 복사

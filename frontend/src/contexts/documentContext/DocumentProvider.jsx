@@ -84,7 +84,7 @@ export function DocumentProvider({ children }) {
 
         try {
             setLoading(true);
-            const response = await postApi('/document', formData, {});
+            const response = await postApi('/document/upload', formData, {});
             return response.data;
         } catch (error) {
             console.error('파일 업로드 실패:', error);

@@ -85,14 +85,9 @@ export default function RegisterPage() {
                     <div style={styles.titleHeader}>
                         <h2 style={styles.title}>회원가입</h2>
                     </div>
-                    <div>
-                        <p style={styles.subtitle}>
-                            지원금24 서비스 이용을 위해 기본 정보를 입력해 주세요.
-                        </p>
-                        <span style={styles.portfolioNotice}>
-                            해당 사이트는 포트폴리오용 사이트입니다. 실제 개인정보 입력을 금합니다.
-                        </span>
-                    </div>
+                    <span style={styles.portfolioNotice}>
+                        해당 사이트는 포트폴리오용 사이트입니다. 실제 개인정보 입력을 금합니다.
+                    </span>
 
                     <form onSubmit={handleSubmit} style={styles.form}>
                         {/* 아이디 중복확인 포함 */}

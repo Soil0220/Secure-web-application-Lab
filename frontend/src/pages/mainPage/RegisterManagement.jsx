@@ -85,9 +85,14 @@ export default function RegisterPage() {
                     <div style={styles.titleHeader}>
                         <h2 style={styles.title}>회원가입</h2>
                     </div>
-                    <span style={styles.portfolioNotice}>
-                        해당 사이트는 포트폴리오용 사이트입니다. 실제 개인정보 입력을 금합니다.
-                    </span>
+                    <div>
+                        <p style={styles.subtitle}>
+                            지원금24 서비스 이용을 위해 기본 정보를 입력해 주세요.
+                        </p>
+                        <span style={styles.portfolioNotice}>
+                            해당 사이트는 포트폴리오용 사이트입니다. 실제 개인정보 입력을 금합니다.
+                        </span>
+                    </div>
 
                     <form onSubmit={handleSubmit} style={styles.form}>
                         {/* 아이디 중복확인 포함 */}
@@ -259,5 +264,5 @@ const styles = {
     submitBtn: { backgroundColor: '#0056b3', color: '#ffffff', border: 'none', padding: '12px', borderRadius: '6px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px', width: '100%', transition: 'background-color 0.15s ease' },
     bottomPrompt: { marginTop: '28px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666666' },
     loginLinkBtn: { background: 'none', border: 'none', color: '#0056b3', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', textDecoration: 'underline', padding: 0 },
-    portfolioNotice: {display: 'inline-flex', alignItems: 'center', marginLeft: '14px', padding: '5px 10px', borderLeft: '3px solid #dc2626', borderRadius: '4px', backgroundColor: '#fef2f2', color: '#b91c1c', fontSize: '12px', fontWeight: '600', lineHeight: '1.4',},
+    portfolioNotice: {display: 'flex', alignItems: 'center', justifyContent: 'center',marginTop: '10px', marginBottom: '24px', padding: '10px 14px', borderLeft: '4px solid #dc2626', borderRadius: '6px', backgroundColor: '#fef2f2', color: '#b91c1c', fontSize: '12.5px', fontWeight: '600', lineHeight: '1.4', boxSizing: 'border-box', width: '100%',},
 };

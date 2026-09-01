@@ -14,22 +14,21 @@ import java.util.Set;
 @Component
 public class FileUploadValidator {
 
-    /*
-    //안전한 버전(필요한 서류만 화이트리스트 방식으로 허용, Path Traversal 검증)
+    /*안전한 버전(필요한 서류만 화이트리스트 방식으로 허용, Path Traversal 검증)*/
     private static final Set<String> ALLOWED_EXTENSIONS =
             Set.of("jpg", "jpeg", "png");
 
     private static final Set<String> ALLOWED_MIME_TYPES =
             Set.of("image/jpeg", "image/png");
-     */
 
-    //취약한 버전(불필요한 파일까지 허용, Path Traversal 검증 누락)
+
+    /*취약한 버전(불필요한 파일까지 허용, Path Traversal 검증 누락)
     private static final Set<String> ALLOWED_EXTENSIONS =
             Set.of("jpg", "jpeg", "png", "md", "txt");
 
     private static final Set<String> ALLOWED_MIME_TYPES =
             Set.of("image/jpeg", "image/png", "text/markdown", "text/plain");
-
+    */
 
 
     private final Tika tika = new Tika();

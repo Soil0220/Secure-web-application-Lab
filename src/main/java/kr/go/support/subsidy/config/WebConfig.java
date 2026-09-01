@@ -19,13 +19,14 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    //CORS 필터 적용
+    // 배포시 nginx를 거치기에 백엔드 자체의 외부포트는 닫혀있다.
+    // 그래서 CORS 필터 적용은 필요 없지만 만약 외부포트를 열 경우에는 필요하다.
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("http://localhost:3000");
+        config.addAllowedOriginPattern("http://34.170.29.236:80");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 

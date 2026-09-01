@@ -299,7 +299,7 @@ export default function NoticeManagement() {
                                             {selectedQna.content || "내용이 없습니다."}
                                         </div>
 
-                                        {/* 취약한 버전 (window.location.href에 링크 직접 주입) */}
+                                        {/* 취약한 버전 (window.location.href에 링크 직접 주입)
                                         <div style={styles.qnaLinkBox}>
                                             <span style={styles.linkTitle}>🔗 {selectedQna.link ? (
                                                 <span
@@ -313,9 +313,9 @@ export default function NoticeManagement() {
                                             ) : (
                                                 <span style={styles.noLinkText}>등록된 참고링크가 없습니다.</span>
                                             )}</span>
-                                        </div>
+                                        </div>*/}
 
-                                        {/*안전한 버전 (텍스트 형태로 링크 출력)
+                                        {/*안전한 버전 (텍스트 형태로 링크 출력)*/}
 
                                         <div style={styles.qnaLinkBox}>
                                             <span style={styles.linkTitle}>🔗 {selectedQna.link ? (
@@ -325,11 +325,8 @@ export default function NoticeManagement() {
                                             )}</span>
                                         </div>
 
-                                        */}
-
 
                                     </div>
-
                                     <div style={styles.inputGroup}>
                                         <label style={styles.inputLabel}>답변 내용</label>
                                         <textarea

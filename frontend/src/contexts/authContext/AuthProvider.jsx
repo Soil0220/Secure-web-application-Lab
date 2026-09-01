@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {AuthContext} from "./AuthContext.jsx";
-import {useLoading} from "../loadingContext/useLoading.jsx";
+import {useLoading} from "../loadingContext/UseLoading.jsx";
 import { postApi, getApi } from '../../components/RequestApi.jsx';
 
 export function AuthProvider({ children }) {

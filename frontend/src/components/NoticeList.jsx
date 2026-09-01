@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {useLoading} from "../contexts/loadingContext/UseLoading.jsx";
-import {useNotice} from "../contexts/noticeContext/useNotice.jsx";
+import {useNotice} from "../contexts/noticeContext/UseNotice.jsx";
 import {useAuth} from "../contexts/authContext/UseAuth.jsx";
 
 const NoticeList = () => {

@@ -1,5 +1,5 @@
 import {postApi, getApi, deleteApi} from '../../components/RequestApi.jsx';
-import {useLoading} from "../loadingContext/useLoading.jsx";
+import {useLoading} from "../loadingContext/UseLoading.jsx";
 import {NoticeContext} from "./NoticeContext.jsx";
 import {useState} from "react";
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAccount } from "../../contexts/accountContext/useAccount";
+import { useAccount } from "../../contexts/accountContext/UseAccount";
 
 /*
     계정별 페이지

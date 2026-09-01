@@ -5,6 +5,7 @@ WORKDIR /app
 # 의존성 캐싱을 위한 Gradle 파일 먼저 복사
 COPY gradle gradle
 COPY gradlew build.gradle settings.gradle ./
+RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon
 
 # 소스코드 복사 및 빌드 (테스트x)

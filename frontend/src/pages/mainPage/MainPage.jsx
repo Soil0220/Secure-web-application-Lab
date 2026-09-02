@@ -157,7 +157,7 @@ export default function MainPage() {
 
                     <span style={styles.portfolioNotice}>
                         해당 사이트는 정부 지원금 사이트를 주제로 제작한 포트폴리오용 사이트입니다.
-                        <span style={{ display: 'block', paddingLeft: '16px', marginTop: '4px' }}>
+                        <span style={{ display: 'block', paddingLeft: '12px', marginTop: '2px', fontWeight: 'normal' }}>
                             * 30분마다 데이터 및 세션이 자동 초기화됩니다.
                         </span>
                     </span>
@@ -519,7 +519,7 @@ const styles = {
     metaValue: { fontSize: '13px', color: '#111111', fontWeight: 'bold' },
     metaValueHighlight: { fontSize: '14px', color: '#0056b3', fontWeight: 'bold' },
     metaDivider: { width: '1px', height: '12px', backgroundColor: '#cbd5e1' },
-    portfolioNotice: {display: 'inline-flex', alignItems: 'center', marginLeft: '14px', padding: '5px 10px', borderLeft: '3px solid #dc2626', borderRadius: '4px', backgroundColor: '#fef2f2', color: '#b91c1c', fontSize: '12px', fontWeight: '600', lineHeight: '1.4',},
+    portfolioNotice: {display: 'block', marginLeft: '14px', padding: '6px 12px', borderLeft: '3px solid #dc2626', borderRadius: '4px', backgroundColor: '#fef2f2', color: '#b91c1c', fontSize: '12px', fontWeight: '600', lineHeight: '1.5', textAlign: 'left',},
 
     /* 공통 기본 카드가이드 */
     cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', width: '100%' },

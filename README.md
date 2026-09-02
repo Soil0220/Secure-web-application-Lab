@@ -31,10 +31,10 @@
 
 ## 서비스 접속 및 실습 환경
 
-| 구분 | 환경 | 링크                                                                                                  | 설명                                               |
-| :--- | :--- |:------------------------------------------------------------------------------------------------------|:---------------------------------------------------|
-| **Secure** | 라이브 배포 | [정부지원금 통합 신청 시스템](http://gov-subsidy-portal.kro.kr)                                       | 보안 패치가 완료된 안전한 배포 환경                |
-| **Vulnerable** | 로컬 Docker | [정부지원금 통합 신청 시스템](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable) | 시나리오 기반 침투테스트가 가능한 취약한 로컬 환경 |
+| 구분 | 환경 | 링크                                                                                                  | 설명                                                        |
+| :--- | :--- |:------------------------------------------------------------------------------------------------------|:------------------------------------------------------------|
+| **Secure** | 라이브 배포 | [정부지원금 통합 신청 시스템](http://gov-subsidy-portal.kro.kr)                                       | 보안 패치가 완료된 안전한 배포 환경                         |
+| **Vulnerable** | 로컬 Docker | [정부지원금 통합 신청 시스템](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable) | 시나리오 기반 침투테스트가 가능한 취약한 로컬 환경 (수정중) |
 
 ### 관리자 Demo 계정
 
@@ -218,3 +218,4 @@
 
 ## 모의해킹 진단 보고서 (Penetration Testing Report)
 - **[정부지원금 통합 신청 시스템 취약점 진단 보고서](./images/VulnerabilityAssessmentReport.pdf)** 
+- **[SQLI 공격 자동화 스크립트](https://github.com/Soil0220/Secure-web-application-Lab/tree/main/scripts)**

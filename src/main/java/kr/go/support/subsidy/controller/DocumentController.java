@@ -35,7 +35,7 @@ public class DocumentController {
     }
 
     //서류 등록
-    @PostMapping
+    @PostMapping("/upload")
     public ResponseApi<Long> createDocument(
             @Valid @ModelAttribute DocumentCreateDto dto,
             @SessionAttribute(name = "loginUser") SessionUser sessionUser){

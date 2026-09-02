@@ -6,6 +6,7 @@ import kr.go.support.subsidy.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,7 +38,10 @@ public class Initializer {
 
         // Redis 초기화
         try {
-            redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+            redisTemplate.execute((RedisCallback<Object>) connection -> {
+                connection.serverCommands().flushAll();
+                return null;
+            });
         } catch (Exception e) {
             log.error("[Redis] 초기화 실패", e);
         }

@@ -36,6 +36,16 @@
 | **Secure** | 라이브 배포 | [정부지원금 통합 신청 시스템](http://gov-subsidy-portal.kro.kr)                                       | 보안 패치가 완료된 안전한 배포 환경                |
 | **Vulnerable** | 로컬 Docker | [정부지원금 통합 신청 시스템](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable) | 시나리오 기반 침투테스트가 가능한 취약한 로컬 환경 |
 
+### 관리자 Demo 계정
+
+배포 환경은 **정부지원금 통합 신청 시스템의 권한 분리 및 관리자 API 검증을 위해 관리자 권한을 직접 확인할 수 있도록 구성한 포트폴리오 전용 Demo 환경** 입니다.
+
+* **관리자 ID** : admin  
+* **관리자 PW** : admin1234!
+
+> ⚠️ 관리자 계정은 포트폴리오 검증을 위한 전용 계정이며,
+> 관리자 계정 정보를 제외한 **Redis 및 DB 데이터는 30분 단위로 초기화**됩니다.
+
 
 ---
 

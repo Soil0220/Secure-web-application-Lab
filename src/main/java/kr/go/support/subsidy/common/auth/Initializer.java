@@ -32,7 +32,7 @@ public class Initializer {
     private String adminPassword;
 
     //30분마다 초기화
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 1800000)
     public void resetSystem() {
 
 

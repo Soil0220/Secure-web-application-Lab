@@ -157,9 +157,6 @@ export default function MainPage() {
 
                     <span style={styles.portfolioNotice}>
                         해당 사이트는 정부 지원금 사이트를 주제로 제작한 포트폴리오용 사이트입니다.
-                        <span style={{ display: 'block', paddingLeft: '12px', marginTop: '2px', fontWeight: 'normal' }}>
-                            * 30분마다 데이터 및 세션이 자동 초기화됩니다.
-                        </span>
                     </span>
 
                     <ul style={styles.menuList}>

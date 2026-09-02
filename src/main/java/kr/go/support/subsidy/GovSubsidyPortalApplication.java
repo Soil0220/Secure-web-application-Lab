@@ -6,12 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 import java.util.TimeZone;
 
 @EnableJpaAuditing
 @EnableAsync
 @EnableScheduling
+@EnableRedisHttpSession
 @SpringBootApplication
 public class GovSubsidyPortalApplication {
     //TODO HTTPS 설정

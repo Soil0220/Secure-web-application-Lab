@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 @dataclass
 class Config:
-    base_url: str = "http://localhost:8080"
+    base_url: str = "http://localhost:80"
     endpoint: str = "/api/monitoring/admin"
 
     request_id: str = str(uuid.uuid4())
@@ -14,6 +14,6 @@ class Config:
 
     login_point: str = "/api/user/login/public"
     username: str = "admin"
-    password: str = "admin1234"
+    password: str = "admin1234!"
 
 CONFIG = Config()

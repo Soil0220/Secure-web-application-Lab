@@ -218,4 +218,4 @@
 
 ## 모의해킹 진단 보고서 (Penetration Testing Report)
 - **[정부지원금 통합 신청 시스템 취약점 진단 보고서](./images/VulnerabilityAssessmentReport.pdf)** 
-- **[SQLI 공격 자동화 스크립트](https://github.com/Soil0220/Secure-web-application-Lab/tree/main/scripts)**
+- **[SQLI 공격 자동화 스크립트](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable/scripts)**

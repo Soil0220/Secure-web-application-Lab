@@ -34,11 +34,11 @@
 | 구분 | 환경 | 링크                                                                                                  | 설명                                                        |
 | :--- | :--- |:------------------------------------------------------------------------------------------------------|:------------------------------------------------------------|
 | **Secure** | 라이브 배포 | [정부지원금 통합 신청 시스템](http://gov-subsidy-portal.kro.kr)                                       | 보안 패치가 완료된 안전한 배포 환경                         |
-| **Vulnerable** | 로컬 Docker | [정부지원금 통합 신청 시스템](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable) | 시나리오 기반 침투테스트가 가능한 취약한 로컬 환경 (수정중) |
+| **Vulnerable** | 로컬 Docker | [정부지원금 통합 신청 시스템](https://github.com/Soil0220/Secure-web-application-Lab/tree/vulnerable) | 시나리오 기반 침투테스트가 가능한 취약한 로컬 환경 |
 
-### 관리자 Demo 계정
+### 안전한 정부지원금 통합 신청 시스템 - 관리자 Demo 계정
 
-배포 환경은 **정부지원금 통합 신청 시스템의 권한 분리 및 관리자 API 검증을 위해 관리자 권한을 직접 확인할 수 있도록 구성한 포트폴리오 전용 Demo 환경** 입니다.
+배포 환경은 정부지원금 통합 신청 시스템의 권한 분리 및 관리자 API 검증을 위해 관리자 권한을 직접 확인할 수 있도록 구성한 포트폴리오 전용 Demo 환경 입니다.
 
 * **관리자 ID** : admin  
 * **관리자 PW** : admin1234!
@@ -46,7 +46,29 @@
 > ⚠️ 관리자 계정은 포트폴리오 검증을 위한 전용 계정이며,
 > 관리자 계정 정보를 제외한 **Redis 및 DB 데이터는 30분 단위로 초기화**됩니다.
 
+### 취약한 정부지원금 통합 신청 시스템 - Window 로컬 실습 환경
 
+취약한 로컬 테스트 환경은 모의침투 및 웹 취약점 분석 실습을 위해 의도적으로 보안 취약점을 포함하여 제작된 환경입니다.
+
+- Docker Desktop 설치 및 실행
+  - [Docker 공식 홈페이지](https://www.docker.com/products/docker-desktop/)에서 Docker Desktop for Windows 설치 프로그램을 다운로드합니다.
+  - 설치 완료 후 Docker Desktop 앱을 실행합니다.
+  
+- 프로젝트 다운로드 및 실행 과정
+  - Windows 환경의 PowerShell을 열고 아래 명령어를 순서대로 실행합니다.
+
+```powershell
+# 저장소 복제
+git clone -b vulnerable https://github.com/Soil0220/Secure-web-application-Lab.git
+
+# 프로젝트 디렉토리로 이동
+cd Secure-web-application-Lab
+
+# 도커 이미지 빌드 및 백그라운드 실행
+docker compose up -d --build
+
+# 웹 브라우저 실행 후 http://localhost:80 접속
+```
 ---
 
 ## 시스템 구조 및 설계
